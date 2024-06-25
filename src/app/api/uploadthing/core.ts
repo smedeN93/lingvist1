@@ -92,7 +92,7 @@ const onUploadComplete = async ({
 
     // vectorize and index entire document
     const pinecone = getPineconeClient();
-    const pineconeIndex = pinecone.Index("quill");
+    const pineconeIndex = pinecone.Index("lingvist");
 
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY!,

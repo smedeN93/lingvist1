@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
   });
 
   const pinecone = getPineconeClient();
-  const pineconeIndex = pinecone.Index("quill");
+  const pineconeIndex = pinecone.Index("lingvist");
 
   const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
     pineconeIndex,
