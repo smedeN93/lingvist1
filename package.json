@@ -14,7 +14,7 @@
     "email": "kontakt@lingvist.dk",
     "url": "https://lingvist.dk"
   },
-  "description": "Lingvist er AI-model som hjælper ",
+  "description": "Lingvist gør det muligt for dig",
   "keywords": [
     "reactjs",
     "nextjs",
@@ -56,26 +56,6 @@
     "eslint",
     "html",
     "css"
-  ],
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/sanidhyy/quill.git"
-  },
-  "homepage": "https://github.com/sanidhyy/quill#readme",
-  "bugs": {
-    "url": "https://github.com/sanidhyy/quill/issues",
-    "email": "sanidhya.verma12345@gmail.com"
-  },
-  "funding": [
-    {
-      "type": "patreon",
-      "url": "https://www.patreon.com/sanidhy"
-    },
-    {
-      "type": "Buy me a coffee",
-      "url": "https://www.buymeacoffee.com/sanidhy"
-    }
   ],
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",

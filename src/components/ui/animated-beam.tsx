@@ -4,6 +4,7 @@ import React, { RefObject, useEffect, useId, useState, forwardRef, useRef } from
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { User } from "lucide-react";
 
 export interface AnimatedBeamProps {
   className?: string;
@@ -230,9 +231,9 @@ export function AnimatedBeamMultipleOutputDemo({
     >
       <div className="flex w-full max-w-lg flex-row items-stretch justify-between gap-2 sm:gap-4 md:gap-6 lg:gap-10">
         <div className="flex flex-col justify-center">
-          <Circle ref={div7Ref} className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16">
-            <Image src="/lingvist_user.webp" alt="User" width={40} height={40} className="w-full h-full object-cover" />
-          </Circle>
+        <Circle ref={div7Ref} className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16">
+  <User size={24} />
+</Circle>
         </div>
         <div className="flex flex-col justify-center">
           <Circle ref={div6Ref} className="w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 p-1.5 sm:p-2 bg-black">
