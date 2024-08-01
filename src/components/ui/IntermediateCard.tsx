@@ -200,7 +200,7 @@ const IntermediateCard: React.FC<IntermediateCardProps> = ({
     { 
       icon: <BarChart size={32} />, 
       title: "22% skarpere til spørgsmål specifikke for PDF'er.", 
-      description: "Vi kender det alle. AI kan begynde at hallucinere.E Med Lingvist arkitektur har vi barberet det markant ned.*", 
+      description: "Vi kender det alle. AI kan begynde at hallucinere.Med Lingvist arkitektur har vi barberet det markant ned.*", 
       href: "/dashboard",
       children: <RAGImprovementChart className="mt-0 h-48" />,
       contentClassName: "justify-start"

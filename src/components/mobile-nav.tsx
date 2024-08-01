@@ -1,6 +1,5 @@
 "use client";
 
-import { ArrowRight, Menu, X, Home, DollarSign, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,7 +16,7 @@ export const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
 
   return (
     <div className="sm:hidden fixed top-4 left-4 right-4 z-50">
-      <div className="bg-white rounded-full shadow-lg py-2 px-4 flex items-center justify-between">
+      <div className="bg-gradient-to-br from-white to-gray-100 rounded-full shadow-lg py-2 px-4 flex items-center justify-between border border-gray-200">
         <Link href="/" className="font-bold text-sm">
           <span>lingvist</span><span className="text-blue-600">.</span>
         </Link>
@@ -35,10 +34,10 @@ export const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
           </>
         ) : (
           <>
-            <Link href="/dashboard" className="text-gray-700 text-sm font-medium">
+            <Link href="/dashboard" className="text-slate-950 text-sm font-medium">
               Kontrolpanel
             </Link>
-            <Link href="/sign-out" className="text-gray-700 text-sm font-medium">
+            <Link href="/sign-out" className="text-slate-950 text-sm font-medium">
               Log ud
             </Link>
           </>

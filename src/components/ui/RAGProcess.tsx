@@ -142,7 +142,7 @@ const ComprehensiveRAGVisualization: React.FC = () => {
       explanation: "Også dit spørgsmål bliver derfor konverteret til vektorer. Det tillader simpelthen at AI kan behandle det effektivt, og sammenligne dit spørgsmål med resten af dit dokument og finde det mest sandsynlige korrekte svar.",
       content: (
         <div>
-          <p>Spørgsmål: "{query}"</p>
+          <p>Spørgsmål: &quot;{query}&quot;</p>
           <p className="mt-2">Vektor-repræsentation:</p>
           <Vector values={queryVector} />
         </div>
@@ -165,7 +165,7 @@ const ComprehensiveRAGVisualization: React.FC = () => {
     },
     { 
       title: "Relevante passager fra dokumentet hentes.", 
-      explanation: "Baseret på lighedssøgningen henter systemet de mest relevante passager fra dokumentet. Det er tekststykker, hvis betydning mest nøjagtigt matcher spørgsmålets betydning, ifølge deres vektor-repræsentationer.",
+      explanation: 'Baseret på lighedssøgningen henter systemet de mest relevante passager fra dokumentet. Det er tekststykker, hvis betydning mest nøjagtigt matcher spørgsmålets betydning, ifølge deres vektor-repræsentationer.',
       content: (
         <div>
           <p>Hentede passager fra dokumentet:</p>
@@ -176,8 +176,8 @@ const ComprehensiveRAGVisualization: React.FC = () => {
       )
     },
     { 
-      title: "Svargenering.", 
-      explanation: "Endelig bruger vi AI på de hentede passager og det originale spørgsmål til at generere et sammenhængende svar. Men altså, vi kopierer og indsætter ikke bare, men syntetiserer informationen for direkte at besvare spørgsmålet.",
+      title: 'Svargenering.', 
+      explanation: 'Endelig bruger vi AI på de hentede passager og det originale spørgsmål til at generere et sammenhængende svar. Men altså, vi kopierer og indsætter ikke bare, men syntetiserer informationen for direkte at besvare spørgsmålet.',
       content: (
         <div>
           <p>Genereret svar baseret på fundne passager:</p>

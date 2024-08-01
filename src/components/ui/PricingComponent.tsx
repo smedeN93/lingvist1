@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight, CheckCircle2, } from 'lucide-react';
 import ShimmerButton from "@/components/ui/shimmer-button";
 import Link from 'next/link';
@@ -103,7 +103,7 @@ const PricingCardScroller: React.FC<{ cards: React.ReactNode[] }> = ({ cards }) 
 
   const totalCards = cards.length;
 
-  const scrollToIndex = (index: number, smooth = true) => {
+  const scrollToIndex = useCallback((index: number, smooth = true) => {
     if (scrollContainerRef.current) {
       const cardWidth = scrollContainerRef.current.offsetWidth / (isMediumOrLargeScreen ? 2 : 1);
       scrollContainerRef.current.scrollTo({
@@ -111,14 +111,14 @@ const PricingCardScroller: React.FC<{ cards: React.ReactNode[] }> = ({ cards }) 
         behavior: smooth ? 'smooth' : 'auto'
       });
     }
-  };
+  }, [isMediumOrLargeScreen]);
 
-  const handleScroll = () => {
+  const handleScroll = useCallback(() => {
     if (scrollContainerRef.current) {
       const scrollPosition = scrollContainerRef.current.scrollLeft;
       const cardWidth = scrollContainerRef.current.offsetWidth / (isMediumOrLargeScreen ? 2 : 1);
       let newIndex = Math.round(scrollPosition / cardWidth);
-
+  
       if (newIndex >= totalCards) {
         newIndex = 0;
         scrollToIndex(0, false);
@@ -126,18 +126,18 @@ const PricingCardScroller: React.FC<{ cards: React.ReactNode[] }> = ({ cards }) 
         newIndex = totalCards - 1;
         scrollToIndex(totalCards - 1, false);
       }
-
+  
       setCurrentIndex(newIndex);
     }
-  };
+  }, [isMediumOrLargeScreen, totalCards, scrollToIndex]);
 
-  const scroll = (direction: 'left' | 'right') => {
+  const scroll = useCallback((direction: 'left' | 'right') => {
     let newIndex = direction === 'left' 
       ? (currentIndex - 1 + totalCards) % totalCards 
       : (currentIndex + 1) % totalCards;
     setCurrentIndex(newIndex);
     scrollToIndex(newIndex);
-  };
+  }, [currentIndex, totalCards, scrollToIndex]);
 
   const handleManualScroll = (direction: 'left' | 'right') => {
     setIsUserInteracting(true);
@@ -171,17 +171,17 @@ const PricingCardScroller: React.FC<{ cards: React.ReactNode[] }> = ({ cards }) 
         scroll('right');
       }
     }, 5000);
-
+  
     return () => clearInterval(autoScrollTimer);
-  }, [isUserInteracting, currentIndex]);
-
+  }, [isUserInteracting, scroll]);
+  
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (container) {
       container.addEventListener('scroll', handleScroll);
       return () => container.removeEventListener('scroll', handleScroll);
     }
-  }, []);
+  }, [handleScroll]);
 
   return (
     <div className="relative max-w-full overflow-hidden"

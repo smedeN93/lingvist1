@@ -28,17 +28,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
   return (
     <html lang="en" className={`light ${inter.variable}`}>
-      <head>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-      </head>
+      {/* Remove the empty <head> tag */}
       <Providers>
         <body
           className={cn(
             "min-h-screen antialiased grainy flex flex-col",
-            inter.className,
-            "font-sans"
+            inter.className
           )}
-          style={{ fontFamily: 'var(--font-inter), Inter, sans-serif' }}
         >
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           <Toaster richColors />
