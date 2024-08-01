@@ -30,7 +30,7 @@ export const ChatInput = ({ isDisabled }: ChatInputProps) => {
             <div className="relative">
               <Textarea
                 ref={textareaRef}
-                placeholder="Enter your question..."
+                placeholder="Indtast dit spørgsmål..."
                 rows={1}
                 maxRows={4}
                 autoFocus
@@ -61,7 +61,7 @@ export const ChatInput = ({ isDisabled }: ChatInputProps) => {
                 }}
                 className="absolute bottom-1.5 right-[8px]"
                 aria-label="Send Message..."
-                title="Send Message..."
+                title="Send Besked..."
               >
                 <Send className="h-4 w-4" />
               </Button>

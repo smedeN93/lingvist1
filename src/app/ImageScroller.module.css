@@ -1,0 +1,87 @@
+.scrollContainer {
+    --card-width: calc(85vw - 2rem);
+    --padding-left: calc((100% - var(--card-width)) / 2);
+    --padding-right: calc((100% - var(--card-width)) / 2);
+    padding-left: var(--padding-left);
+    padding-right: var(--padding-right);
+  }
+  
+  /* iPhone SE, Galaxy S8+ */
+  @media (min-width: 375px) {
+    .scrollContainer {
+      --card-width: calc(80vw - 2rem);
+      --padding-left: 1rem;
+      --padding-right: 1rem;
+    }
+  }
+  
+  /* iPhone X, Pixel 2 */
+  @media (min-width: 411px) {
+    .scrollContainer {
+      --padding-left: 0.5rem;
+      --padding-right: 1.25rem;
+    }
+  }
+  
+  /* iPad Mini */
+  @media (min-width: 768px) {
+    .scrollContainer {
+      --card-width: calc(70vw - 2rem);
+      --padding-left: 1rem;
+      --padding-right: 2rem;
+    }
+  }
+  
+  /* iPad Pro */
+  @media (min-width: 1024px) {
+    .scrollContainer {
+      --card-width: calc(60vw - 2rem);
+      --padding-left: 1.5rem;
+      --padding-right: 3rem;
+    }
+  }
+  
+  /* Small laptops */
+  @media (min-width: 1280px) {
+    .scrollContainer {
+      --card-width: calc(50vw - 2rem);
+      --padding-left: 4rem;
+      --padding-right: 4rem;
+    }
+  }
+  
+  /* Desktops */
+  @media (min-width: 1440px) {
+    .scrollContainer {
+      --card-width: calc(40vw - 2rem);
+      --padding-left: 2rem;
+      --padding-right: 5rem;
+    }
+  }
+  
+  /* Large desktops */
+  @media (min-width: 1920px) {
+    .scrollContainer {
+      --card-width: min(calc(35vw - 2rem), 500px);
+      --padding-left: 14rem;
+      --padding-right: 6rem;
+    }
+  }
+  
+  /* 2K Screens (1440p) */
+  @media (min-width: 2560px) {
+    .scrollContainer {
+      --card-width: min(calc(32vw - 2rem), 550px);
+      --padding-left: 36rem;
+      --padding-right: 6.5rem;
+    }
+  }
+  
+  /* 4K Screens */
+  @media (min-width: 3840px) {
+    .scrollContainer {
+      --card-width: min(calc(30vw - 2rem), 600px);
+      --padding-left: 58rem;
+      --padding-right: 7rem;
+    }
+  }

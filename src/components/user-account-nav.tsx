@@ -67,15 +67,15 @@ export const UserAccountNav = async ({
         <DropdownMenuSeparator />
 
         <DropdownMenuItem asChild>
-          <Link href="/dashboard">Dashboard</Link>
+          <Link href="/dashboard">Kontrolpanel</Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem asChild>
           {subscriptionPlan?.isSubscribed ? (
-            <Link href="/dashboard/billing">Manage Subscription</Link>
+            <Link href="/dashboard/billing">Administrer Abonnement</Link>
           ) : (
             <Link href="/pricing">
-              Upgrade <Gem className="text-blue-600 w-4 h-4 ml-1.5" />
+              Opgradér <Gem className="text-blue-600 w-4 h-4 ml-1.5" />
             </Link>
           )}
         </DropdownMenuItem>
@@ -83,7 +83,7 @@ export const UserAccountNav = async ({
         <DropdownMenuSeparator />
 
         <DropdownMenuItem className="cursor-pointer">
-          <LogoutLink className="w-full">Log out</LogoutLink>
+          <LogoutLink className="w-full">Log ud</LogoutLink>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

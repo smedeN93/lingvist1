@@ -48,8 +48,8 @@ export const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
               }
               onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               onLoadError={() =>
-                toast.error("Error loading PDF.", {
-                  description: "Please try again.",
+                toast.error("Der skete en fejl.", {
+                  description: "Prøv venligst igen.",
                 })
               }
               file={fileUrl}

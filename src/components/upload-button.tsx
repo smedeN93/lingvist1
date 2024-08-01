@@ -33,13 +33,13 @@ const UploadDropzone = ({
     {
       onUploadError: (err) => {
         setIsUploading(false);
-        if (err.code === "BAD_REQUEST") setError("Only PDF files are allowed.");
+        if (err.code === "BAD_REQUEST") setError("Kun PDF-filer er tilladt.");
 
         if (err.code === "INTERNAL_SERVER_ERROR" || err.code === "TOO_LARGE")
-          setError("File is too large.");
+          setError("Filen er for stor.");
 
         if (err.code === "FILE_LIMIT_EXCEEDED" || err.code === "TOO_MANY_FILES")
-          setError("Too many files.");
+          setError("Der er for mange filer.");
       },
     },
   );
@@ -77,7 +77,7 @@ const UploadDropzone = ({
   return (
     <Dropzone
       multiple={false}
-      onDropRejected={() => setError("Too many files.")}
+      onDropRejected={() => setError("Der er for mange filer.")}
       onDrop={async (acceptedFile) => {
         setIsUploading(true);
 
@@ -87,8 +87,8 @@ const UploadDropzone = ({
         const res = await startUpload(acceptedFile);
 
         if (!res) {
-          return toast.error("Something went wrong!", {
-            description: "Please try again later.",
+          return toast.error("Noget gik galt!", {
+            description: "Prøv igen senere.",
           });
         }
 
@@ -97,8 +97,8 @@ const UploadDropzone = ({
         const key = fileResponse?.key;
 
         if (!key) {
-          return toast.error("Something went wrong!", {
-            description: "Please try again later.",
+          return toast.error("Noget gik galt!", {
+            description: "Prøv igen senere.",
           });
         }
 
@@ -121,12 +121,12 @@ const UploadDropzone = ({
               <div className="flex flex-col items-center justify-center pt-5 pb-6">
                 <Cloud className="h-6 w-6 text-zinc-500 mb-2" />
                 <p className="mb-2 text-sm text-zinc-700">
-                  <span className="font-semibold">Click to upload</span> or drag
-                  and drop.
+                  <span className="font-semibold">Klik for at upload</span> eller træk
+                  og slip.
                 </p>
 
                 <p className="text-xs text-zinc-500">
-                  PDF (up to {isSubscribed ? "16" : "4"}MB)
+                  PDF (op til {isSubscribed ? "16" : "4"}MB)
                 </p>
               </div>
 
@@ -157,7 +157,7 @@ const UploadDropzone = ({
                   {uploadProgress === 100 ? (
                     <div className="flex gap-1 items-center justify-center text-sm text-zinc-700 text-center pt-2">
                       <Loader2 className="h-3 w-3 animate-spin" />
-                      Redirecting...
+                      Omdirigerer...
                     </div>
                   ) : null}
                 </div>

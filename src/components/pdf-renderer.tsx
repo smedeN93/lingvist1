@@ -87,8 +87,8 @@ export const PDFRenderer = ({ url }: PDFRendererProps) => {
               setValue("page", String(currPage - 1));
             }}
             variant="ghost"
-            aria-label="Previous Page"
-            title="Previous Page"
+            aria-label="Forrige Side"
+            title="Forrige Side"
           >
             <ChevronDown className="h-4 w-4" />
           </Button>
@@ -126,8 +126,8 @@ export const PDFRenderer = ({ url }: PDFRendererProps) => {
               setValue("page", String(currPage + 1));
             }}
             variant="ghost"
-            aria-label="Next Page"
-            title="Next Page"
+            aria-label="Næste Side"
+            title="Næste Side"
           >
             <ChevronUp className="h-4 w-4" />
           </Button>
@@ -149,6 +149,15 @@ export const PDFRenderer = ({ url }: PDFRendererProps) => {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent>
+            <DropdownMenuItem onSelect={() => setScale(0.5)}>
+                50%
+              </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setScale(0.6)}>
+                60%
+              </DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setScale(0.7)}>
+                70%
+              </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setScale(0.8)}>
                 80%
               </DropdownMenuItem>

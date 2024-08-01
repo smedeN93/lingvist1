@@ -39,9 +39,9 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
 
-            <h3 className="font-semibold text-xl">Loading...</h3>
+            <h3 className="font-semibold text-xl">Indlæser...</h3>
             <p className="text-zinc-500 text-sm">
-              We&apos;re preparing your PDF.
+              Vi er ved at forberede din PDF.
             </p>
           </div>
         </div>
@@ -58,8 +58,8 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
 
-            <h3 className="font-semibold text-xl">Processing PDF...</h3>
-            <p className="text-zinc-500 text-sm">This won&apos;t take long.</p>
+            <h3 className="font-semibold text-xl">Analyserer din PDF...</h3>
+            <p className="text-zinc-500 text-sm">Det tager ikke ret længe heldigvis!</p>
           </div>
         </div>
 
@@ -75,10 +75,10 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
           <div className="flex flex-col items-center gap-2">
             <XCircle className="h-8 w-8 text-rose-500" />
 
-            <h3 className="font-semibold text-xl">Too many pages in PDF</h3>
+            <h3 className="font-semibold text-xl">Der er for mange sider i din PDF</h3>
             <p className="text-zinc-500 text-sm">
-              Your <span className="font-medium">Free</span> plan supports upto
-              5 pages per PDF.
+              Din <span className="font-medium">Gratis</span> plan understøtter kun op til
+              5 sider pr. PDF.
             </p>
 
             <Link
@@ -88,7 +88,7 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
                 className: "mt-4",
               })}
             >
-              <ChevronLeft className="h-3 w-3 mr-1.5" /> Back
+              <ChevronLeft className="h-3 w-3 mr-1.5" /> Tilbage
             </Link>
           </div>
         </div>

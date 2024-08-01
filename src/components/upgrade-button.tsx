@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { trpc } from "@/app/_trpc/client";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 const CHECKOUT_TOAST_ID = "checkout-toast";
 
@@ -20,8 +21,8 @@ export const UpgradeButton = () => {
 
   const handleClick = () => {
     setIsLoading(true);
-    toast.loading("Redirecting to checkout...", {
-      description: "Please wait while we redirect you to checkout page.",
+    toast.loading("Omdirigerer...", {
+      description: "Vent venligst mens du omdirigeres til kassen...",
       id: CHECKOUT_TOAST_ID,
     });
 
@@ -33,13 +34,20 @@ export const UpgradeButton = () => {
   }, [isLoading]);
 
   return (
-    <Button
+    <button
+      onClick={handleClick}
       disabled={isLoading}
       aria-disabled={isLoading}
-      className="w-full"
-      onClick={handleClick}
+      className={cn(
+        buttonVariants({
+          className:
+            "w-full py-3 px-4 rounded-full font-bold text-sm lg:text-base",
+        }),
+        "bg-green-400 text-black hover:bg-green-500"
+      )}
     >
-      Upgrade now <ArrowRight className="h-5 w-5 ml-1.5" />
-    </Button>
+      {isLoading ? "Omdirigerer..." : "Opgrader nu"}{" "}
+      <ArrowRight className="h-5 w-5 ml-1.5" />
+    </button>
   );
 };

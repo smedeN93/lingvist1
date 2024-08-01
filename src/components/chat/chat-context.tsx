@@ -107,8 +107,8 @@ export const ChatContextProvider = ({
       setIsLoading(false);
 
       if (!stream) {
-        return toast.error("There was a problem sending this message.", {
-          description: "Please refresh this page and try again.",
+        return toast.error("Der opstod et problem med at sende din besked.", {
+          description: "Opdatér siden og prøv igen.",
         });
       }
 

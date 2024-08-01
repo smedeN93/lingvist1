@@ -60,13 +60,13 @@ export const DeleteFileModal = ({
       <DialogContent className="p-0 overflow-hidden">
         <DialogHeader className="pt-8 px-6">
           <DialogTitle className="text-2xl text-center font-bold">
-            Delete File
+            Slet PDF
           </DialogTitle>
 
           <DialogDescription className="text-center">
-            Are you sure you want to do this? <br />
-            The file <strong>{currentlyDeletingFile?.name || ""}</strong> will
-            be will be permanently deleted.
+            Er du sikker på at du vil slette? <br />
+            Filen <strong>{currentlyDeletingFile?.name || ""}</strong> vil blive
+            permanent slettet.
           </DialogDescription>
         </DialogHeader>
 
@@ -78,7 +78,7 @@ export const DeleteFileModal = ({
               onClick={onClose}
               variant="ghost"
             >
-              Cancel
+              Annuller
             </Button>
             <Button
               disabled={isPending}
@@ -86,7 +86,7 @@ export const DeleteFileModal = ({
               onClick={onClick}
               variant="danger"
             >
-              Confirm
+              Bekræft
             </Button>
           </div>
         </DialogFooter>

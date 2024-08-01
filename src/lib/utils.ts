@@ -11,7 +11,7 @@ export function absoluteUrl(path: string) {
 }
 
 export function constructMetadata({
-  title = "Quill - The SaaS for Students",
+  title = "Lingvist - Få bedre indsigt i dine PDF'er med AI",
   description = "Quill is an open-source software to make chatting to your PDF files easy.",
   image = "/thumbnail.png",
   noIndex = false,
@@ -37,8 +37,7 @@ export function constructMetadata({
       "shadcn-ui",
       "radix-ui",
       "cn",
-      "clsx",
-      "quill",
+      "clsx",,
       "realtime-chat",
       "summarize-pdf",
       "pdf-ai",
@@ -67,8 +66,8 @@ export function constructMetadata({
       "css",
     ] as Array<string>,
     authors: {
-      name: "Sanidhya Kumar Verma",
-      url: "https://github.com/sanidhyy",
+      name: "Nicklas M. Christiansen",
+      url: "https://www.linkedin.com/in/nicklas-majlund-christiansen/",
     },
     openGraph: {
       title,
@@ -78,13 +77,6 @@ export function constructMetadata({
           url: image,
         },
       ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [image],
-      creator: "@TechnicalShubam",
     },
     metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL),
     ...(noIndex && {

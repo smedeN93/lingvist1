@@ -88,6 +88,7 @@ const onUploadComplete = async ({
           userId,
         },
       });
+      return;
     }
 
     // vectorize and index entire document
@@ -113,6 +114,7 @@ const onUploadComplete = async ({
       },
     });
   } catch (error) {
+    console.error("File processing failed:", error);
     await db.file.update({
       data: {
         uploadStatus: "FAILED",
