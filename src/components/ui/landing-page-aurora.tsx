@@ -1,11 +1,11 @@
 "use client";
 import { motion } from "framer-motion";
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, TouchEvent } from 'react';
 import { AuroraBackground } from "./aurora-background";
 import { PlaceholdersAndVanishInputDemo } from "./placeholders-and-vanish-input";
-import { ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from "next/image";
-
+import Link from 'next/link';
 
 export function LandingPage() {
   return (
@@ -22,10 +22,10 @@ export function LandingPage() {
           className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-16 sm:pt-20 md:pt-24 lg:pt-32"
         >
           <h1 className="text-5xl md:text-7xl font-bold dark:text-white text-center">
-          Chat med dine dokumenter
+            Chat med dine dokumenter
           </h1>
           <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 text-center">
-          AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
+            AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
           </div>
           
           <PlaceholdersAndVanishInputDemo />
@@ -39,7 +39,7 @@ export function LandingPage() {
           <OrDivider />
           
           <p className="text-[9px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 md:mb-16">
-          Kom i gang uden kreditkort.
+            Kom i gang uden kreditkort.
           </p>
         </motion.div>
 
@@ -62,7 +62,6 @@ export function LandingPage() {
               "/lingvist_chat_preview14.webp",
               "/lingvist_billing.webp",
               "/lingvist_billingform.webp",
-              
             ]} 
             url="https://lingvist.dk/dashboard"
             autoSlideInterval={5000}
@@ -79,52 +78,78 @@ interface BrowserFrameMockupProps {
   autoSlideInterval?: number;
 }
 
-const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({ 
+const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({
   images,
   url = "https://example.com/image-slider",
   autoSlideInterval = 5000
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchDelta, setTouchDelta] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set([0, 1]));
 
-  const nextSlide = useCallback(() => {
-    if (!isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
-    }
-  }, [images.length, isTransitioning]);
+  const handleSlideChange = useCallback((newIndex: number) => {
+    const adjustedIndex = (newIndex + images.length) % images.length;
+    setCurrentIndex(adjustedIndex);
+    const nextIndex = (adjustedIndex + 1) % images.length;
+    setLoadedImages(prev => {
+      const newSet = new Set(Array.from(prev));
+      newSet.add(adjustedIndex);
+      newSet.add(nextIndex);
+      return newSet;
+    });
+  }, [images.length]);
 
-  const prevSlide = useCallback(() => {
-    if (!isTransitioning) {
-      setIsTransitioning(true);
-      setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
+  const nextSlide = useCallback(() => handleSlideChange(currentIndex + 1), [currentIndex, handleSlideChange]);
+  const prevSlide = useCallback(() => handleSlideChange(currentIndex - 1), [currentIndex, handleSlideChange]);
+
+  const handleTouchStart = (e: TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+    setIsSwiping(true);
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (isSwiping) {
+      const currentTouch = e.targetTouches[0].clientX;
+      const delta = touchStart - currentTouch;
+      setTouchDelta(delta);
     }
-  }, [images.length, isTransitioning]);
+  };
+
+  const handleTouchEnd = () => {
+    setIsSwiping(false);
+    if (Math.abs(touchDelta) > 75) {
+      if (touchDelta > 0) {
+        nextSlide();
+      } else {
+        prevSlide();
+      }
+    }
+    setTouchDelta(0);
+  };
 
   useEffect(() => {
     const slideInterval = setInterval(nextSlide, autoSlideInterval);
     return () => clearInterval(slideInterval);
   }, [nextSlide, autoSlideInterval]);
 
-  useEffect(() => {
-    if (isTransitioning) {
-      const timer = setTimeout(() => setIsTransitioning(false), 500);
-      return () => clearTimeout(timer);
-    }
-  }, [isTransitioning]);
-
+  const getImageStyle = (index: number) => {
+    const baseTransform = `translateX(${(index - currentIndex) * 100}%)`;
+    const swipeTransform = isSwiping ? `translateX(calc(${(index - currentIndex) * 100}% - ${touchDelta}px))` : baseTransform;
+    return {
+      transform: swipeTransform,
+      transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
+    };
+  };
   return (
     <div className="w-full max-w-7xl mx-auto my-6 lg:my-16 px-4 sm:px-6 lg:px-8">
       <div className="relative">
-        {/* Subtle shadow overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl transform scale-[1.02] blur-2xl opacity-50"></div>
         
-        {/* Browser Frame */}
         <div className="relative bg-white rounded-xl lg:rounded-3xl overflow-hidden border-[0.5px] sm:border border-gray-200 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 hover:shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)]">
           
-          {/* Browser Chrome */}
           <div className="bg-gradient-to-b from-gray-50 to-gray-100 border-b-[0.5px] sm:border-b border-gray-200">
-            {/* Tab and Controls */}
             <div className="flex items-center px-2 sm:px-3 py-1 sm:py-2">
               <div className="flex space-x-1 sm:space-x-1.5 mr-2 sm:mr-3">
                 <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-red-400 rounded-full"></div>
@@ -133,7 +158,6 @@ const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({
               </div>
             </div>
 
-            {/* Address Bar */}
             <div className="flex items-center px-2 sm:px-3 py-0.5 sm:py-1.5">
               <div className="flex-1 bg-white rounded-full shadow-inner flex items-center border-[0.5px] sm:border border-gray-200">
                 <div className="flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 space-x-1 sm:space-x-1.5 text-gray-500 w-full">
@@ -146,60 +170,59 @@ const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({
             </div>
           </div>
 
-          {/* Content Area with Image Slider */}
           <div className="bg-white relative">
-            <div className="w-full h-0 pb-[49.66%] relative overflow-hidden">
+            <div 
+              className="w-full h-0 pb-[49.66%] relative overflow-hidden touch-pan-y"
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+            >
               {images.map((img, index) => (
                 <div 
                   key={index}
-                  className={`absolute top-0 left-0 w-full h-full transition-all duration-500 ease-in-out ${
-                    index === currentIndex 
-                      ? 'opacity-100 translate-x-0 scale-100' 
-                      : index < currentIndex 
-                        ? 'opacity-0 -translate-x-full scale-95'
-                        : 'opacity-0 translate-x-full scale-95'
-                  }`}
+                  className="absolute top-0 left-0 w-full h-full"
+                  style={getImageStyle(index)}
                 >
-                  <Image 
-                    src={img}
-                    alt={`Screenshot of Lingvist application ${index + 1}`}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                    style={{ objectFit: 'cover' }}
-                    quality={100}
-                    priority={index === 0}
-                  />
-                  {/* Refined Professional Overlay */}
+                  {loadedImages.has(index) && (
+                    <Image 
+                      src={img}
+                      alt={`Screenshot of Lingvist application ${index + 1}`}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                      style={{ objectFit: 'cover' }}
+                      quality={100}
+                      priority={index === 0}
+                      loading={index === 0 ? "eager" : "lazy"}
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/15 pointer-events-none"></div>
                   <div className="absolute inset-0 bg-slate-950/[0.02] pointer-events-none"></div>
                 </div>
               ))}
             </div>
             
-            {/* Navigation Arrows */}
             <button 
               onClick={prevSlide} 
-              className="absolute top-1/2 left-0.5 sm:left-2 transform -translate-y-1/2 bg-white bg-opacity-80 text-gray-800 p-0.5 sm:p-1.5 rounded-full hover:bg-opacity-100 transition-all duration-300 ease-in-out shadow-sm"
+              className="absolute top-1/2 left-0.5 sm:left-2 transform -translate-y-1/2 bg-white bg-opacity-80 text-gray-800 p-1.5 sm:p-2 rounded-full hover:bg-opacity-100 transition-all duration-300 ease-in-out shadow-sm"
               aria-label="Previous slide"
             >
-              <ChevronLeft className="w-3 h-3 sm:w-5 sm:h-5" />
+              <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
             </button>
             <button 
               onClick={nextSlide} 
-              className="absolute top-1/2 right-0.5 sm:right-2 transform -translate-y-1/2 bg-white bg-opacity-80 text-gray-800 p-0.5 sm:p-1.5 rounded-full hover:bg-opacity-100 transition-all duration-300 ease-in-out shadow-sm"
+              className="absolute top-1/2 right-0.5 sm:right-2 transform -translate-y-1/2 bg-white bg-opacity-80 text-gray-800 p-1.5 sm:p-2 rounded-full hover:bg-opacity-100 transition-all duration-300 ease-in-out shadow-sm"
               aria-label="Next slide"
             >
-              <ChevronRight className="w-3 h-3 sm:w-5 sm:h-5" />
+              <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
             </button>
 
-            {/* Dots with Container */}
             <div className="absolute bottom-1 sm:bottom-3 left-1/2 transform -translate-x-1/2">
               <div className="bg-white bg-opacity-80 rounded-full px-1 py-0.5 sm:px-2 sm:py-1.5 flex space-x-0.5 sm:space-x-1.5 transition-all duration-300 hover:bg-opacity-100 shadow-sm">
                 {images.map((_, index) => (
                   <button
                     key={index}
-                    onClick={() => !isTransitioning && setCurrentIndex(index)}
-                    className={`w-1 h-1 sm:w-2 sm:h-2 rounded-full transition-all duration-300 ${
+                    onClick={() => handleSlideChange(index)}
+                    className={`w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 ${
                       index === currentIndex 
                         ? 'bg-gray-800 scale-100' 
                         : 'bg-gray-400 scale-75 hover:bg-gray-600 hover:scale-90'
@@ -216,26 +239,32 @@ const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({
   );
 };
 
-  const SignInButtons = () => {
-    return (
-      <div className="flex flex-row space-x-2 sm:space-x-4 justify-center w-full max-w-[200px] sm:max-w-none">
+const SignInButtons = () => {
+  return (
+    <div className="flex flex-row space-x-2 sm:space-x-4 justify-center w-full max-w-[200px] sm:max-w-none">
+      <Link href="/dashboard" passHref>
         <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-white text-gray-700 h-7 sm:h-auto sm:py-2 px-2 sm:px-4 rounded-full border border-gray-300 hover:shadow-md transition-all duration-200 text-[10px] sm:text-sm">
           <Image src="/google-logo.svg" alt="Google logo" width={14} height={14} className="w-3 h-3 sm:w-4 sm:h-4" />
           <span>Google</span>
         </button>
+      </Link>
+      <Link href="/dashboard" passHref>
         <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-white text-gray-700 h-7 sm:h-auto sm:py-2 px-2 sm:px-4 rounded-full border border-gray-300 hover:shadow-md transition-all duration-200 text-[10px] sm:text-sm">
           <Image src="/linkedin-logo.svg" alt="LinkedIn logo" width={14} height={14} className="w-3 h-3 sm:w-4 sm:h-4" />
           <span>LinkedIn</span>
         </button>
-      </div>
-    );
-  };
-  
-  const OrDivider = () => {
-    return (
-      <div className="flex items-center w-full max-w-xs my-4">
-        <div className="flex-grow border-t border-gray-300"></div>
-        <div className="flex-grow border-t border-gray-300"></div>
-      </div>
-    );
-  };
+      </Link>
+    </div>
+  );
+};
+
+const OrDivider = () => {
+  return (
+    <div className="flex items-center w-full max-w-xs my-4">
+      <div className="flex-grow border-t border-gray-300"></div>
+      <div className="flex-grow border-t border-gray-300"></div>
+    </div>
+  );
+};
+
+export default LandingPage;

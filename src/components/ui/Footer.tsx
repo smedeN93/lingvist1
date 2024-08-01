@@ -29,10 +29,6 @@ const Footer: React.FC = () => {
           </div>
           <div className="space-y-4">
             <h3 className="text-lg font-semibold mb-4">Kontakt</h3>
-            <address className="not-italic text-gray-600">
-              Istedgade 35, 9000, Aalborg
-            </address>
-            <p className="text-gray-600">Telefon: <a href="tel:+4560132882" className="hover:text-blue-600 transition-colors duration-200">(+45) 60132882</a></p>
             <p className="text-gray-600">Email: <a href="mailto:kontakt@lingvist.dk" className="hover:text-blue-600 transition-colors duration-200">kontakt@lingvist.dk</a></p>
             <p className="text-gray-600">CVR-nummer: 44532263</p>
           </div>

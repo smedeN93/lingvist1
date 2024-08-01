@@ -74,12 +74,12 @@ const PreFooter: React.FC = () => {
           variants={childVariants}
         >
           
-            <Link href="/signin" className="flex-1 max-w-[168px] sm:max-w-[192px] md:max-w-[224px] inline-block px-6 py-3 border border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-colors duration-300 text-center">
+            <Link href="/dashboard" className="flex-1 max-w-[168px] sm:max-w-[192px] md:max-w-[224px] inline-block px-6 py-3 border border-white text-white font-bold rounded-full hover:bg-white hover:text-black transition-colors duration-300 text-center">
               Log Ind
             </Link>
           
           
-            <Link href="/signup" className="flex-1 max-w-[168px] sm:max-w-[192px] md:max-w-[224px] inline-block px-6 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors duration-300 text-center">
+            <Link href="/dashboard" className="flex-1 max-w-[168px] sm:max-w-[192px] md:max-w-[224px] inline-block px-6 py-3 bg-white text-black font-bold rounded-full hover:bg-gray-200 transition-colors duration-300 text-center">
               Tilmeld
             </Link>
           
