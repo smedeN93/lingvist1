@@ -26,6 +26,7 @@ const HomePage = () => {
           title="Dine dokumenter, forbedret."
           animatedTexts={[
             "Tal med dem.",
+            "Tag noter.",
             "Opsummer dem.",
             "Få præcise svar.",
             "Sammensæt tekster.",

@@ -73,7 +73,6 @@ const StudyInfoDialog: React.FC<StudyInfoDialogProps> = ({ studieNavn, studieDet
     </AlertDialog>
   );
 };
-
 const CustomRAGTooltip: React.FC<CustomTooltipProps> = ({ active, payload, label }) => {
   if (active && payload && payload.length === 2) {
     return (
@@ -115,14 +114,14 @@ export const ChartForSmallCard: React.FC<{ className?: string }> = ({ className 
           *Repræsentative tal baseret på videnskabeligt studie.
         </span>
         <StudyInfoDialog 
-          studieNavn="RAG-teknologi øger AI's nøjagtighed med 29% i teknisk dokumentanalyse" 
+          studieNavn="RAG-teknologi øger AI&apos;s nøjagtighed med 29% i teknisk dokumentanalyse" 
           studieDetaljer={
             <>
-              <div>Studiet startede med en undren: selv førende AI-modeller havde svært ved at besvare komplekse tekniske spørgsmål præcist, selv med adgang til relevante PDF'er.</div>
+              <div>Studiet startede med en undren: selv førende AI-modeller havde svært ved at besvare komplekse tekniske spørgsmål præcist, selv med adgang til relevante PDF&apos;er.</div>
               <div>Forskerne undersøgte dertil hvorvidt en ny form for arkitektur - RAG (Retrieval-Augmented Generation) var bedre.</div>
               <div>Lingvist bruger samme RAG-arkitektur med en brugervenlig grænseflade. Fordelene ved den metode er at:</div>
               <ul className="list-disc pl-5">
-                <li>Din PDF bliver AI'ens primære informationskilde.</li>
+                <li>Din PDF bliver AI&apos;ens primære informationskilde.</li>
                 <li>Systemet finder de mest relevante afsnit for hvert spørgsmål.</li>
                 <li>Du får præcise svar baseret direkte på dit dokument.</li>
               </ul>
@@ -163,17 +162,15 @@ export const RAGImprovementChart: React.FC<{ className?: string }> = ({ classNam
           studieDetaljer={
             <>
               <div>Studiet undersøgte hvor gode avancerede AI-systemer, er til at læse og forstå lange, komplekse dokumenter, og besvare spørgsmål om dem.</div>
-              <div>Det de kunne se var, at hvis du leder efter meget præcise svar i en lang rapport, kontrakt eller afhandling med spørgsmål som 'Hvilke metoder blev brugt i eksperiment X?' eller 'Hvad for nogle krav er der til brugerfladen i x-system?', så er standard AI'er (ChatGPT mv.) ikke de bedste værktøjer</div>
+              <div>Det de kunne se var, at hvis du leder efter meget præcise svar i en lang rapport, kontrakt eller afhandling med spørgsmål som &apos;Hvilke metoder blev brugt i eksperiment X?&apos; eller &apos;Hvad for nogle krav er der til brugerfladen i x-system?&apos;, så er standard AI&apos;er (ChatGPT mv.) ikke de bedste værktøjer</div>
               <div>RAG-arkitektur - den samme som Lingvist anvender - var markant bedre til den slags opgaver.</div>
               <div className="font-bold">Nøgleresultater:</div>
               <ul className="list-disc pl-5">
-                <li>Standard AI'er var ikke de bedste for specifikke forespørgsler.</li>
+                <li>Standard AI&apos;er var ikke de bedste for specifikke forespørgsler.</li>
                 <li>Lingvist arkitketur var særlig effektiv for faktuelle spørgsmål.</li>
                 <li>Gør dine dokumenter til den primære informationskilde.</li>
                 <li>Bedre til at fokusere på de meste relevante dele af dine dokumenter.</li>
                 <li>Undgår forkerte svar som almindelige AI laver.</li>
-              </ul>
-              <ul className="list-disc pl-5">
               </ul>
               <div><span className="font-bold">Resultat:</span> 22% mere præcision og skarphed i faktuelle spørgsmål.</div>
             </>

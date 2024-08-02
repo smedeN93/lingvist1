@@ -36,7 +36,7 @@ export const TypewriterEffectSmooth = ({
           return;
         }
         
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         await controls.start({
           width: "0%",
