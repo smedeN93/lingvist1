@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, ArrowLeft, LockIcon } from 'lucide-react';
+import { ArrowRight, ArrowLeft, LockIcon, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface VectorProps {
   values: number[];
+  label?: string;
+  color?: string;
 }
 
-const Vector: React.FC<VectorProps> = ({ values }) => (
-  <div className="flex space-x-1">
-    {values.map((v, i) => (
-      <div key={i} className="w-8 h-8 bg-black text-white flex items-center justify-center text-xs rounded animate-fade-in">
-        {v.toFixed(1)}
-      </div>
-    ))}
+const Vector: React.FC<VectorProps> = ({ values, label, color = 'bg-black' }) => (
+  <div className="flex flex-col items-center">
+    {label && <span className="text-xs sm:text-sm font-semibold mb-1">{label}</span>}
+    <div className="flex space-x-0.5 sm:space-x-1">
+      {values.map((v, i) => (
+        <div key={i} className={`w-6 h-6 sm:w-8 sm:h-8 ${color} text-white flex items-center justify-center text-[10px] sm:text-xs rounded animate-fade-in`}>
+          {v.toFixed(1)}
+        </div>
+      ))}
+    </div>
   </div>
 );
 
@@ -22,11 +27,11 @@ interface VectorWordProps {
 }
 
 const VectorWord: React.FC<VectorWordProps> = ({ word, vector, show }) => (
-  <span className="inline-block mx-1 transition-all duration-500 ease-in-out">
+  <span className="inline-block mx-0.5 sm:mx-1 transition-all duration-500 ease-in-out">
     {show ? (
       <Vector values={vector} />
     ) : (
-      <span className="bg-yellow-100 px-1 py-0.5 rounded">{word}</span>
+      <span className="bg-yellow-100 px-0.5 py-0.5 text-xs sm:text-sm rounded">{word}</span>
     )}
   </span>
 );
@@ -55,14 +60,15 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ showVector }) => {
   ];
 
   return (
-    <div className="border-2 border-gray-300 rounded-lg p-4 bg-white shadow-md max-w-2xl mx-auto">
-      <p className="font-bold text-lg mb-2">Københavns Geografi</p>
-      <div className="text-sm space-y-2">
-        <p>
-          {content.map((item, index) => (
-            <VectorWord key={index} word={item.word} vector={item.vector} show={showVector} />
-          ))}
-        </p>
+    <div className="border-2 border-gray-300 rounded-lg p-3 sm:p-6 bg-white shadow-md max-w-full sm:max-w-3xl mx-auto">
+      <h2 className="font-bold text-lg sm:text-xl mb-2 sm:mb-4 text-center">Danmarks Geografi</h2>
+      <div className="text-sm sm:text-base leading-relaxed">
+        {content.map((item, index) => (
+          <React.Fragment key={index}>
+            <VectorWord word={item.word} vector={item.vector} show={showVector} />
+            {item.word === "." && <br className="my-1 sm:my-2" />}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
@@ -75,8 +81,40 @@ interface DocumentProps {
 
 const Document: React.FC<DocumentProps> = ({ content, similarity }) => (
   <div className="border border-gray-300 p-2 rounded mt-2 bg-gray-50 animate-slide-in">
-    <p>{content}</p>
-    <p className="text-sm text-gray-600">Lighedsscore: {similarity.toFixed(2)}</p>
+    <p className="text-sm">{content}</p>
+    <p className="text-xs text-gray-600">Lighedsscore: {similarity.toFixed(2)}</p>
+  </div>
+);
+
+interface VectorComparisonProps {
+  queryText: string;
+  queryVector: number[];
+  documentText: string;
+  documentVector: number[];
+  similarity: number;
+}
+
+const VectorComparison: React.FC<VectorComparisonProps> = ({
+  queryText,
+  queryVector,
+  documentText,
+  documentVector,
+  similarity
+}) => (
+  <div className="border border-gray-200 rounded-lg p-2 sm:p-4 mb-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+      <div>
+        <p className="text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Spørgsmål:</p>
+        <p className="text-xs sm:text-sm mb-1 sm:mb-2">{queryText}</p>
+        <Vector values={queryVector} label="Spørgsmålsvektor" color="bg-blue-500" />
+      </div>
+      <div>
+        <p className="text-xs sm:text-sm font-semibold mb-1 sm:mb-2">Dokument passage:</p>
+        <p className="text-xs sm:text-sm mb-1 sm:mb-2">{documentText}</p>
+        <Vector values={documentVector} label="Dokumentvektor" color="bg-green-500" />
+      </div>
+    </div>
+    <p className="text-xs sm:text-sm font-semibold mt-2 sm:mt-4">Lighedsscore: {similarity.toFixed(2)}</p>
   </div>
 );
 
@@ -90,6 +128,7 @@ const ComprehensiveRAGVisualization: React.FC = () => {
   const [step, setStep] = useState<number>(0);
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
   const [showVector, setShowVector] = useState<boolean>(false);
+  const [showExplanation, setShowExplanation] = useState<boolean>(true);
   const query = "Hvad er hovedstaden i Danmark?";
 
   const queryVector: number[] = [0.2, 0.3, 0.5];
@@ -102,15 +141,15 @@ const ComprehensiveRAGVisualization: React.FC = () => {
   const steps: Step[] = [
     {
       title: "Vi danner en vidensbase.",
-      explanation: "RAG starter med en vidensbase, som er en samling af information, der er blevet behandlet og gemt. Når du uploader din PDF, så gemmes den ikke som tekst, men som matematiske repræsentationer kaldet vektorer, der så at sige indrammer ordenes betydning. I Lingvist tilfælde, er vidensbasen dine dokumenter. For enkelthedensskyld, så bruger vi her et fiktivt uddrag af et dokument om Københavns geografi.",
+      explanation: "Retrieval Augmented Generation (RAG) starter med at vi laver en vidensbase, som er en samling af information, der er blevet behandlet og gemt. Allerede når du uploader din PDF så laver vi denne vidensbase, som vi laver søgbar, ved ikke at gemme dokumenterne som tekst, men som matematiske repræsentationer kaldet vektorer, der så at sige indrammer ordenes betydning. For enkelthedensskyld, så bruger vi her et fiktivt uddrag af et dokument om Danmarks geografi.",
       content: (
         <div>
-          <p className="mb-4">Et givent stykke tekst fra vores dokument:</p>
+          <p className="mb-2 sm:mb-4 text-sm sm:text-base">Et givent stykke tekst fra vores dokument:</p>
           <PDFPreview showVector={showVector} />
-          <div className="mt-4 flex justify-center">
+          <div className="mt-2 sm:mt-4 flex justify-center">
             <button 
               onClick={() => setShowVector(!showVector)} 
-              className="px-4 py-2 bg-black text-white rounded transition-all duration-200 ease-in-out hover:bg-gray-800"
+              className="px-3 py-1 sm:px-4 sm:py-2 bg-black text-white text-sm sm:text-base rounded transition-all duration-200 ease-in-out hover:bg-gray-800"
             >
               {showVector ? "Vis Tekst" : "Vis Vektorer"}
             </button>
@@ -120,68 +159,67 @@ const ComprehensiveRAGVisualization: React.FC = () => {
     },
     { 
       title: "Du stiller et spørgsmål.", 
-      explanation: "Selve processen med at finde de mest nøjagtigt svar til dig, begynder selvfølgelig med at du stiller et spørgsmål. Dette spørgsmål vil blive brugt til at søge i vores vidensbase efter relevant information. Husk på, at vores vidensbase af dokumenter, blot er vektorer - dvs. en lang række tal.",
+      explanation: "Selve processen med at finde de mest nøjagtigt svar til dig, begynder selvfølgelig med at du stiller et spørgsmål. Vi bruger basalt set spørgsmålet til at søge i de dokumenter som du har uploadet. Og husk på, at vi gemmer blot dine dokumenter som vektorer - dvs. en lang række tal.",
       content: (
         <div>
-          <p className="mb-2">Eksempel på spørgsmål om Københavns geografi:</p>
+          <p className="mb-1 sm:mb-2 text-sm sm:text-base">Eksempel på spørgsmål om Danmarks geografi:</p>
           <div className="relative">
             <input 
               type="text" 
               value={query}
               readOnly
-              className="w-full p-2 pr-8 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+              className="w-full p-1 sm:p-2 pr-6 sm:pr-8 border border-gray-300 rounded bg-gray-100 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-sm sm:text-base"
             />
-            <LockIcon className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500" size={16} />
+            <LockIcon className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 text-gray-500" size={14} />
           </div>
-          <p className="text-sm text-gray-500 mt-1">Denne forespørgsel er låst til demonstrationsformål.</p>
+          <p className="text-xs sm:text-sm text-gray-500 mt-1">Denne forespørgsel er låst til demonstrationsformål.</p>
         </div>
       )
     },
     { 
       title: "Vektorisering.", 
-      explanation: "Også dit spørgsmål bliver derfor konverteret til vektorer. Det tillader simpelthen at AI kan behandle det effektivt, og sammenligne dit spørgsmål med resten af dit dokument og finde det mest sandsynlige korrekte svar.",
+      explanation: "Dit spørgsmål bliver konverteret til en vektor. Dette gør det muligt for os at behandle det effektivt og sammenligne dit spørgsmål med indholdet i dit dokument for at finde det mest sandsynlige korrekte svar.",
       content: (
-        <div>
-          <p>Spørgsmål: &quot;{query}&quot;</p>
-          <p className="mt-2">Vektor-repræsentation:</p>
-          <Vector values={queryVector} />
+        <div className="border border-gray-200 rounded-lg p-2 sm:p-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+            <div>
+              <p className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Spørgsmål:</p>
+              <p className="bg-blue-100 p-1 sm:p-2 rounded text-xs sm:text-sm">{query}</p>
+            </div>
+            <div>
+              <p className="font-semibold mb-1 sm:mb-2 text-sm sm:text-base">Spørgsmålets vektor:</p>
+              <Vector values={queryVector} color="bg-blue-500" />
+            </div>
+          </div>
         </div>
       )
     },
     { 
       title: "Lighedssøgning.", 
-      explanation: "Næste skridt er nu at søge efter vektorer i vidensbasen, der ligner vektorene fra dit spørgsmål. Dette gøres ved at sammenligne spørgsmålvektorene med vektorerne af passager i dokumentet. Ligheden beregnes matematisk, ofte ved hjælp af en metode kaldet cosinuslighed.",
+      explanation: "I dette trin sammenligner vi vektoren fra dit spørgsmål med vektorerne fra forskellige passager i dokumentet. Dette gøres ved at beregne lighedsscoren mellem vektorerne. Jo højere lighedsscore, jo mere relevant er passagen for dit spørgsmål. Bemærk, hvordan vektorerne for spørgsmålet og de mest relevante passager ligner hinanden mere. Baseret på disse ligheder henter systemet de mest relevante passager fra dokumentet.",
       content: (
         <div>
-          <p>Finder lignende vektorer i vores dokumentet om Københavns geografi...</p>
+          <p className="mb-2 sm:mb-4 text-sm sm:text-base">Sammenligning af spørgsmålsvektor med dokumentpassager:</p>
           {documents.map((doc, index) => (
-            <div key={index} className="mt-2">
-              <Vector values={doc.vector} />
-              <p className="text-sm">Lighedsscore: {doc.similarity.toFixed(2)}</p>
-            </div>
-          ))}
-        </div>
-      )
-    },
-    { 
-      title: "Relevante passager fra dokumentet hentes.", 
-      explanation: 'Baseret på lighedssøgningen henter systemet de mest relevante passager fra dokumentet. Det er tekststykker, hvis betydning mest nøjagtigt matcher spørgsmålets betydning, ifølge deres vektor-repræsentationer.',
-      content: (
-        <div>
-          <p>Hentede passager fra dokumentet:</p>
-          {documents.map((doc, index) => (
-            <Document key={index} {...doc} />
+            <VectorComparison
+              key={index}
+              queryText={query}
+              queryVector={queryVector}
+              documentText={doc.content}
+              documentVector={doc.vector}
+              similarity={doc.similarity}
+            />
           ))}
         </div>
       )
     },
     { 
       title: 'Svargenering.', 
-      explanation: 'Endelig bruger vi AI på de hentede passager og det originale spørgsmål til at generere et sammenhængende svar. Men altså, vi kopierer og indsætter ikke bare, men syntetiserer informationen for direkte at besvare spørgsmålet.',
+      explanation: 'Endelig bruger vi AI på de hentede passager og det originale spørgsmål til at generere et sammenhængende svar. Vi kopierer og indsætter ikke bare, men syntetiserer informationen for direkte at besvare spørgsmålet, baseret på de mest relevante passager fundet i lighedssøgningen.',
       content: (
         <div>
-          <p>Genereret svar baseret på fundne passager:</p>
-          <p className="font-bold mt-2 p-2 bg-gray-50 border border-gray-300 rounded animate-fade-in">Hovedstaden i Danmark er København. Den ligger i Nordeuropa, og Københavns Havn er en populær attraktion i byen.</p>
+          <p className="text-sm sm:text-base">Genereret svar baseret på fundne passager:</p>
+          <p className="font-bold mt-1 sm:mt-2 p-1 sm:p-2 bg-gray-50 border border-gray-300 rounded animate-fade-in text-xs sm:text-sm">Hovedstaden i Danmark er København. Den ligger i Nordeuropa, og Københavns Havn er en populær attraktion i byen.</p>
         </div>
       )
     }
@@ -201,35 +239,50 @@ const ComprehensiveRAGVisualization: React.FC = () => {
   }, [step]);
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <h3 className="text-3xl font-bold mb-6 text-center">Teknikken bag Lingvist.</h3>
-      <div className="border border-gray-300 rounded-lg p-6 bg-white shadow-lg transition-all duration-300 ease-in-out">
-        <h3 className="font-bold text-2xl mb-3 transition-opacity duration-300 ease-in-out" style={{ opacity: isTransitioning ? 0 : 1 }}>{steps[step].title}</h3>
-        <p className="text-gray-600 mb-4 transition-opacity duration-300 ease-in-out" style={{ opacity: isTransitioning ? 0 : 1 }}>{steps[step].explanation}</p>
-        <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 transition-opacity duration-300 ease-in-out min-h-[400px]" style={{ opacity: isTransitioning ? 0 : 1 }}>
+    <div className="p-2 sm:p-4 max-w-full sm:max-w-3xl mx-auto">
+      <h3 className="text-xl sm:text-3xl font-bold mb-3 sm:mb-6 text-center">Teknikken bag Lingvist.</h3>
+      <div className="border border-gray-300 rounded-lg p-3 sm:p-6 bg-white shadow-lg transition-all duration-300 ease-in-out">
+        <h3 className="font-bold text-lg sm:text-2xl mb-2 sm:mb-3 transition-opacity duration-300 ease-in-out" style={{ opacity: isTransitioning ? 0 : 1 }}>{steps[step].title}</h3>
+        <div className="mb-2 sm:mb-4">
+          <button
+            onClick={() => setShowExplanation(!showExplanation)}
+            className="flex items-center text-sm sm:text-base text-gray-600 hover:text-gray-800"
+          >
+            {showExplanation ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+            <span className="ml-1">Forklaring</span>
+          </button>
+          {showExplanation && (
+            <p className="text-xs sm:text-sm text-gray-600 mt-1 transition-opacity duration-300 ease-in-out" style={{ opacity: isTransitioning ? 0 : 1 }}>
+              {steps[step].explanation}
+            </p>
+          )}
+        </div>
+        <div className="bg-gray-50 p-2 sm:p-4 rounded-lg border border-gray-200 transition-opacity duration-300 ease-in-out min-h-[200px] sm:min-h-[400px]" style={{ opacity: isTransitioning ? 0 : 1 }}>
           {steps[step].content}
         </div>
       </div>
-      <div className="mt-6 flex justify-between items-center">
-        {step > 0 && (
+      <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row justify-between items-center space-y-2 sm:space-y-0">
+        {step > 0 ? (
           <button 
             onClick={() => handleStepChange(step - 1)}
-            className="px-4 py-2 bg-black text-white rounded flex items-center transition-all duration-200 ease-in-out hover:bg-gray-800 transform hover:-translate-x-1"
+            className="w-full sm:w-auto px-4 py-2 bg-black text-white rounded flex items-center justify-center transition-all duration-200 ease-in-out hover:bg-gray-800 transform hover:-translate-x-1 text-sm sm:text-base"
           >
-            <ArrowLeft className="mr-2" /> Forrige
+            <ArrowLeft className="mr-2" size={16} /> Forrige
           </button>
+        ) : (
+          <div className="w-full sm:w-auto"></div>
         )}
-        {step === 0 && <div></div>}
-        <span className="text-gray-600">Trin {step + 1} af {steps.length}</span>
-        {step < steps.length - 1 && (
+        <span className="text-xs sm:text-sm text-gray-600">Trin {step + 1} af {steps.length}</span>
+        {step < steps.length - 1 ? (
           <button 
             onClick={() => handleStepChange(step + 1)}
-            className="px-4 py-2 bg-black text-white rounded flex items-center transition-all duration-200 ease-in-out hover:bg-gray-800 transform hover:translate-x-1"
+            className="w-full sm:w-auto px-4 py-2 bg-black text-white rounded flex items-center justify-center transition-all duration-200 ease-in-out hover:bg-gray-800 transform hover:translate-x-1 text-sm sm:text-base"
           >
-            Næste <ArrowRight className="ml-2" />
+            Næste <ArrowRight className="ml-2" size={16} />
           </button>
+        ) : (
+          <div className="w-full sm:w-auto"></div>
         )}
-        {step === steps.length - 1 && <div></div>}
       </div>
     </div>
   );

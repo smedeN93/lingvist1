@@ -111,23 +111,23 @@ const SecurityInfoCard: React.FC = () => {
           <div className="space-y-4 md:space-y-6">
             <ExpandableSection
               title="Sikker dokumenthåndtering"
-              content="En intention ved Lingvist, er at man ikke skal give sin data til hvem som helst, for at få noget brugbart AI. Vi benytter derfor også anerkendte cloudtjenester som AWS, Neon og Pinecone, der sikrer dine PDF-dokumenter, svar og spørgsmål med AES-256 kryptering i hvile og SSL/TLS kryptering under overførsel. Det er samme teknologi som regeringer og finansielle institutioner bruger."
+              content="Vi har alle tænkt tanken: Gad vide hvem der har adgang til mine data, når jeg bruger AI? Det har vi i hvert fald tænkt, og vi mener, at du ikke skal udlevere dine data til hvem som helst for at få brugbar AI. Det burde være en selvfølge, og hos os er det det. Vi benytter derfor anerkendte og sikre cloudtjenester, der beskytter dine PDF-dokumenter, spørgsmål og svar med kryptering - både når data er i hvile og under overførsel."
               isExpanded={expandedSection === 0}
               onToggle={() => toggleSection(0)}
               icon={<Shield className="w-5 h-5 md:w-6 md:h-6 text-slate-950" />}
               showAnimation={expandedSection === 0}
             />
             <ExpandableSection
-              title="Kontrolleret adgang"
-              content="Adgangstyring er tæt på at være rygraden af hvad der muliggør en app som Lingvist. Naturligvis har vi derfor også anvendt Kinde som vores authentication partner, og vi bruger multifaktorautentificering og rollebaseret adgang. Det sætter os på linje med top moderne virksomheders adgangsstyring."
+              title="Sikker brugeradgang"
+              content="Adgangsstyring er rygraden i Lingvists sikkerhedsstruktur. Vi har implementeret en pålidelig autentificeringsløsning og anvender multifaktorautentificering samt rollebaseret adgang. Dét, kombineret med kryptering, gør at vi følger med bedste praksis inden for moderne virksomheders sikkerhedsstandarder. Naturligvis."
               isExpanded={expandedSection === 1}
               onToggle={() => toggleSection(1)}
               icon={<Lock className="w-5 h-5 md:w-6 md:h-6 text-slate-950" />}
               showAnimation={expandedSection === 1}
             />
             <ExpandableSection
-              title="Compliant interaktion"
-              content="Lingvist har selvfølgelig en infrastruktur, der overholder GDPR og SOC 2. Ved at bruge Pinecone til vektoropbevaring og AWS Amplify til hosting, sikrer vi, at dine PDF'er, spørgsmål og svar forbliver helt privat og compliant. Selvfølgelig."
+              title="Ansvarlig databehandling"
+              content="Lingvist har selvfølgelig en infrastruktur, der overholder GDPR. Ved at bruge moderne teknologier til dataopbevaring og hosting, sikrer vi, at dine PDF'er, spørgsmål og svar forbliver helt private og behandles i overensstemmelse med gældende lovgivning. Selvfølgelig."
               isExpanded={expandedSection === 2}
               onToggle={() => toggleSection(2)}
               icon={<FileCheck className="w-5 h-5 md:w-6 md:h-6 text-slate-950" />}

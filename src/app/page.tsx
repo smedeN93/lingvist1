@@ -25,10 +25,11 @@ const HomePage = () => {
         <IntermediateCard
           title="Dine dokumenter, forbedret."
           animatedTexts={[
-            "Bogniveau kontekst.",
-            "Præcise svar.",
-            "Al indsigt.",
-            "Start nu."
+            "Tal med dem.",
+            "Opsummer dem.",
+            "Få præcise svar.",
+            "Sammensæt tekster.",
+            "Lingvist. Start nu."
           ]}
           buttonText="Prøv gratis"
           buttonHref="/demo"
@@ -55,12 +56,12 @@ Stil et spørgsmål. Få præcise svar. Direkte fra dine dokumenter."
               {
                 image: '/lingvist_chat_preview11.webp',
                 category: 'Produktivitet',
-                description: 'Få svar kun baseret på dit dokument.',
+                description: 'Få svar baseret kun på dit dokument.',
               },
               {
                 image: '/lingvist_chat_preview1.webp',
                 category: 'Dokumentanalyse',
-                description: 'Du uploader hurtigt og ender med at forstå dybere.',
+                description: 'Opsummering og syntese af dine nøgleinformationer.',
               },
               {
                 image: '/lingvist_chat_preview8.webp',
