@@ -11,37 +11,37 @@ export function LandingPage() {
   return (
     <AuroraBackground>
       <div className="relative w-full">
-        <motion.div
-          initial={{ opacity: 0.0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: 0.3,
-            duration: 0.8,
-            ease: "easeInOut",
-          }}
-          className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-16 sm:pt-20 md:pt-24 lg:pt-32"
-        >
-          <h1 className="text-5xl md:text-7xl font-bold dark:text-white text-center">
-            Chat med dine dokumenter
-          </h1>
-          <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 text-center">
-            AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
-          </div>
-          
-          <PlaceholdersAndVanishInputDemo />
-          
-          <p className="text-[9px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2 sm:mt-3">
-            Tilmeld gratis med Email, Google eller LinkedIn
-          </p>
-          
-          <SignInButtons />
-          
-          <OrDivider />
-          
-          <p className="text-[9px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 md:mb-16">
-            Kom i gang uden kreditkort.
-          </p>
-        </motion.div>
+      <motion.div
+  initial={{ opacity: 0.0, y: 40 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  transition={{
+    delay: 0.3,
+    duration: 0.8,
+    ease: "easeInOut",
+  }}
+  className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-12 sm:pt-16 lg:pt-20 xl:pt-24"
+>
+  <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold dark:text-white text-center">
+    Chat med dine dokumenter
+  </h1>
+  <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl dark:text-neutral-200 text-center">
+    AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
+  </div>
+  
+  <PlaceholdersAndVanishInputDemo />
+  
+  <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-2 sm:mt-3">
+    Tilmeld gratis med Email, Google eller LinkedIn
+  </p>
+  
+  <SignInButtons />
+  
+  <OrDivider />
+  
+  <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
+    Kom i gang uden kreditkort.
+  </p>
+</motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 60 }}
