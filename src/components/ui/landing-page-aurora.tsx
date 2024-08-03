@@ -7,9 +7,21 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from "next/image";
 import Link from 'next/link';
 
+const ResponsiveTest = () => (
+  <div className="fixed top-0 left-0 right-0 z-50 bg-gray-800 text-white text-center py-2">
+    <span className="sm:hidden">Default (&lt;640px)</span>
+    <span className="hidden sm:inline md:hidden">SM (≥640px)</span>
+    <span className="hidden md:inline lg:hidden">MD (≥768px)</span>
+    <span className="hidden lg:inline xl:hidden">LG (≥1024px)</span>
+    <span className="hidden xl:inline 2xl:hidden">XL (≥1280px)</span>
+    <span className="hidden 2xl:inline">2XL (≥1536px)</span>
+  </div>
+);
+
 export function LandingPage() {
   return (
     <AuroraBackground>
+      <ResponsiveTest />
       <div className="relative w-full">
         <motion.div
           initial={{ opacity: 0.0, y: 40 }}
