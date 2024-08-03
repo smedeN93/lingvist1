@@ -2,46 +2,52 @@
 
 import React, { Suspense } from "react";
 import { LandingPage } from "@/components/ui/landing-page-aurora";
-import IntermediateCard from "@/components/ui/IntermediateCard";
 
-// Lazy load components with named exports
+const AnswerResponse = React.lazy(() => import("@/components/ui/AnswerResponse"));
+const IntermediateCard = React.lazy(() => import("@/components/ui/IntermediateCard"));
 const FeatureSection = React.lazy(() => import("@/components/ui/FeatureSection").then(module => ({ default: module.FeatureSection })));
 const SecurityInfoCard = React.lazy(() => import("@/components/ui/SecurityInfoCard"));
 const PricingComponent = React.lazy(() => import("@/components/ui/PricingComponent"));
 const PreFooter = React.lazy(() => import("@/components/ui/PreFooter"));
 
-// Simple loading fallback
+
 const LoadingFallback = () => <div className="w-full h-20 flex items-center justify-center">Loading...</div>;
 
 const HomePage = () => {
   return (
     <div className="relative w-full overflow-hidden">
-      {/* Hero section with AuroraBackgroundDemo */}
       <div className="pb-2 sm:pb-8 md:pb-24 lg:pb-16">
         <LandingPage />
       </div>
 
+      <div className="min-h-screen flex items-center justify-center">
+        <Suspense fallback={<LoadingFallback />}>
+          <AnswerResponse />
+        </Suspense>
+      </div>
+      
       <div className="pt-16 sm:pt-2 md:pt-32 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6 lg:px-8">
-        <IntermediateCard
-          title="Dine dokumenter, forbedret."
-          animatedTexts={[
-            "Tal med dem.",
-            "Tag noter.",
-            "Opsummer dem.",
-            "Få præcise svar.",
-            "Sammensæt tekster.",
-            "Lingvist. Start nu."
-          ]}
-          buttonText="Prøv gratis"
-          buttonHref="/demo"
-          descriptionText="Du har sikkert prøvet det: At finde nålen i høstakken.
+        <Suspense fallback={<LoadingFallback />}>
+          <IntermediateCard
+            title="Dine dokumenter, forbedret."
+            animatedTexts={[
+              "Tal med dem.",
+              "Tag noter.",
+              "Opsummer dem.",
+              "Få præcise svar.",
+              "Sammensæt tekster.",
+              "Lingvist. Start nu."
+            ]}
+            buttonText="Prøv gratis"
+            buttonHref="/demo"
+            descriptionText="Du har sikkert prøvet det: At finde nålen i høstakken.
 Men forestil dig, hvis dine dokumenter kunne svare dig.
 Med Lingvist bliver din søgen til en samtale.
 Stil et spørgsmål. Få præcise svar. Direkte fra dine dokumenter."
-        />
+          />
+        </Suspense>
       </div>
 
-      {/* FeatureSection */}
       <div className="-mt-16 sm:-mt-20 md:-mt-24 lg:-mt-10">
         <Suspense fallback={<LoadingFallback />}>
           <FeatureSection 

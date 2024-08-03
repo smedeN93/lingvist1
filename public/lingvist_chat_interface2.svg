@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <defs>
+    <linearGradient id="bg-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8f9fa;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-opacity="0.1"/>
+    </filter>
+    <clipPath id="rounded-corners">
+      <rect x="0" y="0" width="800" height="600" rx="20" ry="20"/>
+    </clipPath>
+  </defs>
+  
+  <!-- Main background -->
+  <rect width="800" height="600" fill="url(#bg-gradient)" clip-path="url(#rounded-corners)"/>
+  
+  <!-- Top bar -->
+  <rect x="0" y="0" width="800" height="40" fill="#ffffff" filter="url(#shadow)"/>
+  <text x="20" y="26" font-family="SF Pro Display, Arial" font-size="16" font-weight="600" fill="#2c3e50">Lingvist</text>
+  
+  <!-- PDF-visning (venstre side) -->
+  <rect x="20" y="60" width="460" height="520" fill="#ffffff" rx="12" ry="12" filter="url(#shadow)"/>
+  
+  <!-- PDF Header -->
+  <rect x="20" y="60" width="460" height="60" fill="#f8f9fa" rx="12" ry="12"/>
+  <text x="40" y="98" font-family="SF Pro Display, Arial" font-size="18" font-weight="600" fill="#2c3e50">Årsrapport 2023 - Dansk Pladsholder A/S</text>
+  
+  <!-- PDF Indhold Skeletons -->
+  <rect x="40" y="140" width="420" height="20" rx="4" ry="4" fill="#e9ecef"/>
+  <rect x="40" y="170" width="380" height="20" rx="4" ry="4" fill="#e9ecef"/>
+  <rect x="40" y="200" width="400" height="20" rx="4" ry="4" fill="#e9ecef"/>
+  
+  <rect x="40" y="240" width="200" height="16" rx="4" ry="4" fill="#e9ecef"/>
+  <rect x="40" y="266" width="420" height="16" rx="4" ry="4" fill="#e9ecef"/>
+  <rect x="40" y="292" width="400" height="16" rx="4" ry="4" fill="#e9ecef"/>
+  
+  <!-- Finansiel tabel placeholder -->
+  <rect x="40" y="328" width="420" height="160" rx="8" ry="8" fill="#f1f3f5"/>
+  <line x1="40" y1="368" x2="460" y2="368" stroke="#ced4da" stroke-width="1"/>
+  <line x1="40" y1="408" x2="460" y2="408" stroke="#ced4da" stroke-width="1"/>
+  <line x1="40" y1="448" x2="460" y2="448" stroke="#ced4da" stroke-width="1"/>
+  <line x1="200" y1="328" x2="200" y2="488" stroke="#ced4da" stroke-width="1"/>
+  <line x1="330" y1="328" x2="330" y2="488" stroke="#ced4da" stroke-width="1"/>
+  <text x="250" y="508" font-family="SF Pro Text, Arial" font-size="12" fill="#6c757d" text-anchor="middle">Finansielle Nøgletal</text>
+  
+  <!-- Chat-visning (højre side) -->
+  <rect x="500" y="60" width="280" height="520" fill="#ffffff" rx="12" ry="12" filter="url(#shadow)"/>
+  
+  <!-- Chat Header -->
+  <rect x="500" y="60" width="280" height="60" fill="#f8f9fa" rx="12" ry="12"/>
+  <text x="520" y="98" font-family="SF Pro Display, Arial" font-size="18" font-weight="600" fill="#2c3e50">Chat</text>
+  
+  <!-- Chatbeskeder -->
+  <!-- Bruger 1 -->
+  <rect x="520" y="140" width="240" height="50" rx="25" ry="25" fill="#007aff"/>
+  <text x="535" y="162" font-family="SF Pro Text, Arial" font-size="14" fill="#ffffff">Hvor kan jeg finde oplysninger</text>
+  <text x="535" y="182" font-family="SF Pro Text, Arial" font-size="14" fill="#ffffff">om virksomhedens omsætning?</text>
+  
+  <!-- Assistent 1 -->
+  <rect x="520" y="200" width="240" height="100" rx="12" ry="12" fill="#f8f9fa"/>
+  <text x="535" y="220" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">Du finder oplysninger om</text>
+  <text x="535" y="240" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">virksomhedens omsætning på</text>
+  <text x="535" y="260" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">side 15 i årsrapporten under</text>
+  <text x="535" y="280" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">"Resultatopgørelse" og i nøgle-</text>
+  <text x="535" y="300" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">talsoversigten på side 4.</text>
+  
+  <!-- Bruger 2 -->
+  <rect x="520" y="310" width="240" height="50" rx="25" ry="25" fill="#007aff"/>
+  <text x="535" y="332" font-family="SF Pro Text, Arial" font-size="14" fill="#ffffff">Hvad er virksomhedens</text>
+  <text x="535" y="352" font-family="SF Pro Text, Arial" font-size="14" fill="#ffffff">egenkapitalforrentning?</text>
+  
+  <!-- Assistent 2 -->
+  <rect x="520" y="370" width="240" height="120" rx="12" ry="12" fill="#f8f9fa"/>
+  <text x="535" y="390" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">Egenkapitalforrentningen (ROE)</text>
+  <text x="535" y="410" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">findes på side 4 i nøgletals-</text>
+  <text x="535" y="430" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">oversigten. For regnskabsåret</text>
+  <text x="535" y="450" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">2023 er den 18,5%, hvilket er</text>
+  <text x="535" y="470" font-family="SF Pro Text, Arial" font-size="14" fill="#2c3e50">en stigning fra 16,2% i 2022.</text>
+  
+  <!-- Inputfelt -->
+  <rect x="520" y="520" width="240" height="40" rx="20" ry="20" fill="#f8f9fa" stroke="#e9ecef" stroke-width="2"/>
+  <text x="540" y="545" font-family="SF Pro Text, Arial" font-size="14" fill="#adb5bd">Skriv en besked...</text>
+</svg>
