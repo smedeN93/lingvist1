@@ -19,18 +19,18 @@ export function LandingPage() {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-16 sm:pt-20 md:pt-24 lg:pt-32"
+          className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-5 md:space-y-6 pt-12 sm:pt-16 md:pt-20 lg:pt-24 xl:pt-32"
         >
-          <h1 className="text-5xl md:text-7xl font-bold dark:text-white text-center">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold dark:text-white text-center">
             Chat med dine dokumenter
           </h1>
-          <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 text-center">
+          <div className="font-extralight text-base sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl dark:text-neutral-200 text-center">
             AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
           </div>
           
           <PlaceholdersAndVanishInputDemo />
           
-          <p className="text-[9px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mt-2 sm:mt-3">
+          <p className="text-[9px] sm:text-xs md:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-2 sm:mt-3">
             Tilmeld gratis med Email, Google eller LinkedIn
           </p>
           
@@ -38,7 +38,7 @@ export function LandingPage() {
           
           <OrDivider />
           
-          <p className="text-[9px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 mb-8 sm:mb-12 md:mb-16">
+          <p className="text-[9px] sm:text-xs md:text-sm lg:text-base text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 md:mb-10 lg:mb-12 xl:mb-16">
             Kom i gang uden kreditkort.
           </p>
         </motion.div>
@@ -71,7 +71,6 @@ export function LandingPage() {
     </AuroraBackground>
   );
 }
-
 interface BrowserFrameMockupProps {
   images: string[];
   url?: string;
@@ -143,28 +142,28 @@ const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({
     };
   };
   return (
-    <div className="w-full max-w-7xl mx-auto my-6 lg:my-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full max-w-7xl mx-auto my-4 sm:my-5 md:my-6 lg:my-8 xl:my-16 px-2 sm:px-4 md:px-6 lg:px-8">
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl transform scale-[1.02] blur-2xl opacity-50"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg sm:rounded-xl lg:rounded-2xl transform scale-[1.02] blur-2xl opacity-50"></div>
         
-        <div className="relative bg-white rounded-xl lg:rounded-3xl overflow-hidden border-[0.5px] sm:border border-gray-200 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 hover:shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)]">
+        <div className="relative bg-white rounded-lg sm:rounded-xl lg:rounded-2xl overflow-hidden border-[0.5px] sm:border border-gray-200 shadow-[0_5px_20px_-10px_rgba(0,0,0,0.1)] sm:shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 hover:shadow-[0_15px_50px_-15px_rgba(0,0,0,0.15)] sm:hover:shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)]">
           
           <div className="bg-gradient-to-b from-gray-50 to-gray-100 border-b-[0.5px] sm:border-b border-gray-200">
             <div className="flex items-center px-2 sm:px-3 py-1 sm:py-2">
               <div className="flex space-x-1 sm:space-x-1.5 mr-2 sm:mr-3">
-                <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-red-400 rounded-full"></div>
-                <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-yellow-400 rounded-full"></div>
-                <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-green-400 rounded-full"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 md:w-2.5 sm:h-2 md:h-2.5 bg-red-400 rounded-full"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 md:w-2.5 sm:h-2 md:h-2.5 bg-yellow-400 rounded-full"></div>
+                <div className="w-1.5 h-1.5 sm:w-2 md:w-2.5 sm:h-2 md:h-2.5 bg-green-400 rounded-full"></div>
               </div>
             </div>
 
-            <div className="flex items-center px-2 sm:px-3 py-0.5 sm:py-1.5">
+            <div className="flex items-center px-2 sm:px-3 py-0.5 sm:py-1 md:py-1.5">
               <div className="flex-1 bg-white rounded-full shadow-inner flex items-center border-[0.5px] sm:border border-gray-200">
                 <div className="flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 space-x-1 sm:space-x-1.5 text-gray-500 w-full">
-                  <svg className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <svg className="w-2.5 h-2.5 sm:w-3 md:w-3.5 sm:h-3 md:h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                   </svg>
-                  <span className="text-[8px] sm:text-xs font-light truncate">{url}</span>
+                  <span className="text-[8px] sm:text-[10px] md:text-xs font-light truncate">{url}</span>
                 </div>
               </div>
             </div>
@@ -241,23 +240,22 @@ const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({
 
 const SignInButtons = () => {
   return (
-    <div className="flex flex-row space-x-2 sm:space-x-4 justify-center w-full max-w-[200px] sm:max-w-none">
+    <div className="flex flex-row space-x-2 sm:space-x-3 md:space-x-4 justify-center w-full max-w-[220px] sm:max-w-none">
       <Link href="/dashboard" passHref>
-        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-white text-gray-700 h-7 sm:h-auto sm:py-2 px-2 sm:px-4 rounded-full border border-gray-300 hover:shadow-md transition-all duration-200 text-[10px] sm:text-sm">
-          <Image src="/google-logo.svg" alt="Google logo" width={14} height={14} className="w-3 h-3 sm:w-4 sm:h-4" />
+        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-white text-gray-700 h-7 sm:h-8 md:h-10 py-1 sm:py-1.5 md:py-2 px-2 sm:px-3 md:px-4 rounded-full border border-gray-300 hover:shadow-md transition-all duration-200 text-[10px] sm:text-xs md:text-sm">
+          <Image src="/google-logo.svg" alt="Google logo" width={14} height={14} className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
           <span>Google</span>
         </button>
       </Link>
       <Link href="/dashboard" passHref>
-        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-white text-gray-700 h-7 sm:h-auto sm:py-2 px-2 sm:px-4 rounded-full border border-gray-300 hover:shadow-md transition-all duration-200 text-[10px] sm:text-sm">
-          <Image src="/linkedin-logo.svg" alt="LinkedIn logo" width={14} height={14} className="w-3 h-3 sm:w-4 sm:h-4" />
+        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-white text-gray-700 h-7 sm:h-8 md:h-10 py-1 sm:py-1.5 md:py-2 px-2 sm:px-3 md:px-4 rounded-full border border-gray-300 hover:shadow-md transition-all duration-200 text-[10px] sm:text-xs md:text-sm">
+          <Image src="/linkedin-logo.svg" alt="LinkedIn logo" width={14} height={14} className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" />
           <span>LinkedIn</span>
         </button>
       </Link>
     </div>
   );
 };
-
 const OrDivider = () => {
   return (
     <div className="flex items-center w-full max-w-xs my-4">

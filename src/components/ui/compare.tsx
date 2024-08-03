@@ -248,7 +248,7 @@ export const Compare = ({
               transition={{ duration: 0 }}
             >
               <Image
-                alt="first image"
+                alt="Billede af en AI chat app brugerflade"
                 src={firstImage}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -267,7 +267,7 @@ export const Compare = ({
         {secondImage ? (
           <motion.div className="absolute inset-0 z-[19]">
             <Image
-              alt="second image"
+              alt="Billede af en AI chat app brugerflade"
               src={secondImage}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
