@@ -2,6 +2,7 @@
 
 import React, { Suspense } from "react";
 import { LandingPage } from "@/components/ui/landing-page-aurora";
+import ToolbarExpandable from "@/components/ui/ChatToolBar";
 
 const AnswerResponse = React.lazy(() => import("@/components/ui/AnswerResponse"));
 const IntermediateCard = React.lazy(() => import("@/components/ui/IntermediateCard"));

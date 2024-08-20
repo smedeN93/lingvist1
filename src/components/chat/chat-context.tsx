@@ -12,6 +12,20 @@ type StreamResponse = {
   message: string;
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   isLoading: boolean;
+  includePageNumbers: boolean;
+  setIncludePageNumbers: (include: boolean) => void;
+  argumentAnalysis: boolean;
+  setArgumentAnalysis: (include: boolean) => void;
+  exploreScenarios: boolean;
+  setExploreScenarios: (include: boolean) => void;
+  kontraktvilkaar: boolean;
+  setKontraktvilkaar: (include: boolean) => void;
+  okonomi: boolean;
+  setOkonomi: (include: boolean) => void;
+  metode: boolean;
+  setMetode: (include: boolean) => void;
+  risici: boolean;
+  setRisici: (include: boolean) => void;
 };
 
 export const ChatContext = createContext<StreamResponse>({
@@ -19,6 +33,20 @@ export const ChatContext = createContext<StreamResponse>({
   message: "",
   handleInputChange: () => {},
   isLoading: false,
+  includePageNumbers: false,
+  setIncludePageNumbers: () => {},
+  argumentAnalysis: false,
+  setArgumentAnalysis: () => {},
+  exploreScenarios: false,
+  setExploreScenarios: () => {},
+  kontraktvilkaar: false,
+  setKontraktvilkaar: () => {},
+  okonomi: false,
+  setOkonomi: () => {},
+  metode: false,
+  setMetode: () => {},
+  risici: false,
+  setRisici: () => {},
 });
 
 export const ChatContextProvider = ({
@@ -29,6 +57,13 @@ export const ChatContextProvider = ({
 }>) => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [includePageNumbers, setIncludePageNumbers] = useState(false);
+  const [argumentAnalysis, setArgumentAnalysis] = useState(false);
+  const [exploreScenarios, setExploreScenarios] = useState(false);
+  const [kontraktvilkaar, setKontraktvilkaar] = useState(false);
+  const [okonomi, setOkonomi] = useState(false);
+  const [metode, setMetode] = useState(false);
+  const [risici, setRisici] = useState(false);
 
   const backupMessage = useRef("");
 
@@ -41,6 +76,13 @@ export const ChatContextProvider = ({
         body: JSON.stringify({
           fileId,
           message,
+          includePageNumbers,
+          argumentAnalysis,
+          exploreScenarios,
+          kontraktvilkaar,
+          okonomi,
+          metode,
+          risici
         }),
       });
 
@@ -205,8 +247,7 @@ export const ChatContextProvider = ({
 
   const addMessage = () => {
     if (message.trim().length === 0) return;
-
-    sendMessage({ message });
+    sendMessage({ message }); // Send the message without modifying it
   };
 
   return (
@@ -216,6 +257,20 @@ export const ChatContextProvider = ({
         message,
         handleInputChange,
         isLoading,
+        includePageNumbers,
+        setIncludePageNumbers,
+        argumentAnalysis,
+        setArgumentAnalysis,
+        exploreScenarios,
+        setExploreScenarios,
+        kontraktvilkaar,
+        setKontraktvilkaar,
+        okonomi,
+        setOkonomi,
+        metode,
+        setMetode,
+        risici,
+        setRisici,
       }}
     >
       {children}

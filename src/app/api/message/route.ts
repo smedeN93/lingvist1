@@ -10,8 +10,6 @@ import { getPineconeClient } from "@/lib/pinecone";
 import { sendMessageValidator } from "@/lib/validators/send-message-validator";
 
 export async function POST(req: NextRequest) {
-  // endpoint for asking a question to a PDF file
-
   const body = await req.json();
 
   const { getUser } = getKindeServerSession();
@@ -21,8 +19,18 @@ export async function POST(req: NextRequest) {
 
   const { id: userId } = user;
 
-  const { fileId, message } = sendMessageValidator.parse(body);
-
+  const { 
+    fileId, 
+    message, 
+    includePageNumbers,
+    argumentAnalysis,
+    exploreScenarios,
+    kontraktvilkaar,
+    okonomi,
+    metode,
+    risici 
+  } = sendMessageValidator.parse(body);
+  
   const file = await db.file.findUnique({
     where: {
       id: fileId,
@@ -80,11 +88,19 @@ export async function POST(req: NextRequest) {
       {
         role: "system",
         content:
-          "Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format.",
+          `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Svar altid i markdown format og vær præcis og koncis. Hvis du er usikker, så sig det ærligt frem for at gætte.
+          ${includePageNumbers ? "Inkluder sidetal for hver specifik reference i dit svar. Dette hjælper brugeren med at finde informationen i originaldokumentet." : ""}
+          ${argumentAnalysis ? "Inkludér hvor det er nødvendigt en grundig analyse af argumenterne præsenteret i den givne kontekst. Identificer hovedargumenter, understøttende beviser og potentielle svagheder." : ""}
+          ${exploreScenarios ? "Inkludér hvor det er brugbart forskellige hypotetiske scenarier baseret på den givne kontekst. Overvej potentielle udfald og konsekvenser af de præsenterede situationer." : ""}
+          ${kontraktvilkaar ? "Læg særlig vægt på at analysere kontraktvilkår. Fremhæv vigtige klausuler, potentielle faldgruber og juridiske implikationer." : ""}
+          ${okonomi ? "Læg særlig vægt på de økonomiske aspekter nævnt i teksten. Inkluder finansielle prognoser, risici og potentielle muligheder hvor relevant." : ""}
+          ${metode ? "Gennemgå og forklar den metodologi, der er anvendt eller nævnt i teksten. Vurder dens styrker, svagheder og potentielle bias." : ""}
+          ${risici ? "Identificer og diskuter potentielle risici, der er nævnt eller antydet i teksten. Vurder sandsynligheden og konsekvenserne af hver risiko." : ""}
+          Basér dit svar på den givne kontekst og tidligere samtale. Strukturér dit svar klart og logisk, og brug overskrifter hvor det er relevant`,
       },
       {
         role: "user",
-        content: `Use the following pieces of context (or previous conversaton if needed) to answer the users question in markdown format. \nIf you don't know the answer, just say that you don't know, don't try to make up an answer.
+        content: `Besvar følgende spørgsmål baseret på den givne kontekst og tidligere samtale.
         
   \n----------------\n
   

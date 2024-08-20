@@ -110,6 +110,7 @@
     "react-slick": "^0.30.2",
     "react-swipeable": "^7.0.1",
     "react-textarea-autosize": "^8.5.3",
+    "react-use-measure": "^2.1.1",
     "react-wrap-balancer": "^1.1.1",
     "recharts": "^2.12.7",
     "simplebar-react": "^3.2.4",
