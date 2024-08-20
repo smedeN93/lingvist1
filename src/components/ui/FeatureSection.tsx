@@ -1,5 +1,4 @@
 import React from "react";
-import { AuroraBackground } from "./aurora-background";
 import { CheckCircle } from 'lucide-react';
 import ImageScroller from "./ImageScroller";
 import styles from "@/app/ImageScroller.module.css"
@@ -43,13 +42,13 @@ const itemVariants = {
 export const FeatureSection: React.FC<FeatureSectionProps> = ({ title, subtitle, goodAt, images }) => {
   return (
     <motion.section 
-      className="relative w-full"
+      className="relative w-full bg-white"
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.3 }}
       variants={containerVariants}
     >
-      <AuroraBackground className="pt-8 sm:pt-10 md:pt-12 lg:pt-16 pb-16 sm:pb-20 md:pb-24 lg:pb-32">
+      <div className="pt-8 sm:pt-10 md:pt-12 lg:pt-16 pb-16 sm:pb-20 md:pb-24 lg:pb-32 relative">
         <div className="absolute top-0 left-0 right-0 h-8 sm:h-10 md:h-12 lg:h-16 bg-gradient-to-b from-white to-transparent z-10"></div>
         
         <div className="relative z-20 w-full mx-auto">
@@ -87,7 +86,7 @@ export const FeatureSection: React.FC<FeatureSectionProps> = ({ title, subtitle,
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 h-0 sm:h-20 bg-gradient-to-t from-white to-transparent z-10"></div>
-      </AuroraBackground>
+      </div>
     </motion.section>
   );
 }
