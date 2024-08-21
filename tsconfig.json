@@ -21,6 +21,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/ui/ParallaxSection.tsx", "src/components/ui/ParallaxSection.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/components/ui/ParallaxSection.tsx", "src/components/ui/ParallaxSection.tsx", "src/components/ui/Gradient.jsx", "src/components/ui/Gradient.js"],
   "exclude": ["node_modules"]
 }

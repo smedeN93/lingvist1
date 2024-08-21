@@ -73,6 +73,7 @@
     "@radix-ui/react-progress": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tooltip": "^1.0.7",
+    "@react-three/fiber": "^8.17.5",
     "@tabler/icons-react": "^3.11.0",
     "@tailwindcss/typography": "^0.5.12",
     "@tanstack/react-query": "^5.28.14",
@@ -120,6 +121,7 @@
     "stripe": "^15.1.0",
     "tailwind-merge": "^2.4.0",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.167.1",
     "uploadthing": "^6.9.0",
     "zod": "^3.22.4"
   },
@@ -128,6 +130,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-slick": "^0.23.13",
+    "@types/three": "^0.167.2",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.1.4",

@@ -1,144 +1,85 @@
 "use client";
 import { motion } from "framer-motion";
-import React, { useState, useEffect, useCallback, TouchEvent } from 'react';
+import React, { useState } from 'react';
 import { PlaceholdersAndVanishInputDemo } from "./placeholders-and-vanish-input";
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from "next/image";
 import Link from 'next/link';
+import AnimatedBackground from "./AnimatedBackground";
 
 export function LandingPage() {
-  return (
-    <div className="relative w-full min-h-screen bg-white dark:bg-zinc-900">
-      <motion.div
-        initial={{ opacity: 0.0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: 0.3,
-          duration: 0.8,
-          ease: "easeInOut",
-        }}
-        className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-12 sm:pt-16 lg:pt-20 xl:pt-24"
-      >
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold dark:text-white text-center">
-          Chat med dine dokumenter
-        </h1>
-        <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl dark:text-neutral-200 text-center">
-          AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
-        </div>
-        
-        <PlaceholdersAndVanishInputDemo />
-        
-        <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mt-2 sm:mt-3">
-          Tilmeld gratis med Email, Google eller LinkedIn
-        </p>
-        
-        <SignInButtons />
-        
-        <OrDivider />
-        
-        <p className="text-xs sm:text-sm lg:text-base text-gray-600 dark:text-gray-400 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
-          Kom i gang uden kreditkort.
-        </p>
-      </motion.div>
+  const [speed, setSpeed] = useState(1);
+  const [color1, setColor1] = useState('#E0E5EC'); // Lysegrå
+  const [color2, setColor2] = useState('#AEB7C3'); // Mørkere grå med et strejf af blå
 
-      <motion.div
-        initial={{ opacity: 0, y: 60 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{
-          delay: 0.5,
-          duration: 0.8,
-          ease: "easeInOut",
-        }}
-        className="w-full mx-auto"
-      >
-        <BrowserFrameMockup 
-          images={[
-            "/lingvist_chat_preview15.webp",
-            "/lingvist_kontrolpanel.webp",
-            "/lingvist_chat_preview13.webp",
-            "/lingvist_chat_preview13.1.webp",
-            "/lingvist_chat_preview14.webp",
-            "/lingvist_billing.webp",
-            "/lingvist_billingform.webp",
-          ]} 
-          url="https://lingvist.dk/dashboard"
-          autoSlideInterval={5000}
-        />
-      </motion.div>
+  return (
+    <div className="relative w-full min-h-screen">
+      <AnimatedBackground 
+        speed={speed} 
+        color1={color1} 
+        color2={color2} 
+      />
+
+      <div className="relative z-10"> {/* This ensures content is above the animated background */}
+        <motion.div
+          initial={{ opacity: 0.0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.3,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-12 sm:pt-16 lg:pt-20 xl:pt-24"
+        >
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white text-center">
+            Chat med dine dokumenter
+          </h1>
+          <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-neutral-200 text-center">
+            AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
+          </div>
+          
+          <PlaceholdersAndVanishInputDemo />
+          
+          <p className="text-xs sm:text-sm lg:text-base text-gray-300 mt-2 sm:mt-3">
+            Tilmeld gratis med Email, Google eller LinkedIn
+          </p>
+          
+          <SignInButtons />
+          
+          <OrDivider />
+          
+          <p className="text-xs sm:text-sm lg:text-base text-gray-300 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
+            Kom i gang uden kreditkort.
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.5,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="w-full mx-auto"
+        >
+          <StaticBrowserFrame 
+            imageSrc="/lingvist_chat_preview15.webp"
+            url="https://lingvist.dk/dashboard"
+          />
+        </motion.div>
+      </div>
     </div>
   );
 }
-
-interface BrowserFrameMockupProps {
-  images: string[];
+interface StaticBrowserFrameProps {
+  imageSrc: string;
   url?: string;
-  autoSlideInterval?: number;
 }
 
-const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({
-  images,
-  url = "https://example.com/image-slider",
-  autoSlideInterval = 5000
+const StaticBrowserFrame: React.FC<StaticBrowserFrameProps> = ({
+  imageSrc,
+  url = "https://example.com/static-image"
 }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [touchStart, setTouchStart] = useState(0);
-  const [touchDelta, setTouchDelta] = useState(0);
-  const [isSwiping, setIsSwiping] = useState(false);
-  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set([0, 1]));
-
-  const handleSlideChange = useCallback((newIndex: number) => {
-    const adjustedIndex = (newIndex + images.length) % images.length;
-    setCurrentIndex(adjustedIndex);
-    const nextIndex = (adjustedIndex + 1) % images.length;
-    setLoadedImages(prev => {
-      const newSet = new Set(Array.from(prev));
-      newSet.add(adjustedIndex);
-      newSet.add(nextIndex);
-      return newSet;
-    });
-  }, [images.length]);
-
-  const nextSlide = useCallback(() => handleSlideChange(currentIndex + 1), [currentIndex, handleSlideChange]);
-  const prevSlide = useCallback(() => handleSlideChange(currentIndex - 1), [currentIndex, handleSlideChange]);
-
-  const handleTouchStart = (e: TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-    setIsSwiping(true);
-  };
-
-  const handleTouchMove = (e: TouchEvent) => {
-    if (isSwiping) {
-      const currentTouch = e.targetTouches[0].clientX;
-      const delta = touchStart - currentTouch;
-      setTouchDelta(delta);
-    }
-  };
-
-  const handleTouchEnd = () => {
-    setIsSwiping(false);
-    if (Math.abs(touchDelta) > 75) {
-      if (touchDelta > 0) {
-        nextSlide();
-      } else {
-        prevSlide();
-      }
-    }
-    setTouchDelta(0);
-  };
-
-  useEffect(() => {
-    const slideInterval = setInterval(nextSlide, autoSlideInterval);
-    return () => clearInterval(slideInterval);
-  }, [nextSlide, autoSlideInterval]);
-
-  const getImageStyle = (index: number) => {
-    const baseTransform = `translateX(${(index - currentIndex) * 100}%)`;
-    const swipeTransform = isSwiping ? `translateX(calc(${(index - currentIndex) * 100}% - ${touchDelta}px))` : baseTransform;
-    return {
-      transform: swipeTransform,
-      transition: isSwiping ? 'none' : 'transform 0.3s ease-out',
-    };
-  };
   return (
     <div className="w-full max-w-7xl mx-auto my-6 lg:my-16 px-4 sm:px-6 lg:px-8">
       <div className="relative">
@@ -168,66 +109,18 @@ const BrowserFrameMockup: React.FC<BrowserFrameMockupProps> = ({
           </div>
 
           <div className="bg-white relative">
-            <div 
-              className="w-full h-0 pb-[49.66%] relative overflow-hidden touch-pan-y"
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-            >
-              {images.map((img, index) => (
-                <div 
-                  key={index}
-                  className="absolute top-0 left-0 w-full h-full"
-                  style={getImageStyle(index)}
-                >
-                  {loadedImages.has(index) && (
-                    <Image 
-                      src={img}
-                      alt={`Screenshot of Lingvist application ${index + 1}`}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                      style={{ objectFit: 'cover' }}
-                      quality={100}
-                      priority={index === 0}
-                      loading={index === 0 ? "eager" : "lazy"}
-                    />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/15 pointer-events-none"></div>
-                  <div className="absolute inset-0 bg-slate-950/[0.02] pointer-events-none"></div>
-                </div>
-              ))}
-            </div>
-            
-            <button 
-              onClick={prevSlide} 
-              className="absolute top-1/2 left-0.5 sm:left-2 transform -translate-y-1/2 bg-white bg-opacity-80 text-gray-800 p-1.5 sm:p-2 rounded-full hover:bg-opacity-100 transition-all duration-300 ease-in-out shadow-sm"
-              aria-label="Previous slide"
-            >
-              <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
-            </button>
-            <button 
-              onClick={nextSlide} 
-              className="absolute top-1/2 right-0.5 sm:right-2 transform -translate-y-1/2 bg-white bg-opacity-80 text-gray-800 p-1.5 sm:p-2 rounded-full hover:bg-opacity-100 transition-all duration-300 ease-in-out shadow-sm"
-              aria-label="Next slide"
-            >
-              <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
-            </button>
-
-            <div className="absolute bottom-1 sm:bottom-3 left-1/2 transform -translate-x-1/2">
-              <div className="bg-white bg-opacity-80 rounded-full px-1 py-0.5 sm:px-2 sm:py-1.5 flex space-x-0.5 sm:space-x-1.5 transition-all duration-300 hover:bg-opacity-100 shadow-sm">
-                {images.map((_, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleSlideChange(index)}
-                    className={`w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 ${
-                      index === currentIndex 
-                        ? 'bg-gray-800 scale-100' 
-                        : 'bg-gray-400 scale-75 hover:bg-gray-600 hover:scale-90'
-                    }`}
-                    aria-label={`Go to slide ${index + 1}`}
-                  />
-                ))}
-              </div>
+            <div className="w-full h-0 pb-[49.66%] relative overflow-hidden">
+              <Image 
+                src={imageSrc}
+                alt="Screenshot of Lingvist application"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
+                style={{ objectFit: 'cover' }}
+                quality={100}
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/15 pointer-events-none"></div>
+              <div className="absolute inset-0 bg-slate-950/[0.02] pointer-events-none"></div>
             </div>
           </div>
         </div>
