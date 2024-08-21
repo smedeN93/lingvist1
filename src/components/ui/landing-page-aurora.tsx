@@ -1,15 +1,16 @@
 "use client";
 import { motion } from "framer-motion";
-import React from 'react';
+import React, { useState } from 'react';
 import { PlaceholdersAndVanishInputDemo } from "./placeholders-and-vanish-input";
 import Image from "next/image";
 import Link from 'next/link';
-import { AuroraBackground } from "./aurora-background";
+import AnimatedBackground from "./AnimatedBackground";
 
 export function LandingPage() {
+  const [speed, setSpeed] = useState(0.5);
+
   return (
-    <AuroraBackground>
-      <div className="relative w-full min-h-screen">
+    <AnimatedBackground speed={speed}>
         <div className="relative z-10">
           <motion.div
             initial={{ opacity: 0.0, y: 40 }}
@@ -24,13 +25,13 @@ export function LandingPage() {
             <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-950 text-center">
               Chat med dine dokumenter
             </h1>
-            <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-slate-700 text-center">
+            <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-neutral-200 text-center">
               AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
             </div>
             
             <PlaceholdersAndVanishInputDemo />
             
-            <p className="text-xs sm:text-sm lg:text-base text-slate-700 mt-2 sm:mt-3">
+            <p className="text-xs sm:text-sm lg:text-base text-gray-300 mt-2 sm:mt-3">
               Tilmeld gratis med Email, Google eller LinkedIn
             </p>
             
@@ -38,7 +39,7 @@ export function LandingPage() {
             
             <OrDivider />
             
-            <p className="text-xs sm:text-sm lg:text-base text-slate-700 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
+            <p className="text-xs sm:text-sm lg:text-base text-gray-300 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
               Kom i gang uden kreditkort.
             </p>
           </motion.div>
@@ -59,8 +60,7 @@ export function LandingPage() {
             />
           </motion.div>
         </div>
-      </div>
-    </AuroraBackground>
+    </AnimatedBackground>
   );
 }
 interface StaticBrowserFrameProps {
