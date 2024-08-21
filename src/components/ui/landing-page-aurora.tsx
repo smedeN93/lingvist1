@@ -1,24 +1,16 @@
 "use client";
 import { motion } from "framer-motion";
-import React, { useState } from 'react';
+import React from 'react';
 import { PlaceholdersAndVanishInputDemo } from "./placeholders-and-vanish-input";
 import Image from "next/image";
 import Link from 'next/link';
-import AnimatedBackground from "./AnimatedBackground";
+import { AuroraBackground } from "./aurora-background";
 
 export function LandingPage() {
-  const [speed, setSpeed] = useState(1);
-  const [color1, setColor1] = useState('#E0E5EC'); // Lysegrå
-  const [color2, setColor2] = useState('#AEB7C3'); // Mørkere grå med et strejf af blå
-
   return (
-    <AnimatedBackground 
-      speed={speed} 
-      color1={color1} 
-      color2={color2} 
-    >
+    <AuroraBackground>
       <div className="relative w-full min-h-screen">
-        <div className="relative z-10"> {/* This ensures content is above the animated background */}
+        <div className="relative z-10">
           <motion.div
             initial={{ opacity: 0.0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -29,16 +21,16 @@ export function LandingPage() {
             }}
             className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-12 sm:pt-16 lg:pt-20 xl:pt-24"
           >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white text-center">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-950 text-center">
               Chat med dine dokumenter
             </h1>
-            <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-neutral-200 text-center">
+            <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-slate-700 text-center">
               AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
             </div>
             
             <PlaceholdersAndVanishInputDemo />
             
-            <p className="text-xs sm:text-sm lg:text-base text-gray-300 mt-2 sm:mt-3">
+            <p className="text-xs sm:text-sm lg:text-base text-slate-700 mt-2 sm:mt-3">
               Tilmeld gratis med Email, Google eller LinkedIn
             </p>
             
@@ -46,7 +38,7 @@ export function LandingPage() {
             
             <OrDivider />
             
-            <p className="text-xs sm:text-sm lg:text-base text-gray-300 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
+            <p className="text-xs sm:text-sm lg:text-base text-slate-700 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
               Kom i gang uden kreditkort.
             </p>
           </motion.div>
@@ -68,7 +60,7 @@ export function LandingPage() {
           </motion.div>
         </div>
       </div>
-    </AnimatedBackground>
+    </AuroraBackground>
   );
 }
 interface StaticBrowserFrameProps {

@@ -2,14 +2,14 @@ import React, { useRef, useEffect } from 'react';
 import * as THREE from 'three';
 
 interface AnimatedBackgroundProps {
-    speed: number;
-    color1: string;
-    color2: string;
-    children: React.ReactNode;
-  }
+  speed: number;
+  color1: string;
+  color2: string;
+  children: React.ReactNode;
+}
 
-  const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({ speed, color1, color2, children }) => {
-    const mountRef = useRef<HTMLDivElement>(null);
+const AnimatedBackground: React.FC<AnimatedBackgroundProps> = ({ speed, color1, color2, children }) => {
+  const mountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!mountRef.current) return;
@@ -50,26 +50,37 @@ interface AnimatedBackgroundProps {
         uniform vec3 u_color2;
         varying vec2 vUv;
 
-        float wave(vec2 st, float freq, float amplitude, float speed, float offset) {
-          return sin((st.x * freq + u_time * speed + offset) * 6.28318) * amplitude;
+        float curveShape(vec2 st) {
+          // Create a more pronounced inverted U-shape
+          float x = st.x * 2.0 - 1.0; // Map x from 0-1 to -1 to 1
+          float y = abs(x); // Create V-shape
+          y = pow(y, 0.5); // Curve the V into a U
+          
+          // Add some variation to the bottom edges
+          float bottomEdge = pow(abs(x), 2.0) * 0.3;
+          y = mix(y, y - bottomEdge, 1.0 - st.y);
+          
+          // Scale and position the curve
+          y = 1.0 - (y * 0.8 + 0.1); // Invert, scale vertically and move up
+          
+          return y;
         }
 
         void main() {
           vec2 st = gl_FragCoord.xy / u_resolution.xy;
-          st.x *= u_resolution.x / u_resolution.y;
-
-          float wave1 = wave(st, 5.0, 0.05, 0.5, 0.0);
-          float wave2 = wave(st, 7.0, 0.03, 0.7, 1.57);
-          float wave3 = wave(st, 9.0, 0.02, 0.9, 3.14);
-
-          float finalWave = wave1 + wave2 + wave3;
-
-          vec3 color = mix(u_color1, u_color2, finalWave + 0.5);
-
-          color = mix(color, u_color2, st.y * 0.2);
-
-          float vignette = smoothstep(0.5, 0.2, length(vUv - 0.5));
-          color = mix(color, color * 0.9, vignette);
+          
+          float shape = curveShape(st);
+          float distFromCurve = abs(st.y - shape);
+          
+          // Create a soft edge
+          float edge = smoothstep(0.0, 0.15, distFromCurve);
+          
+          // Mix colors based on the curve
+          vec3 color = mix(u_color2, u_color1, edge);
+          
+          // Add subtle wave animation
+          float wave = sin(st.x * 8.0 + u_time) * 0.5 + 0.5;
+          color = mix(color, u_color2, wave * 0.1);
 
           gl_FragColor = vec4(color, 1.0);
         }
