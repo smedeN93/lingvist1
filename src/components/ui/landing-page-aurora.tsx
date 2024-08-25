@@ -1,66 +1,117 @@
 "use client";
 import { motion } from "framer-motion";
-import React, { useState } from 'react';
+import React from 'react';
 import { PlaceholdersAndVanishInputDemo } from "./placeholders-and-vanish-input";
 import Image from "next/image";
 import Link from 'next/link';
-import AnimatedBackground from "./AnimatedBackground";
+
+const StructuredGridBackground = () => {
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Existing gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[rgb(245,245,247)] to-[rgb(240,240,242)]" />
+      
+      {/* Adjusted Fade-to-white overlay */}
+      <div 
+        className="absolute inset-0" 
+        style={{
+          background: 'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 70%, rgba(255,255,255,0.5) 85%, rgba(255,255,255,1) 100%)'
+        }}
+      />
+      
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div 
+          className="w-full max-w-[1320px] h-full relative border border-[rgba(220,220,225,0.8)]"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(220,220,225,0.8) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(220,220,225,0.8) 1px, transparent 1px)
+            `,
+            backgroundSize: '120px 120px',
+            backgroundPosition: '-1px -1px',
+          }}
+        >
+          {/* Top-left cross */}
+          <div 
+            className="absolute -top-[1.5px] -left-[1.5px]" 
+            style={{
+              width: '60px',
+              height: '60px',
+              borderTop: '1.5px solid rgba(210,210,215,1)',
+              borderLeft: '1.5px solid rgba(210,210,215,1)',
+            }}
+          />
+          {/* Bottom-right cross */}
+          <div 
+            className="absolute -bottom-[1.5px] -right-[1.5px]" 
+            style={{
+              width: '60px',
+              height: '60px',
+              borderBottom: '1.5px solid rgba(210,210,215,1)',
+              borderRight: '1.5px solid rgba(210,210,215,1)',
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export function LandingPage() {
-  const [speed, setSpeed] = useState(0.5);
-
   return (
-    <AnimatedBackground speed={speed}>
-        <div className="relative z-10">
-          <motion.div
-            initial={{ opacity: 0.0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: 0.3,
-              duration: 0.8,
-              ease: "easeInOut",
-            }}
-            className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-12 sm:pt-16 lg:pt-20 xl:pt-24"
-          >
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-950 text-center">
-              Chat med dine dokumenter
-            </h1>
-            <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-neutral-200 text-center">
-              AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
-            </div>
-            
-            <PlaceholdersAndVanishInputDemo />
-            
-            <p className="text-xs sm:text-sm lg:text-base text-gray-300 mt-2 sm:mt-3">
-              Tilmeld gratis med Email, Google eller LinkedIn
-            </p>
-            
-            <SignInButtons />
-            
-            <OrDivider />
-            
-            <p className="text-xs sm:text-sm lg:text-base text-gray-300 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
-              Kom i gang uden kreditkort.
-            </p>
-          </motion.div>
+    <div className="relative min-h-screen">
+      <StructuredGridBackground />
+      
+      <div className="relative z-10 max-w-7xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0.0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.3,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-28 xs:pt-32 sm:pt-36 lg:pt-40 xl:pt-44"
+        >
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-950 text-center">
+            Chat med dine dokumenter
+          </h1>
+          <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-slate-700 text-center">
+            AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
+          </div>
+          
+          <PlaceholdersAndVanishInputDemo />
+          
+          <p className="text-xs sm:text-sm lg:text-base text-slate-600 mt-2 sm:mt-3">
+            Tilmeld gratis med Email, Google eller LinkedIn
+          </p>
+          
+          <SignInButtons />
+          
+          <OrDivider />
+          
+          <p className="text-xs sm:text-sm lg:text-base text-slate-600 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
+            Kom i gang uden kreditkort.
+          </p>
+        </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{
-              delay: 0.5,
-              duration: 0.8,
-              ease: "easeInOut",
-            }}
-            className="w-full mx-auto"
-          >
-            <StaticBrowserFrame 
-              imageSrc="/lingvist_chat_preview15.webp"
-              url="https://lingvist.dk/dashboard"
-            />
-          </motion.div>
-        </div>
-    </AnimatedBackground>
+        <motion.div
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: 0.5,
+            duration: 0.8,
+            ease: "easeInOut",
+          }}
+          className="w-full mx-auto"
+        >
+          <StaticBrowserFrame 
+            imageSrc="/lingvist_chat_preview15.webp"
+            url="https://lingvist.dk/dashboard"
+          />
+        </motion.div>
+      </div>
+    </div>
   );
 }
 interface StaticBrowserFrameProps {
@@ -125,13 +176,13 @@ const SignInButtons = () => {
   return (
     <div className="flex flex-row space-x-2 sm:space-x-4 justify-center w-full max-w-[200px] sm:max-w-none">
       <Link href="/dashboard" passHref>
-        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-white text-gray-700 h-7 sm:h-auto sm:py-2 px-2 sm:px-4 rounded-full border border-gray-300 hover:shadow-md transition-all duration-200 text-[10px] sm:text-sm">
+        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-slate-950 text-white h-8 sm:h-auto sm:py-2 px-3 sm:px-4 rounded-full border border-slate-800 hover:bg-slate-800 transition-all duration-200 text-[11px] sm:text-sm font-medium">
           <Image src="/google-logo.svg" alt="Google logo" width={14} height={14} className="w-3 h-3 sm:w-4 sm:h-4" />
           <span>Google</span>
         </button>
       </Link>
       <Link href="/dashboard" passHref>
-        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-white text-gray-700 h-7 sm:h-auto sm:py-2 px-2 sm:px-4 rounded-full border border-gray-300 hover:shadow-md transition-all duration-200 text-[10px] sm:text-sm">
+        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-slate-950 text-white h-8 sm:h-auto sm:py-2 px-3 sm:px-4 rounded-full border border-slate-800 hover:bg-slate-800 transition-all duration-200 text-[11px] sm:text-sm font-medium">
           <Image src="/linkedin-logo.svg" alt="LinkedIn logo" width={14} height={14} className="w-3 h-3 sm:w-4 sm:h-4" />
           <span>LinkedIn</span>
         </button>

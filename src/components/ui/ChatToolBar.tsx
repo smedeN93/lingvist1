@@ -279,7 +279,7 @@ export default function ToolbarExpandable() {
             </motion.div>
           )}
         </AnimatePresence>
-        <div className="rounded-xl border border-zinc-950/10 bg-white">
+        <div className="rounded-full border border-zinc-950/10 bg-[rgb(245,245,247)] ">
           <div className="flex space-x-2 p-2" ref={menuRef}>
             {ITEMS.map((item) => (
               <button

@@ -1,10 +1,10 @@
 "use client";
 
-import { Send } from "lucide-react";
 import { useContext, useRef } from "react";
+import { motion } from "framer-motion";
 
-import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 import { ChatContext } from "./chat-context";
 import ToolbarExpandable from "../ui/ChatToolBar";
@@ -49,20 +49,54 @@ export const ChatInput = ({ isDisabled }: ChatInputProps) => {
                 className="resize-none pr-12 text-base py-3 scrollbar-thumb-blue scrollbar-thumb-rounded scrollbar-track-blue-lighter scrollbar-w-2 scrolling-touch flex-grow"
               />
 
-              <Button
-                disabled={isLoading || isDisabled}
-                aria-disabled={isLoading || isDisabled}
+              <button
+                disabled={isLoading || isDisabled || !message.trim()}
+                aria-disabled={isLoading || isDisabled || !message.trim()}
                 type="submit"
                 onClick={() => {
                   addMessage();
                   textareaRef.current?.focus();
                 }}
-                className="absolute right-[8px] rounded-xl"
+                className={cn(
+                  "absolute right-2 top-1/2 z-50 -translate-y-1/2 h-5 w-5 sm:h-6 sm:w-6 lg:h-10 lg:w-10 rounded-full",
+                  "bg-black dark:bg-zinc-900 dark:disabled:bg-zinc-800 transition duration-200",
+                  "flex items-center justify-center",
+                  "disabled:bg-gray-100 disabled:cursor-not-allowed"
+                )}
                 aria-label="Send Message..."
                 title="Send Besked..."
               >
-                <Send className="h-4 w-4" />
-              </Button>
+                <motion.svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-gray-300 h-2.5 w-2.5 sm:h-3 sm:w-3 lg:h-5 lg:w-5"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <motion.path
+                    d="M5 12l14 0"
+                    initial={{
+                      strokeDasharray: "50%",
+                      strokeDashoffset: "50%",
+                    }}
+                    animate={{
+                      strokeDashoffset: message.trim() ? 0 : "50%",
+                    }}
+                    transition={{
+                      duration: 0.3,
+                      ease: "linear",
+                    }}
+                  />
+                  <path d="M13 18l6 -6" />
+                  <path d="M13 6l6 6" />
+                </motion.svg>
+              </button>
             </div>
           </div>
           

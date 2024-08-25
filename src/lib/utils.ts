@@ -11,8 +11,8 @@ export function absoluteUrl(path: string) {
 }
 
 export function constructMetadata({
-  title = "Lingvist - Få bedre indsigt i dine PDF'er med AI",
-  description = "Quill is an open-source software to make chatting to your PDF files easy.",
+  title = "Lingvist - Få bedre indsigt i dine PDF'er med AI.",
+  description = "Lingvist er en AI-dreven hjælper til at research dokumenter hurtigere, bedre og mere effektivt.",
   image = "/thumbnail.png",
   noIndex = false,
 }: {

@@ -17,9 +17,10 @@ export const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
   return (
     <div className="sm:hidden fixed top-4 left-4 right-4 z-50">
       <div className="bg-gradient-to-br from-white to-gray-100 rounded-full shadow-lg py-2 px-4 flex items-center justify-between border border-gray-200">
-        <Link href="/" className="font-bold text-sm">
-          <span>lingvist</span><span className="text-blue-600">.</span>
-        </Link>
+      <Link href="/" className="flex items-center font-bold text-sm">
+  <span>lingvist</span>
+  <span className="text-blue-600 text-lg font-extrabold leading-none relative bottom-0.5">.</span>
+</Link>
         <Link href="/pricing" className="text-slate-950 text-sm font-semibold">
           Priser
         </Link>

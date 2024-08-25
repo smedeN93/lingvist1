@@ -8,7 +8,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { UpgradeButton } from "@/components/upgrade-button";
 import { PLANS } from "@/config/stripe";
 import { cn } from "@/lib/utils";
-import { AuroraBackground } from "@/components/ui/aurora-background";
 
 const pricingItems = [
   {
@@ -48,12 +47,78 @@ const pricingItems = [
   },
 ];
 
+const StructuredGridBackground = () => {
+  return (
+    <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Solid color background */}
+      <div className="absolute inset-0 bg-[rgb(245,245,247)]" />
+      
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div 
+          className="w-full max-w-[1800px] h-full relative"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(220,220,225,0.8) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(220,220,225,0.8) 1px, transparent 1px)
+            `,
+            backgroundSize: '150px 150px',
+            backgroundPosition: 'center center',
+            border: '1px solid rgba(220,220,225,0.8)',
+          }}
+        >
+          {/* Top-left cross */}
+          <div 
+            className="absolute -top-[1.5px] -left-[1.5px]" 
+            style={{
+              width: '75px',
+              height: '75px',
+              borderTop: '2.5px solid rgba(210,210,215,1)',
+              borderLeft: '1.5px solid rgba(210,210,215,1)',
+            }}
+          />
+          {/* Top-right cross */}
+          <div 
+            className="absolute -top-[1.5px] -right-[1.5px]" 
+            style={{
+              width: '75px',
+              height: '75px',
+              borderTop: '2.5px solid rgba(210,210,215,1)',
+              borderRight: '1.5px solid rgba(210,210,215,1)',
+            }}
+          />
+          {/* Bottom-left cross */}
+          <div 
+            className="absolute -bottom-[1.5px] -left-[1.5px]" 
+            style={{
+              width: '75px',
+              height: '75px',
+              borderBottom: '1.5px solid rgba(210,210,215,1)',
+              borderLeft: '1.5px solid rgba(210,210,215,1)',
+            }}
+          />
+          {/* Bottom-right cross */}
+          <div 
+            className="absolute -bottom-[1.5px] -right-[1.5px]" 
+            style={{
+              width: '75px',
+              height: '75px',
+              borderBottom: '1.5px solid rgba(210,210,215,1)',
+              borderRight: '1.5px solid rgba(210,210,215,1)',
+            }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PricingPage = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
   return (
-    <AuroraBackground>
+    <div className="relative w-full min-h-screen overflow-hidden">
+      <StructuredGridBackground />
       <div className="relative z-10 w-full min-h-screen overflow-auto pt-28 pb-24">
         <MaxWidthWrapper className="text-center">
           <div className="mx-auto mb-10 sm:max-w-lg opacity-0 animate-fade-in-up">
@@ -64,10 +129,11 @@ const PricingPage = async () => {
           </div>
         </MaxWidthWrapper>
 
-        <div className="bg-[rgb(245,245,247)] rounded-3xl p-4 sm:p-6 lg:p-8 w-full max-w-[1663px] mx-auto mt-8 mb-20 opacity-0 animate-fade-in-up-delay">
+        {/* Removed the background color from this container */}
+        <div className="rounded-3xl p-4 sm:p-6 lg:p-8 w-full max-w-[1663px] mx-auto mt-8 mb-20 opacity-0 animate-fade-in-up-delay relative z-20">
           <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3 lg:gap-8">
             <TooltipProvider>
-              {pricingItems.map(({ plan,features }, index) => {
+              {pricingItems.map(({ plan, features }, index) => {
                 const price =
                   plan !== "Enterprise"
                     ? PLANS.find((p) => p.slug === plan.toLowerCase())?.price
@@ -197,7 +263,7 @@ const PricingPage = async () => {
           </div>
         </div>
       </div>
-    </AuroraBackground>
+    </div>
   );
 };
 

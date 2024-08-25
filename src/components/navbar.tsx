@@ -1,9 +1,7 @@
 import {
   LoginLink,
-  RegisterLink,
   getKindeServerSession,
 } from "@kinde-oss/kinde-auth-nextjs/server";
-import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -11,6 +9,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { MaxWidthWrapper } from "./max-width-wrapper";
 import { MobileNav } from "./mobile-nav";
 import { UserAccountNav } from "./user-account-nav";
+import { NavbarWrapper } from "./navbarwrapper";
+import { ShimmerRegisterLink } from "./ui/ShimmerRegisterLink";
 
 export const Navbar = async () => {
   const { getUser } = getKindeServerSession();
@@ -18,12 +18,13 @@ export const Navbar = async () => {
 
   return (
     <>
-      <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-white/75 backdrop-blur-lg transition-all hidden sm:block">
+      <NavbarWrapper>
         <MaxWidthWrapper>
-          <div className="flex h-14 items-center justify-between border-b border-zinc-200">
-            <Link href="/" className="flex z-40 font-bold">
-              <span>lingvist</span><span className="text-blue-600">.</span>
-            </Link>
+          <div className="flex h-14 items-center justify-between">
+          <Link href="/" className="flex z-40 font-bold items-center">
+  <span>lingvist</span>
+  <span className="text-blue-600 text-2xl font-extrabold leading-none relative bottom-0.5">.</span>
+</Link>
 
             <div className="flex items-center justify-center space-x-4">
               {!user ? (
@@ -32,7 +33,7 @@ export const Navbar = async () => {
                     href="/pricing"
                     className={buttonVariants({
                       variant: "ghost",
-                      size: "sm",
+                      size: "default",
                     })}
                   >
                     Priser
@@ -41,18 +42,12 @@ export const Navbar = async () => {
                   <LoginLink
                     className={buttonVariants({
                       variant: "ghost",
-                      size: "sm",
+                      size: "default",
                     })}
                   >
                     Log ind
                   </LoginLink>
-                  <RegisterLink
-                    className={buttonVariants({
-                      size: "sm",
-                    })}
-                  >
-                    Kom i gang <ArrowRight className="ml-1.5 h-5 w-5" />
-                  </RegisterLink>
+                  <ShimmerRegisterLink size="default" className="shadow-md" />
                 </>
               ) : (
                 <>
@@ -80,7 +75,7 @@ export const Navbar = async () => {
             </div>
           </div>
         </MaxWidthWrapper>
-      </nav>
+      </NavbarWrapper>
       
       <MobileNav isAuth={!!user} />
     </>
