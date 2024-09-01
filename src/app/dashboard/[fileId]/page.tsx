@@ -26,17 +26,15 @@ const FileIdPage = async ({ params }: { params: { fileId: string } }) => {
   if (!file) notFound();
 
   return (
-    <div className="flex-1 justify-between flex flex-col h-[calc(100vh-3.5rem)]">
-      <div className="mx-auto w-full max-w-8xl grow lg:flex xl:px-2">
+    <div className="flex-1 bg-[rgb(245,245,247)] justify-between flex flex-col h-[calc(100vh-3.5rem)]">
+      <div className="mx-auto w-full grow lg:flex">
         {/* left side */}
-        <div className="flex-1 xl:flex">
-          <div className="px-4 py-6 sm:px-6 lg:pl-8 xl:flex-1 xl:pl-6">
-            <PDFRenderer url={file.url} />
-          </div>
+        <div className="lg:flex-1 lg:w-1/2 xl:w-[55%] px-4 py-6 lg:px-8">
+          <PDFRenderer url={file.url} />
         </div>
 
         {/* right side */}
-        <div className="shrink-0 flex-[0.75] border-t border-gray-200 lg:w-96 lg:border-l lg:border-t-0">
+        <div className="lg:flex-1 lg:w-1/2 xl:w-[45%] border-t border-gray-200 lg:border-t-0 px-4 py-6 lg:px-8">
           <ChatWrapper fileId={file.id} />
         </div>
       </div>

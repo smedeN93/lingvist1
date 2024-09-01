@@ -74,7 +74,8 @@ export const PDFRenderer = ({ url }: PDFRendererProps) => {
   };
 
   return (
-    <div className="w-full bg-white rounded-md shadow flex flex-col items-center">
+    <div className="w-full bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col items-center overflow-hidden">
+  {/* Resten af komponentens indhold forbliver uændret */}
       {/* topbar */}
       <div className="h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2">
         <div className="flex items-center gap-1.5">
@@ -201,8 +202,8 @@ export const PDFRenderer = ({ url }: PDFRendererProps) => {
               }
               onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               onLoadError={() =>
-                toast.error("Error loading PDF.", {
-                  description: "Please try again.",
+                toast.error("Fejl ved load af PDF.", {
+                  description: "Prøv venligst igen.",
                 })
               }
               file={url}

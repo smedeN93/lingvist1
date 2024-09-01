@@ -2,6 +2,7 @@
 
 import React, { Suspense } from "react";
 import { LandingPage } from "@/components/ui/landing-page-aurora";
+import NotesPanel from "@/components/note-panel";
 
 const AnswerResponse = React.lazy(() => import("@/components/ui/AnswerResponse"));
 const IntermediateCard = React.lazy(() => import("@/components/ui/IntermediateCard"));
@@ -18,6 +19,7 @@ const HomePage = () => {
     <div className="relative w-full overflow-hidden">
       <div className="pb-2 sm:pb-8 md:pb-24 lg:pb-16">
         <LandingPage />
+        <NotesPanel openButtonText="Åbn Noter" closeButtonText="Luk Noter" />
       </div>
 
       <div className="min-h-screen flex items-center justify-center">

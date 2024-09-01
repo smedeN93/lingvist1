@@ -34,18 +34,16 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
 
   if (isLoading) {
     return (
-      <div className="relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2 mt-4">
+      <div className="relative h-full bg-white rounded-xl shadow-md flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
-
             <h3 className="font-semibold text-xl">Indlæser...</h3>
             <p className="text-zinc-500 text-sm">
               Vi er ved at forberede din PDF.
             </p>
           </div>
         </div>
-
         <ChatInput isDisabled />
       </div>
     );
@@ -53,16 +51,14 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
 
   if (data?.status === "PROCESSING") {
     return (
-      <div className="relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2 mt-4">
+      <div className="relative h-full bg-white rounded-xl shadow-md flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
-
             <h3 className="font-semibold text-xl">Analyserer din PDF...</h3>
             <p className="text-zinc-500 text-sm">Det tager ikke ret længe heldigvis!</p>
           </div>
         </div>
-
         <ChatInput isDisabled />
       </div>
     );
@@ -70,17 +66,15 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
 
   if (data?.status === "FAILED") {
     return (
-      <div className="relative min-h-full bg-zinc-50 flex divide-y divide-zinc-200 flex-col justify-between gap-2 mt-4">
+      <div className="relative h-full bg-white rounded-xl shadow-md flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
           <div className="flex flex-col items-center gap-2">
             <XCircle className="h-8 w-8 text-rose-500" />
-
             <h3 className="font-semibold text-xl">Der er for mange sider i din PDF</h3>
             <p className="text-zinc-500 text-sm">
               Din <span className="font-medium">Gratis</span> plan understøtter kun op til
               5 sider pr. PDF.
             </p>
-
             <Link
               href="/dashboard"
               className={buttonVariants({
@@ -92,7 +86,6 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
             </Link>
           </div>
         </div>
-
         <ChatInput isDisabled />
       </div>
     );
@@ -100,11 +93,10 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
 
   return (
     <ChatContextProvider fileId={fileId}>
-      <div className="relative min-h-full bg-[rgb(245,245,247)] flex divide-y divide-zinc-200 flex-col justify-between gap-2">
-        <div className="flex-1 justify-between flex flex-col mb-28">
+      <div className="relative h-full bg-white rounded-xl shadow-lg flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           <Messages fileId={fileId} />
         </div>
-
         <ChatInput />
       </div>
     </ChatContextProvider>

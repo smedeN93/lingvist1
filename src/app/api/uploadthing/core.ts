@@ -99,7 +99,16 @@ const onUploadComplete = async ({
       openAIApiKey: process.env.OPENAI_API_KEY!,
     });
 
-    await PineconeStore.fromDocuments(pageLevelDocs, embeddings, {
+    // Add page numbers to metadata
+    const docsWithPageNumbers = pageLevelDocs.map((doc, i) => ({
+      ...doc,
+      metadata: {
+        ...doc.metadata,
+        page: i + 1,
+      },
+    }));
+
+    await PineconeStore.fromDocuments(docsWithPageNumbers, embeddings, {
       pineconeIndex,
       namespace: createdFile.id,
     });
