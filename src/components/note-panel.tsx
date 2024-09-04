@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Download, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -14,15 +14,18 @@ interface Note {
 interface NotesPanelProps {
   openButtonText?: string;
   closeButtonText?: string;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
 const NotesPanel: React.FC<NotesPanelProps> = ({
   openButtonText = 'Open Notes',
-  closeButtonText = 'Close Notes'
+  closeButtonText = 'Close Notes',
+  isOpen,
+  onToggle
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [currentNote, setCurrentNote] = useState('');
+  const [notes, setNotes] = React.useState<Note[]>([]);
+  const [currentNote, setCurrentNote] = React.useState('');
   const textareaRefs = useRef<{ [key: string]: HTMLTextAreaElement | null }>({});
 
   useEffect(() => {
@@ -30,10 +33,6 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
       if (ref) autoResizeTextarea(ref);
     });
   }, [notes, isOpen]);
-
-  const togglePanel = () => {
-    setIsOpen(!isOpen);
-  };
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setCurrentNote(e.target.value);
@@ -71,20 +70,18 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
   };
 
   const handleExport = () => {
-    // Implementér eksport-logikken her
     console.log('Eksporterer noter...');
     toast.success('Noter eksporteret', {
       position: "bottom-right",
       duration: 3000,
     });
-    // Du kan tilføje mere avanceret eksport-funktionalitet her
   };
 
   const button = (
     <div className="rounded-full border border-zinc-950/10 bg-[rgb(245,245,247)]">
       <div className="p-2">
         <button
-          onClick={togglePanel}
+          onClick={onToggle}
           className={cn(
             "flex items-center justify-center h-9 w-28",
             "rounded-lg text-zinc-500",
@@ -112,10 +109,10 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: '100%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed top-4 right-4 bottom-4 w-[28rem] bg-[rgb(245,245,247)] rounded-2xl shadow-lg overflow-hidden flex flex-col border border-zinc-950/10 z-50"
+          className="fixed top-4 right-4 bottom-4 w-full sm:w-[24rem] max-w-full bg-[rgb(245,245,247)] rounded-2xl shadow-lg overflow-hidden flex flex-col border border-zinc-950/10 z-50 sm:max-w-sm md:max-w-md lg:max-w-lg"
         >
-          <div className="bg-white p-6 border-b border-zinc-950/10 flex justify-between items-center rounded-t-2xl">
-            <h2 className="text-2xl font-bold text-zinc-800">Notes</h2>
+          <div className="bg-white p-4 sm:p-6 border-b border-zinc-950/10 flex justify-between items-center rounded-t-2xl">
+            <h2 className="text-xl sm:text-2xl font-bold text-zinc-800">Notes</h2>
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleExport}
@@ -125,20 +122,20 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
                 <Download className="h-5 w-5" />
               </button>
               <button
-                onClick={togglePanel}
+                onClick={onToggle}
                 className="text-zinc-500 hover:text-zinc-800 transition-colors"
               >
                 &times;
               </button>
             </div>
           </div>
-          <div className="flex-grow flex flex-col p-6 space-y-6 overflow-y-auto">
-            <div className="bg-white rounded-lg border border-zinc-950/10 p-4 shadow-sm">
+          <div className="flex-grow flex flex-col p-4 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto">
+            <div className="bg-white rounded-lg border border-zinc-950/10 p-3 sm:p-4 shadow-sm">
               <textarea
                 value={currentNote}
                 onChange={handleNoteChange}
                 placeholder="Write your note here..."
-                className="w-full min-h-[8rem] p-2 border border-zinc-300 rounded-md mb-2 resize-none focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:border-transparent"
+                className="w-full min-h-[6rem] sm:min-h-[8rem] p-2 border border-zinc-300 rounded-md mb-2 resize-none focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:border-transparent"
                 ref={(el) => setTextareaRef(el, 'new')}
               />
               <button
@@ -148,9 +145,9 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
                 Save Note
               </button>
             </div>
-            <div className="space-y-4">
+            <div className="space-y-3 sm:space-y-4">
               {notes.map((note) => (
-                <div key={note.id} className="p-4 bg-white rounded-lg border border-zinc-950/10 shadow-sm">
+                <div key={note.id} className="p-3 sm:p-4 bg-white rounded-lg border border-zinc-950/10 shadow-sm">
                   <textarea
                     value={note.content}
                     onChange={(e) => updateNote(note.id, e.target.value)}

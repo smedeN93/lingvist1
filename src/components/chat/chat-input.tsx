@@ -16,7 +16,7 @@ type ChatInputProps = {
 
 export const ChatInput = ({ isDisabled }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { addMessage, handleInputChange, isLoading, message } =
+  const { addMessage, handleInputChange, isLoading, message, isNotesPanelOpen, setIsNotesPanelOpen } =
     useContext(ChatContext);
 
   return (
@@ -45,64 +45,69 @@ export const ChatInput = ({ isDisabled }: ChatInputProps) => {
                 textareaRef.current?.focus();
               }
             }}
-            className="min-h-[52px] max-h-[200px] w-full resize-none pr-12 py-3 text-base"
+            className="min-h-[52px] max-h-[200px] w-full resize-none pr-24 py-3 text-base"
           />
 
-          <button
-            disabled={isLoading || isDisabled || !message.trim()}
-            aria-disabled={isLoading || isDisabled || !message.trim()}
-            type="submit"
-            onClick={() => {
-              addMessage();
-              textareaRef.current?.focus();
-            }}
-            className={cn(
-              "absolute right-3 top-1/2 z-50 -translate-y-1/2 h-9 w-9 rounded-full",
-              "bg-black dark:bg-zinc-900 dark:disabled:bg-zinc-800 transition duration-200",
-              "flex items-center justify-center",
-              "disabled:bg-gray-100 disabled:cursor-not-allowed"
-            )}
-            aria-label="Send Message..."
-            title="Send Besked..."
-          >
-            <motion.svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="text-gray-300 h-5 w-5"
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2">
+            <ToolbarExpandable />
+            <button
+              disabled={isLoading || isDisabled || !message.trim()}
+              aria-disabled={isLoading || isDisabled || !message.trim()}
+              type="submit"
+              onClick={() => {
+                addMessage();
+                textareaRef.current?.focus();
+              }}
+              className={cn(
+                "h-8 w-8 rounded-full",
+                "bg-black dark:bg-zinc-900 dark:disabled:bg-zinc-800 transition duration-200",
+                "flex items-center justify-center",
+                "disabled:bg-gray-100 disabled:cursor-not-allowed"
+              )}
+              aria-label="Send Message..."
+              title="Send Besked..."
             >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <motion.path
-                d="M5 12l14 0"
-                initial={{
-                  strokeDasharray: "50%",
-                  strokeDashoffset: "50%",
-                }}
-                animate={{
-                  strokeDashoffset: message.trim() ? 0 : "50%",
-                }}
-                transition={{
-                  duration: 0.3,
-                  ease: "linear",
-                }}
-              />
-              <path d="M13 18l6 -6" />
-              <path d="M13 6l6 6" />
-            </motion.svg>
-          </button>
+              <motion.svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-gray-300 h-4 w-4"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <motion.path
+                  d="M5 12l14 0"
+                  initial={{
+                    strokeDasharray: "50%",
+                    strokeDashoffset: "50%",
+                  }}
+                  animate={{
+                    strokeDashoffset: message.trim() ? 0 : "50%",
+                  }}
+                  transition={{
+                    duration: 0.3,
+                    ease: "linear",
+                  }}
+                />
+                <path d="M13 18l6 -6" />
+                <path d="M13 6l6 6" />
+              </motion.svg>
+            </button>
+          </div>
         </div>
         
-        <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
-          <ToolbarExpandable />
-          <NotesPanel openButtonText="Noter" closeButtonText="Luk" />
-        </div>
+        <NotesPanel 
+          openButtonText="Noter" 
+          closeButtonText="Luk" 
+          isOpen={isNotesPanelOpen}
+          onToggle={() => setIsNotesPanelOpen(!isNotesPanelOpen)}
+        />
       </form>
     </div>
   );
-};
+}

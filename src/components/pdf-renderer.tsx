@@ -74,8 +74,7 @@ export const PDFRenderer = ({ url }: PDFRendererProps) => {
   };
 
   return (
-    <div className="w-full bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col items-center overflow-hidden">
-  {/* Resten af komponentens indhold forbliver uændret */}
+    <div className="w-full bg-[#fafafa] rounded-xl shadow-lg border border-gray-200 flex flex-col items-center overflow-hidden">
       {/* topbar */}
       <div className="h-14 w-full border-b border-zinc-200 flex items-center justify-between px-2">
         <div className="flex items-center gap-1.5">

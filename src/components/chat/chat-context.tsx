@@ -26,6 +26,8 @@ type StreamResponse = {
   setMetode: (include: boolean) => void;
   risici: boolean;
   setRisici: (include: boolean) => void;
+  isNotesPanelOpen: boolean;
+  setIsNotesPanelOpen: (isOpen: boolean) => void;
 };
 
 export const ChatContext = createContext<StreamResponse>({
@@ -47,6 +49,8 @@ export const ChatContext = createContext<StreamResponse>({
   setMetode: () => {},
   risici: false,
   setRisici: () => {},
+  isNotesPanelOpen: false,
+  setIsNotesPanelOpen: () => {},
 });
 
 export const ChatContextProvider = ({
@@ -64,6 +68,7 @@ export const ChatContextProvider = ({
   const [okonomi, setOkonomi] = useState(false);
   const [metode, setMetode] = useState(false);
   const [risici, setRisici] = useState(false);
+  const [isNotesPanelOpen, setIsNotesPanelOpen] = useState(false);
 
   const backupMessage = useRef("");
 
@@ -271,6 +276,8 @@ export const ChatContextProvider = ({
         setMetode,
         risici,
         setRisici,
+        isNotesPanelOpen,
+        setIsNotesPanelOpen,
       }}
     >
       {children}

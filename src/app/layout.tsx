@@ -31,20 +31,19 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
   return (
     <html lang="en" className={`light ${inter.variable}`}>
-      {/* Remove the empty <head> tag */}
       <Providers>
-        <body
-          className={cn(
-            "min-h-screen antialiased grainy flex flex-col",
-            inter.className
-          )}
-        >
-          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-          <Toaster richColors />
-          <Navbar />
-          <main className="flex-grow">{children}</main>
-          <Footer />
-        </body>
+          <body
+            className={cn(
+              "min-h-screen antialiased grainy flex flex-col",
+              inter.className
+            )}
+          >
+            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+            <Toaster richColors />
+            <Navbar />
+            <main className="flex-grow">{children}</main>
+            <Footer />
+          </body>
       </Providers>
     </html>
   );

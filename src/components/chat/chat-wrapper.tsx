@@ -3,12 +3,12 @@
 import type { UploadStatus } from "@prisma/client";
 import { ChevronLeft, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 import { trpc } from "@/app/_trpc/client";
 import { buttonVariants } from "@/components/ui/button";
 
-import { ChatContextProvider } from "./chat-context";
+import { ChatContextProvider, ChatContext } from "./chat-context";
 import { ChatInput } from "./chat-input";
 import { Messages } from "./messages";
 
@@ -16,7 +16,7 @@ type ChatWrapperProps = {
   fileId: string;
 };
 
-export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
+const ChatWrapperContent = ({ fileId }: ChatWrapperProps) => {
   const [status, setStatus] = useState<UploadStatus>();
   const { data, isLoading } = trpc.getFileUploadStatus.useQuery(
     {
@@ -28,13 +28,15 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
     },
   );
 
+  const { isNotesPanelOpen } = useContext(ChatContext);
+
   useEffect(() => {
     setStatus(data?.status);
   }, [data?.status]);
 
   if (isLoading) {
     return (
-      <div className="relative h-full bg-white rounded-xl shadow-md flex flex-col">
+      <div className="relative h-full bg-[#fafafa] rounded-xl shadow-md flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
@@ -51,7 +53,7 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
 
   if (data?.status === "PROCESSING") {
     return (
-      <div className="relative h-full bg-white rounded-xl shadow-md flex flex-col">
+      <div className="relative h-full bg-[#fafafa] rounded-xl shadow-md flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
           <div className="flex flex-col items-center gap-2">
             <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
@@ -66,7 +68,7 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
 
   if (data?.status === "FAILED") {
     return (
-      <div className="relative h-full bg-white rounded-xl shadow-md flex flex-col">
+      <div className="relative h-full bg-[#fafafa] rounded-xl shadow-md flex flex-col">
         <div className="flex-1 flex justify-center items-center flex-col mb-28">
           <div className="flex flex-col items-center gap-2">
             <XCircle className="h-8 w-8 text-rose-500" />
@@ -92,13 +94,21 @@ export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
   }
 
   return (
-    <ChatContextProvider fileId={fileId}>
-      <div className="relative h-full bg-white rounded-xl shadow-lg flex flex-col">
-        <div className="flex-1 flex flex-col overflow-hidden">
+    <div className={`relative h-full bg-[#fafafa] rounded-xl shadow-lg flex flex-col transition-all duration-300 ease-in-out ${isNotesPanelOpen ? 'w-[calc(100%-24rem)]' : 'w-full'}`}>
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="px-4 py-4 flex-1 overflow-y-auto">
           <Messages fileId={fileId} />
         </div>
-        <ChatInput />
       </div>
+      <ChatInput />
+    </div>
+  );
+};
+
+export const ChatWrapper = ({ fileId }: ChatWrapperProps) => {
+  return (
+    <ChatContextProvider fileId={fileId}>
+      <ChatWrapperContent fileId={fileId} />
     </ChatContextProvider>
   );
 };

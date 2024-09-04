@@ -22,9 +22,6 @@ export async function POST(req: NextRequest) {
   const { 
     fileId, 
     message, 
-    includePageNumbers,
-    argumentAnalysis,
-    exploreScenarios,
     kontraktvilkaar,
     okonomi,
     metode,
@@ -94,9 +91,6 @@ export async function POST(req: NextRequest) {
         content:
           `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Svar altid i markdown format og vær præcis og koncis. Hvis du er usikker, så sig det ærligt frem for at gætte.
           Inkluder in-text citationer for hver specifik reference i dit svar ved at bruge tal i firkantede parenteser, f.eks. [1], [2], osv. Dette hjælper brugeren med at finde informationen i originaldokumentet.
-          ${includePageNumbers ? "Inkluder sidetal for hver specifik reference i dit svar. Dette hjælper brugeren med at finde informationen i originaldokumentet." : ""}
-          ${argumentAnalysis ? "Inkludér hvor det er nødvendigt en grundig analyse af argumenterne præsenteret i den givne kontekst. Identificer hovedargumenter, understøttende beviser og potentielle svagheder." : ""}
-          ${exploreScenarios ? "Inkludér hvor det er brugbart forskellige hypotetiske scenarier baseret på den givne kontekst. Overvej potentielle udfald og konsekvenser af de præsenterede situationer." : ""}
           ${kontraktvilkaar ? "Læg særlig vægt på at analysere kontraktvilkår. Fremhæv vigtige klausuler, potentielle faldgruber og juridiske implikationer." : ""}
           ${okonomi ? "Læg særlig vægt på at analysere de økonomiske aspekter nævnt i teksten. Inkluder finansielle prognoser, risici og potentielle muligheder hvor relevant." : ""}
           ${metode ? "Gennemgå og forklar den metodologi, der er anvendt eller nævnt i teksten. Vurder dens styrker, svagheder og potentielle bias." : ""}
