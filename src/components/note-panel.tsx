@@ -109,10 +109,10 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: '100%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed top-4 right-4 bottom-4 w-full sm:w-[24rem] max-w-full bg-[rgb(245,245,247)] rounded-2xl shadow-lg overflow-hidden flex flex-col border border-zinc-950/10 z-50 sm:max-w-sm md:max-w-md lg:max-w-lg"
+          className="fixed top-20 right-4 bottom-5 w-full sm:w-[24rem] max-w-full bg-[rgb(245,245,247)] rounded-lg shadow-lg overflow-hidden flex flex-col z-50 sm:max-w-sm md:max-w-md lg:max-w-lg"
         >
           <div className="bg-white p-4 sm:p-6 border-b border-zinc-950/10 flex justify-between items-center rounded-t-2xl">
-            <h2 className="text-xl sm:text-2xl font-bold text-zinc-800">Notes</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-zinc-800">Noter</h2>
             <div className="flex items-center space-x-2">
               <button
                 onClick={handleExport}
@@ -134,15 +134,15 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
               <textarea
                 value={currentNote}
                 onChange={handleNoteChange}
-                placeholder="Write your note here..."
+                placeholder="Tilføj din note her..."
                 className="w-full min-h-[6rem] sm:min-h-[8rem] p-2 border border-zinc-300 rounded-md mb-2 resize-none focus:outline-none focus:ring-2 focus:ring-zinc-300 focus:border-transparent"
                 ref={(el) => setTextareaRef(el, 'new')}
               />
               <button
                 onClick={saveNote}
-                className="w-full px-4 py-2 bg-slate-950 text-white rounded-md hover:bg-slate-800 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-slate-700 focus:ring-opacity-50"
+                className="w-full px-4 py-2 bg-slate-950 text-white rounded-full hover:bg-slate-800 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-slate-700 focus:ring-opacity-50"
               >
-                Save Note
+                Gem
               </button>
             </div>
             <div className="space-y-3 sm:space-y-4">

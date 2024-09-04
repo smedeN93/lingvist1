@@ -36,7 +36,7 @@ export const Message = forwardRef<HTMLDivElement, MessageProps>(
                       <span className="flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-600 rounded-full cursor-pointer transition-all duration-200 ease-in-out group-hover:bg-blue-700">
                         {citationIndex + 1}
                       </span>
-                      <span className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-white text-gray-800 text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 transition-all duration-200 w-64 text-left pointer-events-none shadow-lg border border-gray-200">
+                      <span className="absolute top-0 left-full ml-2 bg-white text-gray-800 text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 transition-all duration-200 w-64 text-left pointer-events-none shadow-lg border border-gray-200 whitespace-normal">
                         <strong>Side {citationIndex + 1}:</strong> {citation}
                       </span>
                     </span>
