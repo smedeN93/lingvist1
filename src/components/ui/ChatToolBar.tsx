@@ -155,7 +155,7 @@ export default function ToolbarExpandable() {
         <button
           aria-label="Tematisk Filtrering"
           className={cn(
-            'flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500',
+            'flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-600 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-zinc-950/10',
             isOpen && 'bg-blue-500 text-white hover:bg-blue-600'
           )}
           onClick={() => setIsOpen(!isOpen)}

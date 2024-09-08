@@ -16,7 +16,7 @@ type ChatInputProps = {
 
 export const ChatInput = ({ isDisabled }: ChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { addMessage, handleInputChange, isLoading, message, isNotesPanelOpen, setIsNotesPanelOpen } =
+  const { addMessage, handleInputChange, isLoading, message, isNotesPanelOpen, setIsNotesPanelOpen, fileId } =
     useContext(ChatContext);
 
   return (
@@ -106,6 +106,7 @@ export const ChatInput = ({ isDisabled }: ChatInputProps) => {
           closeButtonText="Luk" 
           isOpen={isNotesPanelOpen}
           onToggle={() => setIsNotesPanelOpen(!isNotesPanelOpen)}
+          fileId={fileId}
         />
       </form>
     </div>

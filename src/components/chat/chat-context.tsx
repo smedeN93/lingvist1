@@ -12,12 +12,6 @@ type StreamResponse = {
   message: string;
   handleInputChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   isLoading: boolean;
-  includePageNumbers: boolean;
-  setIncludePageNumbers: (include: boolean) => void;
-  argumentAnalysis: boolean;
-  setArgumentAnalysis: (include: boolean) => void;
-  exploreScenarios: boolean;
-  setExploreScenarios: (include: boolean) => void;
   kontraktvilkaar: boolean;
   setKontraktvilkaar: (include: boolean) => void;
   okonomi: boolean;
@@ -28,6 +22,7 @@ type StreamResponse = {
   setRisici: (include: boolean) => void;
   isNotesPanelOpen: boolean;
   setIsNotesPanelOpen: (isOpen: boolean) => void;
+  fileId: string,
 };
 
 export const ChatContext = createContext<StreamResponse>({
@@ -35,12 +30,6 @@ export const ChatContext = createContext<StreamResponse>({
   message: "",
   handleInputChange: () => {},
   isLoading: false,
-  includePageNumbers: false,
-  setIncludePageNumbers: () => {},
-  argumentAnalysis: false,
-  setArgumentAnalysis: () => {},
-  exploreScenarios: false,
-  setExploreScenarios: () => {},
   kontraktvilkaar: false,
   setKontraktvilkaar: () => {},
   okonomi: false,
@@ -51,6 +40,7 @@ export const ChatContext = createContext<StreamResponse>({
   setRisici: () => {},
   isNotesPanelOpen: false,
   setIsNotesPanelOpen: () => {},
+  fileId: "",
 });
 
 export const ChatContextProvider = ({
@@ -59,11 +49,9 @@ export const ChatContextProvider = ({
 }: PropsWithChildren<{
   fileId: string;
 }>) => {
+  console.log('fileId in ChatContextProvider:', fileId);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [includePageNumbers, setIncludePageNumbers] = useState(false);
-  const [argumentAnalysis, setArgumentAnalysis] = useState(false);
-  const [exploreScenarios, setExploreScenarios] = useState(false);
   const [kontraktvilkaar, setKontraktvilkaar] = useState(false);
   const [okonomi, setOkonomi] = useState(false);
   const [metode, setMetode] = useState(false);
@@ -81,9 +69,6 @@ export const ChatContextProvider = ({
         body: JSON.stringify({
           fileId,
           message,
-          includePageNumbers,
-          argumentAnalysis,
-          exploreScenarios,
           kontraktvilkaar,
           okonomi,
           metode,
@@ -262,12 +247,6 @@ export const ChatContextProvider = ({
         message,
         handleInputChange,
         isLoading,
-        includePageNumbers,
-        setIncludePageNumbers,
-        argumentAnalysis,
-        setArgumentAnalysis,
-        exploreScenarios,
-        setExploreScenarios,
         kontraktvilkaar,
         setKontraktvilkaar,
         okonomi,
@@ -278,6 +257,7 @@ export const ChatContextProvider = ({
         setRisici,
         isNotesPanelOpen,
         setIsNotesPanelOpen,
+        fileId
       }}
     >
       {children}

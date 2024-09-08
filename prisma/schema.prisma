@@ -16,6 +16,7 @@ model User {
   stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
   File                   File[]
   Message                Message[]
+  Note                   Note[]
 }
 
 model File {
@@ -29,6 +30,7 @@ model File {
   updatedAt    DateTime     @updatedAt
   User         User?        @relation(fields: [userId], references: [id])
   messages     Message[]
+  notes        Note[]
 }
 
 model Message {
@@ -43,6 +45,18 @@ model Message {
   User          User?    @relation(fields: [userId], references: [id])
 }
 
+model Note {
+  id        String   @id @default(cuid())
+  title     String   @default("Ny note")
+  content   String
+  aiResponse String?
+  userId    String
+  fileId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  User      User     @relation(fields: [userId], references: [id])
+  File      File     @relation(fields: [fileId], references: [id])
+}
 enum UploadStatus {
   PENDING
   PROCESSING

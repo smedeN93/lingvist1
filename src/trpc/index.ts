@@ -56,6 +56,129 @@ export const appRouter = router({
       },
     });
   }),
+
+  createNote: privateProcedure
+  .input(z.object({
+    title: z.string(),
+    content: z.string(),
+    fileId: z.string(),
+  }))
+  .mutation(async ({ ctx, input }) => {
+    const { title, content, fileId } = input;
+    const { userId } = ctx;
+
+    // Tjek om filen eksisterer og tilhører brugeren
+    const file = await db.file.findUnique({
+      where: {
+        id: fileId,
+        userId,
+      },
+    });
+
+    if (!file) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Filen blev ikke fundet eller tilhører ikke brugeren.',
+      });
+    }
+
+    const note = await db.note.create({
+      data: {
+        title,
+        content,
+        userId,
+        fileId,
+      },
+    });
+
+    return note;
+  }),
+  
+  getNotes: privateProcedure
+    .input(z.object({ fileId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { fileId } = input;
+
+      const notes = await db.note.findMany({
+        where: {
+          userId,
+          fileId,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+      });
+
+      return notes;
+    }),
+
+    deleteNote: privateProcedure
+  .input(z.object({ id: z.string() }))
+  .mutation(async ({ ctx, input }) => {
+    const { userId } = ctx;
+    const { id } = input;
+
+    const note = await db.note.findUnique({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!note) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Noten blev ikke fundet eller tilhører ikke brugeren.',
+      });
+    }
+
+    await db.note.delete({
+      where: {
+        id,
+      },
+    });
+
+    return { success: true };
+  }),
+
+  updateNote: privateProcedure
+  .input(z.object({
+    id: z.string(),
+    title: z.string(),
+    content: z.string(),
+    aiResponse: z.string().nullable().optional(),
+  }))
+  .mutation(async ({ ctx, input }) => {
+    const { userId } = ctx;
+    const { id, title, content, aiResponse } = input;
+
+    const note = await db.note.findUnique({
+      where: {
+        id,
+        userId,
+      },
+    });
+
+    if (!note) {
+      throw new TRPCError({
+        code: 'NOT_FOUND',
+        message: 'Noten blev ikke fundet eller tilhører ikke brugeren.',
+      });
+    }
+
+    const updatedNote = await db.note.update({
+      where: { id },
+      data: { 
+        title,
+        content,
+        aiResponse: aiResponse !== undefined ? aiResponse : note.aiResponse,
+      },
+    });
+
+    return updatedNote;
+  }),
+
   deleteFile: privateProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
