@@ -1,7 +1,10 @@
 "use client"
 
 import React, { Suspense } from "react";
-import { LandingPage } from "@/components/ui/landing-page-aurora";
+import LandingPage from "@/components/ui/landing-page-aurora";
+import ShuffleSection from "@/components/ui/ShuffleSection";
+import Expandable from "@/components/ui/expandableimagescard";
+
 
 const AnswerResponse = React.lazy(() => import("@/components/ui/AnswerResponse"));
 const IntermediateCard = React.lazy(() => import("@/components/ui/IntermediateCard"));
@@ -26,6 +29,12 @@ const HomePage = () => {
         </Suspense>
       </div>
       
+      <div className="min-h-screen flex items-center justify-center pt-16 sm:pt-2 md:pt-32 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6 lg:px-8">
+        <Suspense fallback={<LoadingFallback />}>
+          <ShuffleSection />
+        </Suspense>
+      </div>
+
       <div className="pt-16 sm:pt-2 md:pt-32 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6 lg:px-8">
         <Suspense fallback={<LoadingFallback />}>
           <IntermediateCard
@@ -107,6 +116,15 @@ Stil et spørgsmål. Få præcise svar. Direkte fra dine dokumenter."
           <PreFooter />
         </Suspense>
       </div>
+      <div className="mt-24 md:mt-32 mb-24 md:mb-32 px-4 sm:px-6 lg:px-8">
+      <Expandable
+        title="Your Title Here"
+        staticText="Your static text here"
+        descriptionText="Your description here"
+        buttonText="Click Me"
+        buttonHref="/your-link"
+      />
+    </div>
     </div>
   );
 };

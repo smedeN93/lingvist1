@@ -1,13 +1,12 @@
 "use client";
 
-import { Cloud, FileIcon, Loader2 } from "lucide-react";
+import { Cloud, FileIcon, Loader2, Upload } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type Dispatch, type SetStateAction, useState } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
 
 import { trpc } from "@/app/_trpc/client";
-import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useUploadThing } from "@/lib/uploadthing";
@@ -45,20 +44,15 @@ const UploadDropzone = ({
   );
 
   const startSimulatedProgress = () => {
-    // reset upload progress
     setError("");
     setUploadProgress(0);
 
-    // update progress every half second
     const interval = setInterval(() => {
       setUploadProgress((prevUploadProgress) => {
-        // stop updating progress if exceeds 95 (taking too long...)
         if (prevUploadProgress >= 95) {
           clearInterval(interval);
           return prevUploadProgress;
         }
-
-        // update progress by 5
         return prevUploadProgress + 5;
       });
     }, 500);
@@ -83,7 +77,6 @@ const UploadDropzone = ({
 
         const progressInterval = startSimulatedProgress();
 
-        // handle file upload
         const res = await startUpload(acceptedFile);
 
         if (!res) {
@@ -130,21 +123,17 @@ const UploadDropzone = ({
                 </p>
               </div>
 
-              {/* render uploaded files */}
               {acceptedFiles && acceptedFiles[0] ? (
                 <div className="max-w-xl bg-white flex items-center rounded-md overflow-hidden outline outline-[1px] outline-zinc-200 divide-x divide-zinc-200">
                   <div className="px-3 py-2 h-full grid place-items-center">
                     <FileIcon className="h-4 w-4 text-blue-500" />
                   </div>
-
-                  {/* file name */}
                   <div className="px-3 py-2 h-full text-sm truncate">
                     {acceptedFiles[0].name}
                   </div>
                 </div>
               ) : null}
 
-              {/* progress bar */}
               {isUploading ? (
                 <div className="w-full mt-4 max-w-xs mx-auto">
                   <Progress
@@ -163,7 +152,6 @@ const UploadDropzone = ({
                 </div>
               ) : null}
 
-              {/* error */}
               {error && error.length !== 0 ? (
                 <p className="mt-4 mx-auto text-sm text-rose-500">{error}</p>
               ) : null}
@@ -187,12 +175,17 @@ export const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
       }}
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <Button
+        <button
+          className="group relative overflow-hidden rounded-full bg-gradient-to-b from-gray-100 to-gray-200 px-6 py-2 shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 active:from-gray-200 active:to-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={isOpen || isUploading}
           aria-disabled={isOpen || isUploading}
         >
-          Upload PDF
-        </Button>
+          <div className="relative z-10 flex items-center justify-center space-x-2">
+            <Upload className="h-5 w-5 text-gray-700" />
+            <span className="text-sm font-medium text-gray-700">Upload</span>
+          </div>
+          <div className="absolute inset-0 z-0 bg-gradient-to-b from-white to-gray-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+        </button>
       </DialogTrigger>
 
       <DialogContent>

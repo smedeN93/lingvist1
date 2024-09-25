@@ -30,7 +30,7 @@ export default function QuestionPopup({ onSubmit, noteId, updateNoteContent, set
       })
 
       if (!response.ok) {
-        throw new Error('Failed to submit question')
+        throw new Error('Fejl ved opdatering af note')
       }
 
       return response.body
@@ -119,15 +119,15 @@ export default function QuestionPopup({ onSubmit, noteId, updateNoteContent, set
       </Button>
 
       {isOpen && (
-        <div 
-          ref={popupRef}
-          className="absolute mt-2 left-full ml-2 w-80 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 ease-out"
-          style={{
-            animation: 'fadeIn 0.3s ease-out',
-          }}
-        >
+  <div 
+    ref={popupRef}
+    className="absolute bottom-full mb-2 right-[-2rem] w-80 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 ease-out z-50"
+    style={{
+      animation: 'fadeIn 0.3s ease-out',
+    }}
+  >
           <div className="bg-gray-50 p-3 flex justify-between items-center border-b border-gray-200">
-            <span className="font-semibold text-sm text-gray-800">Ask AI</span>
+            <span className="font-semibold text-m text-gray-800">Stil et spørgsmål</span>
             <Button 
               variant="ghost" 
               size="icon"
@@ -135,13 +135,13 @@ export default function QuestionPopup({ onSubmit, noteId, updateNoteContent, set
               className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full"
             >
               <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
+              <span className="sr-only">Luk</span>
             </Button>
           </div>
           <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-3">
             <Input
               type="text"
-              placeholder="Type your question..."
+              placeholder="Skriv dit spørgsmål..."
               value={question}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuestion(e.target.value)}
               className="flex-grow border-gray-300 focus:ring-blue-500 focus:border-blue-500 rounded-lg"
@@ -158,12 +158,12 @@ export default function QuestionPopup({ onSubmit, noteId, updateNoteContent, set
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  Processing...
+                  Behandler...
                 </span>
               ) : (
                 <>
                   <Send className="mr-2 h-4 w-4" />
-                  Send Question
+                  Send
                 </>
               )}
             </Button>

@@ -96,7 +96,7 @@ const ChatWrapperContent = ({ fileId }: ChatWrapperProps) => {
   return (
     <div className={`relative h-full bg-[#fafafa] rounded-xl shadow-lg flex flex-col transition-all duration-300 ease-in-out ${isNotesPanelOpen ? 'w-[calc(100%-24rem)]' : 'w-full'}`}>
       <div className="flex-1 flex flex-col overflow-hidden">
-        <div className="px-4 py-4 flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto">
           <Messages fileId={fileId} />
         </div>
       </div>

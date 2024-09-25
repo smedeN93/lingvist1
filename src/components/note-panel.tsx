@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { trpc } from '@/app/_trpc/client';
 import { debounce } from 'lodash';
 import QuestionPopup from './chat/ButtonAskNotes';
+import ReactMarkdown from 'react-markdown';
 
 interface Note {
   id: string;
@@ -40,7 +41,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
 
   const { mutate: createNote } = trpc.createNote.useMutation({
     onSuccess: (newNote) => {
-      setNotes([...notes, { ...newNote, isUpdatingByAI: false }]);
+      setNotes([{ ...newNote, isUpdatingByAI: false }, ...notes]);
       setCurrentNote('');
       setCurrentNoteTitle('');
       if (textareaRefs.current['new']) {
@@ -59,6 +60,9 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
       console.error('Fejl ved gemning af note:', error);
     }
   });
+  const renderMarkdown = (text: string) => {
+    return <ReactMarkdown>{text}</ReactMarkdown>;
+  };
 
   const handleFetchedNotes = useCallback((fetchedNotes: Note[]) => {
     if (fetchedNotes) {
@@ -190,7 +194,6 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
     ));
   };
 
-  // New useEffect to handle auto-resizing of textareas
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => {
@@ -238,13 +241,6 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
           <div className="bg-[#fafafa] p-4 sm:p-6 border-b border-zinc-950/10 flex justify-between items-center rounded-t-2xl">
             <h2 className="text-xl sm:text-2xl font-bold text-zinc-800">Noter</h2>
             <div className="flex items-center space-x-2">
-              <button
-                onClick={handleExport}
-                className="p-2 text-zinc-500 hover:text-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 rounded-full"
-                aria-label="Eksportér noter"
-              >
-                <Download className="h-5 w-5" />
-              </button>
               <button
                 onClick={onToggle}
                 className="text-zinc-500 hover:text-zinc-800 transition-colors"
@@ -316,7 +312,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
                     />
                     {note.aiResponse && (
                       <div className="mt-2 p-2 rounded-lg text-sm bg-gray-200 text-gray-900">
-                        <strong>Lingvist:</strong> {note.aiResponse}
+                        {renderMarkdown(note.aiResponse)}
                       </div>
                     )}
                   </div>

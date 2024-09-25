@@ -51,8 +51,8 @@ const AnswerResponse = () => {
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold dark:text-white mb-4">
               En app der bringer <span className="text-blue-600">kunstig intelligens</span> til dine dokumenter.
             </h2>
-            <p className="text-sm sm:text-base md:text-lg lg:text-xl font-normal sm:font-medium text-slate-950 dark:text-slate-300">
-              Lingvist forvandler dine dokumenter til samtalepartnere. Find svar, opsummér indhold og skab nyt - alt sammen på brøkdel af tiden du plejer. Som vidensarbejder har du vigtigere ting at bruge din tid på.
+            <p className="text-sm sm:text-base xl:text-lg text-slate-950 dark:text-slate-300">
+              Lingvist gør din søgen til en samtale, så du kan finde svar på en brøkdel af tiden du plejer.
             </p>
           </div>
         </motion.div>

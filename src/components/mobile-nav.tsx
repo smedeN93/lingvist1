@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
   const pathname = usePathname();
@@ -26,7 +28,13 @@ export const MobileNav = ({ isAuth }: { isAuth: boolean }) => {
         </Link>
         {!isAuth ? (
           <>
-            <Link href="/sign-in" className="text-slate-950 text-sm font-semibold">
+            <Link
+              href="/sign-in"
+              className={cn(
+                buttonVariants({ variant: "secondary", size: "sm" }),
+                "bg-white text-slate-800 border border-slate-200 hover:bg-slate-50"
+              )}
+            >
               Log ind
             </Link>
             <Link href="/sign-up" className="bg-slate-950 text-white text-sm font-medium py-2 px-4 rounded-full">

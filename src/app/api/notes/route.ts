@@ -36,12 +36,12 @@ export async function POST(req: NextRequest) {
       model: "gpt-4o-mini",
       temperature: 0,
       stream: true,
-      max_tokens: 50,
+      max_tokens: 75,
       messages: [
         {
           role: "system",
           content:
-            `Du er en hjælpsom assistent, der opdaterer brugernotater. Giv klare, koncise svar baseret på konteksten og brugerens input. Fokuser på relevant information uden at gentage eksisterende noteindhold. Begræns dit svar til maksimalt 2-3 korte, men fuldstændige sætninger og én overskrift. Dit svar skal altid kunne tilføjes direkte til en eksisterende note.`,
+            `Du er en hjælpsom assistent, der opdaterer brugernotater. Giv klare, koncise svar baseret på konteksten og brugerens input. Fokuser på relevant information uden at gentage eksisterende noteindhold. Begræns dit svar til maksimalt 1-2 korte, men fuldstændige sætninger og én overskrift. Dit svar skal altid kunne tilføjes direkte til en eksisterende note.`,
         },
         {
           role: "user",

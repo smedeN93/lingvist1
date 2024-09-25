@@ -1,17 +1,17 @@
 "use client";
+
 import { motion } from "framer-motion";
 import React from 'react';
 import { PlaceholdersAndVanishInputDemo } from "./placeholders-and-vanish-input";
 import Image from "next/image";
 import Link from 'next/link';
+import { ShimmerButtonDemo } from "./shimmer-button";
 
 const StructuredGridBackground = () => {
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-      {/* Existing gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[rgb(245,245,247)] to-[rgb(240,240,242)]" />
       
-      {/* Adjusted Fade-to-white overlay */}
       <div 
         className="absolute inset-0" 
         style={{
@@ -21,7 +21,7 @@ const StructuredGridBackground = () => {
       
       <div className="absolute inset-0 flex items-center justify-center">
         <div 
-          className="w-full max-w-[1320px] h-full relative border border-[rgba(220,220,225,0.8)]"
+          className="w-full max-w-[1663px] h-full relative border border-[rgba(220,220,225,0.8)]"
           style={{
             backgroundImage: `
               linear-gradient(to right, rgba(220,220,225,0.8) 1px, transparent 1px),
@@ -31,7 +31,6 @@ const StructuredGridBackground = () => {
             backgroundPosition: '-1px -1px',
           }}
         >
-          {/* Top-left cross */}
           <div 
             className="absolute -top-[1.5px] -left-[1.5px]" 
             style={{
@@ -41,7 +40,6 @@ const StructuredGridBackground = () => {
               borderLeft: '1.5px solid rgba(210,210,215,1)',
             }}
           />
-          {/* Bottom-right cross */}
           <div 
             className="absolute -bottom-[1.5px] -right-[1.5px]" 
             style={{
@@ -57,12 +55,12 @@ const StructuredGridBackground = () => {
   );
 };
 
-export function LandingPage() {
+export default function LandingPage() {
   return (
     <div className="relative min-h-screen">
       <StructuredGridBackground />
       
-      <div className="relative z-10 max-w-7xl mx-auto">
+      <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0.0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -71,28 +69,24 @@ export function LandingPage() {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="relative flex flex-col items-center justify-center px-4 space-y-4 sm:space-y-6 pt-28 xs:pt-32 sm:pt-36 lg:pt-40 xl:pt-44"
+          className="relative flex flex-col items-center justify-center space-y-4 sm:space-y-6 pt-28 xs:pt-32 sm:pt-36 lg:pt-40 xl:pt-44"
         >
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-slate-950 text-center">
-            Chat med dine dokumenter
-          </h1>
-          <div className="font-extralight text-xl sm:text-2xl lg:text-3xl xl:text-4xl text-slate-700 text-center">
-            AI. Dine dokumenter. Mere indsigt. Enkelt og ligetil.
+          <div className="space-y-0 sm:space-y-2 w-full text-center">
+            <h1 className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-slate-950 mx-auto">
+              Chat med dine dokumenter<span className="text-blue-600">.</span>
+            </h1>
+            <div className="text-lg sm:text-2xl lg:text-3xl xl:text-4xl font-extralight text-slate-950">
+              AI der citerer direkte fra dine dokumenter<span className="text-blue-600 text-[1.5em]">.</span>
+            </div>
           </div>
           
           <PlaceholdersAndVanishInputDemo />
           
-          <p className="text-xs sm:text-sm lg:text-base text-slate-600 mt-2 sm:mt-3">
+          <p className="text-xs sm:text-sm lg:text-base text-slate-750 mt-2 sm:mt-3">
             Tilmeld gratis med Email, Google eller LinkedIn
           </p>
           
           <SignInButtons />
-          
-          <OrDivider />
-          
-          <p className="text-xs sm:text-sm lg:text-base text-slate-600 mb-6 sm:mb-8 lg:mb-10 xl:mb-12">
-            Kom i gang uden kreditkort.
-          </p>
         </motion.div>
 
         <motion.div
@@ -103,101 +97,44 @@ export function LandingPage() {
             duration: 0.8,
             ease: "easeInOut",
           }}
-          className="w-full mx-auto"
+          className="w-full mx-auto mt-8 sm:mt-12 lg:mt-16 px-0 sm:px-4 lg:px-6"
         >
-          <StaticBrowserFrame 
-            imageSrc="/lingvist_chat_preview15.webp"
-            url="https://lingvist.dk/dashboard"
-          />
+          <div className="relative w-full mx-auto">
+            <Image 
+              src="/lingvist_chat_preview15.webp"
+              alt="Screenshot of application"
+              width={3840}
+              height={1907}
+              className="w-full h-auto rounded-lg sm:rounded-2xl shadow-lg"
+              quality={100}
+              priority
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 80vw"
+            />
+          </div>
         </motion.div>
       </div>
     </div>
   );
 }
-interface StaticBrowserFrameProps {
-  imageSrc: string;
-  url?: string;
-}
-
-const StaticBrowserFrame: React.FC<StaticBrowserFrameProps> = ({
-  imageSrc,
-  url = "https://example.com/static-image"
-}) => {
-  return (
-    <div className="w-full max-w-7xl mx-auto my-6 lg:my-16 px-4 sm:px-6 lg:px-8">
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl transform scale-[1.02] blur-2xl opacity-50"></div>
-        
-        <div className="relative bg-white rounded-xl lg:rounded-3xl overflow-hidden border-[0.5px] sm:border border-gray-200 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.1)] transition-all duration-300 hover:shadow-[0_20px_60px_-20px_rgba(0,0,0,0.15)]">
-          
-          <div className="bg-gradient-to-b from-gray-50 to-gray-100 border-b-[0.5px] sm:border-b border-gray-200">
-            <div className="flex items-center px-2 sm:px-3 py-1 sm:py-2">
-              <div className="flex space-x-1 sm:space-x-1.5 mr-2 sm:mr-3">
-                <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-red-400 rounded-full"></div>
-                <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-yellow-400 rounded-full"></div>
-                <div className="w-1.5 h-1.5 sm:w-2.5 sm:h-2.5 bg-green-400 rounded-full"></div>
-              </div>
-            </div>
-
-            <div className="flex items-center px-2 sm:px-3 py-0.5 sm:py-1.5">
-              <div className="flex-1 bg-white rounded-full shadow-inner flex items-center border-[0.5px] sm:border border-gray-200">
-                <div className="flex items-center px-1.5 sm:px-2 py-0.5 sm:py-1 space-x-1 sm:space-x-1.5 text-gray-500 w-full">
-                  <svg className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                  </svg>
-                  <span className="text-[8px] sm:text-xs font-light truncate">{url}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white relative">
-            <div className="w-full h-0 pb-[49.66%] relative overflow-hidden">
-              <Image 
-                src={imageSrc}
-                alt="Screenshot of Lingvist application"
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1200px"
-                style={{ objectFit: 'cover' }}
-                quality={100}
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/15 pointer-events-none"></div>
-              <div className="absolute inset-0 bg-slate-950/[0.02] pointer-events-none"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const SignInButtons = () => {
   return (
-    <div className="flex flex-row space-x-2 sm:space-x-4 justify-center w-full max-w-[200px] sm:max-w-none">
-      <Link href="/dashboard" passHref>
-        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-slate-950 text-white h-8 sm:h-auto sm:py-2 px-3 sm:px-4 rounded-full border border-slate-800 hover:bg-slate-800 transition-all duration-200 text-[11px] sm:text-sm font-medium">
-          <Image src="/google-logo.svg" alt="Google logo" width={14} height={14} className="w-3 h-3 sm:w-4 sm:h-4" />
-          <span>Google</span>
-        </button>
-      </Link>
-      <Link href="/dashboard" passHref>
-        <button className="flex items-center justify-center space-x-1 sm:space-x-2 bg-slate-950 text-white h-8 sm:h-auto sm:py-2 px-3 sm:px-4 rounded-full border border-slate-800 hover:bg-slate-800 transition-all duration-200 text-[11px] sm:text-sm font-medium">
-          <Image src="/linkedin-logo.svg" alt="LinkedIn logo" width={14} height={14} className="w-3 h-3 sm:w-4 sm:h-4" />
-          <span>LinkedIn</span>
-        </button>
-      </Link>
+    <div className="flex flex-row space-x-2 sm:space-x-3 md:space-x-6 items-stretch justify-center">
+      <div className="w-36 sm:w-44">
+        <ShimmerButtonDemo 
+          text="Prøv det gratis" 
+          href="/dashboard" 
+          className="w-full h-full"
+        />
+      </div>
+      <div className="w-36 sm:w-44">
+        <Link href="/dashboard" className="block h-full">
+          <button className="w-full h-full group flex items-center justify-center space-x-2 bg-white text-slate-800 px-2 rounded-full border border-slate-200 hover:bg-slate-50 transition-all duration-200 text-xs sm:text-sm font-medium shadow-sm hover:shadow-md">
+            <Image src="/google-logo.svg" alt="Google logo" width={16} height={16} className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:scale-110" />
+            <Image src="/linkedin-logo.svg" alt="LinkedIn logo" width={16} height={16} className="w-4 h-4 sm:w-5 sm:h-5 transition-transform group-hover:scale-110" />
+          </button>
+        </Link>
+      </div>
     </div>
-  );
-};
-
-const OrDivider = () => {
-  return (
-    <div className="flex items-center w-full max-w-xs my-4">
-      <div className="flex-grow border-t border-gray-300"></div>
-      <div className="flex-grow border-t border-gray-300"></div>
-    </div>
-  );
-};
-
-export default LandingPage;
+  )
+}

@@ -11,6 +11,7 @@ import { MobileNav } from "./mobile-nav";
 import { UserAccountNav } from "./user-account-nav";
 import { NavbarWrapper } from "./navbarwrapper";
 import { ShimmerRegisterLink } from "./ui/ShimmerRegisterLink";
+import { cn } from "@/lib/utils";
 
 export const Navbar = async () => {
   const { getUser } = getKindeServerSession();
@@ -21,10 +22,10 @@ export const Navbar = async () => {
       <NavbarWrapper>
         <MaxWidthWrapper>
           <div className="flex h-14 items-center justify-between">
-          <Link href="/" className="flex z-40 font-bold items-center">
-  <span>lingvist</span>
-  <span className="text-blue-600 text-2xl font-extrabold leading-none relative bottom-0.5">.</span>
-</Link>
+            <Link href="/" className="flex z-40 font-bold items-center">
+              <span>lingvist</span>
+              <span className="text-blue-600 text-2xl font-extrabold leading-none relative bottom-0.5">.</span>
+            </Link>
 
             <div className="flex items-center justify-center space-x-4">
               {!user ? (
@@ -33,17 +34,20 @@ export const Navbar = async () => {
                     href="/pricing"
                     className={buttonVariants({
                       variant: "ghost",
-                      size: "default",
+                      size: "sm",
                     })}
                   >
                     Priser
                   </Link>
 
                   <LoginLink
-                    className={buttonVariants({
-                      variant: "ghost",
-                      size: "default",
-                    })}
+                    className={cn(
+                      buttonVariants({
+                        variant: "secondary",
+                        size: "sm",
+                      }),
+                      "bg-white text-slate-800 border border-slate-200 hover:bg-slate-50"
+                    )}
                   >
                     Log ind
                   </LoginLink>
