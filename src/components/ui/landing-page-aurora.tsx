@@ -100,16 +100,19 @@ export default function LandingPage() {
           className="w-full mx-auto mt-8 sm:mt-12 lg:mt-16 px-0 sm:px-4 lg:px-6"
         >
           <div className="relative w-full mx-auto">
-            <Image 
-              src="/lingvist_chat_preview15.webp"
-              alt="Screenshot of application"
-              width={3840}
-              height={1907}
-              className="w-full h-auto rounded-lg sm:rounded-2xl shadow-lg"
-              quality={100}
-              priority
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 80vw"
-            />
+            <div className="relative rounded-lg sm:rounded-2xl overflow-hidden">
+              <Image 
+                src="/lingvist_chat_preview15.webp"
+                alt="Screenshot of application"
+                width={3840}
+                height={1907}
+                className="w-full h-auto"
+                quality={100}
+                priority
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 80vw"
+              />
+              <div className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(220,220,225,0.8)] rounded-lg sm:rounded-2xl"></div>
+            </div>
           </div>
         </motion.div>
       </div>
