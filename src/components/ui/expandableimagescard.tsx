@@ -129,12 +129,12 @@ const items = [
   {
     image: "/tematisk-filtrering_preview.png",
     title: "Tematisk filtrering",
-    subtitle: "Filtrér dine søgninger efter emne, så du får de mest relevante svar.",
+    subtitle: "Filtrér dine søgninger for at få relevante svar.",
   },
   {
     image: "/citat_preview.png",
     title: "Præcis citering",
-    subtitle: "Få citeringer i dine svar, så du kan få vist hvilken kilde, AI'en har fået svaret fra.",
+    subtitle: "Få citeringer så du kan stole på svarene.",
   },
 ]
 

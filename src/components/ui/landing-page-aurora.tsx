@@ -100,7 +100,7 @@ export default function LandingPage() {
           className="w-full mx-auto mt-8 sm:mt-12 lg:mt-16 px-0 sm:px-4 lg:px-6"
         >
           <div className="relative w-full mx-auto">
-            <div className="relative rounded-lg sm:rounded-2xl overflow-hidden">
+            <div className="relative rounded-lg sm:rounded-2xl overflow-hidden shadow-sm">
               <Image 
                 src="/lingvist_chat_preview15.webp"
                 alt="Screenshot of application"
