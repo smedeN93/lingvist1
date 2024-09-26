@@ -3,24 +3,25 @@
 import React, { HTMLAttributes, useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, CheckCircle2, Info } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ShimmerButton from "@/components/ui/shimmer-button"
 import Image from "next/image"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 interface ImageProps extends HTMLAttributes<HTMLDivElement> {
-  item: { image: string; title: string }
+  item: { image: string; title: string; subtitle: string }
   index: number
   activeItem: number
 }
 
 interface ExpandableProps {
-  title: string
-  staticText: string
-  descriptionText: string
-  buttonText: string
-  buttonHref: string
-  list?: { image: string; title: string }[]
+  list?: { image: string; title: string; subtitle: string }[]
   autoPlay?: boolean
   className?: string
 }
@@ -75,9 +76,10 @@ const List: React.FC<ImageProps> = ({ item, className, index, activeItem, ...pro
   return (
     <div
       className={cn(
-        "relative flex h-full w-20 min-w-10 cursor-pointer overflow-hidden rounded-md transition-all delay-0 duration-300 ease-in-out",
+        "relative flex cursor-pointer overflow-hidden rounded-md transition-all delay-0 duration-300 ease-in-out shadow-xl",
         {
-          "flex-grow": index === activeItem,
+          "h-[70%] lg:w-[70%]": index === activeItem,
+          "h-[15%] lg:w-[15%]": index !== activeItem,
         },
         className,
       )}
@@ -100,11 +102,15 @@ const List: React.FC<ImageProps> = ({ item, className, index, activeItem, ...pro
           index === activeItem ? "scale-105" : "scale-100"
         )}
       />
+      <div className="absolute inset-x-0 bottom-0 z-20 p-4 bg-gradient-to-t from-black/80 to-transparent">
+        <h3 className="text-white text-lg font-semibold mb-1 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{item.title}</h3>
+        <p className="text-white/90 text-sm font-light drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{item.subtitle}</p>
+      </div>
       {index === activeItem && (
-        <div className="absolute bottom-4 left-4 min-w-fit text-white md:bottom-8 md:left-8 z-20">
+        <div className="absolute top-4 left-4 min-w-fit text-white md:top-8 md:left-8 z-20">
           <WaveReveal
             duration="1000ms"
-            className="items-start justify-start text-xl sm:text-2xl md:text-6xl"
+            className="items-start justify-start text-xl sm:text-2xl md:text-4xl font-light drop-shadow-[0_2px_8px_rgba(0,0,0,0.7)]"
             text={item.title}
             direction="up"
           />
@@ -116,19 +122,19 @@ const List: React.FC<ImageProps> = ({ item, className, index, activeItem, ...pro
 
 const items = [
   {
-    image:
-      "/lingvist_chat_preview15.webp",
-    title: "Mountains",
+    image: "/lingvist_chat_preview15.webp",
+    title: "AI-Powered Insights",
+    subtitle: "Unlock the potential of your documents",
   },
   {
-    image:
-      "/tematisk-filtrering_preview.png",
-    title: "Great Wall of China",
+    image: "/tematisk-filtrering_preview.png",
+    title: "Smart Filtering",
+    subtitle: "Organize your information effortlessly",
   },
   {
-    image:
-      "/citat_preview.png",
-    title: "Texture & Patterns",
+    image: "/citat_preview.png",
+    title: "Precise Citations",
+    subtitle: "Back your answers with reliable sources",
   },
 ]
 
@@ -146,11 +152,6 @@ const ShimmerButtonDemo: React.FC<{ text: string; href: string }> = ({ text, hre
 }
 
 const Expandable: React.FC<ExpandableProps> = ({
-  title,
-  staticText,
-  descriptionText,
-  buttonText,
-  buttonHref,
   list = items,
   autoPlay = true,
   className
@@ -174,44 +175,69 @@ const Expandable: React.FC<ExpandableProps> = ({
 
   return (
     <motion.div 
-      className={cn("bg-[rgb(245,245,247)] rounded-[24px] p-4 sm:p-6 w-full max-w-[1663px] mx-auto overflow-hidden", className)}
+      className={cn("bg-[rgb(245,245,247)] rounded-3xl p-4 sm:p-6 lg:p-8 w-full max-w-[1663px] mx-auto overflow-hidden", className)}
       variants={containerVariants}
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true }}
     >
-      <div className="flex flex-col xl:flex-row xl:items-stretch xl:space-x-8 h-full">
-        <div className="xl:w-1/3 flex flex-col justify-between xl:justify-start h-full">
-          <div>
-            <motion.h2 
-              className="text-2xl sm:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-slate-950"
-              variants={itemVariants}
-            >
-              {title}
-            </motion.h2>
-            <motion.p 
-              className="text-sm sm:text-base xl:text-lg text-blue-600 mb-2"
-              variants={itemVariants}
-            >
-              {staticText}
-            </motion.p>
-            <motion.p 
-              className="text-sm sm:text-base xl:text-lg text-slate-950 mb-2"
-              variants={itemVariants}
-            >
-              {descriptionText}
-            </motion.p>
+      <div className="flex flex-col lg:flex-row">
+        <motion.div className="lg:w-1/2 flex flex-col mb-6 lg:mb-0" variants={itemVariants}>
+          <div className="mb-2 flex items-center">
+            <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
+              Hyppigt nye features
+            </span>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="text-blue-600 hover:text-blue-800 transition-colors">
+                    <Info className="w-4 h-4" />
+                    <span className="sr-only">Information om hvor meget mere overblik man får ved brug af Lingvist.</span>
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                  <p className="text-sm text-wrap">
+                    Når du uploader dine dokumenter til Lingvist, gør du dem til den primære informationskilde for AI. Det gør ganske enkelt, at du slipper for at bekymre dig om sandhedsgraden af de svar du får. De er nemlig baseret på dine dokumenter.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
-          <motion.div variants={itemVariants} className="mt-4 xl:mt-0">
-            <ShimmerButtonDemo text={buttonText} href={buttonHref} />
-          </motion.div>
-        </div>
+          <div className="mb-4 lg:mb-6">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-slate-950">
+              Søgninger, citeringer og notatskrivning.
+            </h2>
+            <p className="text-blue-600 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold inline-block">
+              Alt samlet i ét.
+            </p>
+          </div>
+          <p className="text-sm sm:text-base xl:text-lg text-slate-950 dark:text-slate-300 mb-4">
+            Lav en pålidelig AI-assistent baseret på dine dokumenter, som citerer kilderne i sine svar.
+          </p>
+          <div className="space-y-2 mb-4">
+            <div className="flex items-center">
+              <CheckCircle2 className="w-5 h-5 text-blue-600 mr-2" />
+              <span className="text-sm text-slate-700">Pålidelige svar baseret på dine dokumenter</span>
+            </div>
+            <div className="flex items-center">
+              <CheckCircle2 className="w-5 h-5 text-blue-600 mr-2" />
+              <span className="text-sm text-slate-700">Kildehenvisninger i alle svar</span>
+            </div>
+            <div className="flex items-center">
+              <CheckCircle2 className="w-5 h-5 text-blue-600 mr-2" />
+              <span className="text-sm text-slate-700">AI-dreven notatskrivning</span>
+            </div>
+          </div>
+          <div className="mt-2">
+            <ShimmerButtonDemo text="Upload nu" href="/dashboard" />
+          </div>
+        </motion.div>
 
         <motion.div 
-          className="xl:w-2/3 mt-6 xl:mt-0 h-full"
+          className="lg:w-1/2 mt-6 lg:mt-0 h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]"
           variants={itemVariants}
         >
-          <div className="flex h-[500px] w-full gap-1">
+          <div className="flex flex-col lg:flex-row h-full w-full gap-1">
             {list.map((item, index) => (
               <List
                 key={item.title}
@@ -225,6 +251,7 @@ const Expandable: React.FC<ExpandableProps> = ({
                 onMouseLeave={() => {
                   setIsHovering(false)
                 }}
+                className="w-full lg:h-full"
               />
             ))}
           </div>

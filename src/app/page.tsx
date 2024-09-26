@@ -29,12 +29,15 @@ const HomePage = () => {
         </Suspense>
       </div>
       
-      <div className="min-h-screen flex items-center justify-center pt-16 sm:pt-2 md:pt-32 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6 lg:px-8">
+      <div className="pt-16 sm:pt-2 md:pt-32 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6 lg:px-8">
         <Suspense fallback={<LoadingFallback />}>
           <ShuffleSection />
         </Suspense>
       </div>
 
+      <div className="pt-16 sm:pt-2 md:pt-32 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6 lg:px-8">
+        <Expandable />
+      </div>
       <div className="pt-16 sm:pt-2 md:pt-32 pb-16 sm:pb-24 md:pb-32 px-4 sm:px-6 lg:px-8">
         <Suspense fallback={<LoadingFallback />}>
           <IntermediateCard
@@ -50,9 +53,9 @@ const HomePage = () => {
             buttonText="Prøv gratis"
             buttonHref="/demo"
             descriptionText="Du har sikkert prøvet det: At finde nålen i høstakken.
-Men forestil dig, hvis dine dokumenter kunne svare dig.
-Med Lingvist bliver din søgen til en samtale.
-Stil et spørgsmål. Få præcise svar. Direkte fra dine dokumenter."
+              Men forestil dig, hvis dine dokumenter kunne svare dig.
+              Med Lingvist bliver din søgen til en samtale.
+              Stil et spørgsmål. Få præcise svar. Direkte fra dine dokumenter."
           />
         </Suspense>
       </div>
@@ -116,15 +119,6 @@ Stil et spørgsmål. Få præcise svar. Direkte fra dine dokumenter."
           <PreFooter />
         </Suspense>
       </div>
-      <div className="mt-24 md:mt-32 mb-24 md:mb-32 px-4 sm:px-6 lg:px-8">
-      <Expandable
-        title="Your Title Here"
-        staticText="Your static text here"
-        descriptionText="Your description here"
-        buttonText="Click Me"
-        buttonHref="/your-link"
-      />
-    </div>
     </div>
   );
 };

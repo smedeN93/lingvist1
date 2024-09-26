@@ -62,18 +62,20 @@ export function ShuffleHeroSection() {
           <motion.div className="lg:w-1/2 flex flex-col mb-6 lg:mb-0" variants={itemVariants}>
             <div className="mb-2 flex items-center">
               <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
-                Eksperimentelt
+               Meget mere overblik
               </span>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <button className="text-blue-600 hover:text-blue-800 transition-colors">
                       <Info className="w-4 h-4" />
-                      <span className="sr-only">Information om eksperimentelle funktioner.</span>
+                      <span className="sr-only">Information om hvor meget mere overblik man får ved brug af Lingvist.</span>
                     </button>
                   </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Vi eksperimenterer løbende, så forvent at du kan uploade større og større filer i fremtiden.</p>
+                  <TooltipContent className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                    <p className="text-sm text-wrap">
+                      Når du uploader dine dokumenter til Lingvist, gør du dem til den primære informationskilde for AI. Det gør ganske enkelt, at du slipper for at bekymre dig om sandhedsgraden af de svar du får. De er nemlig baseret på dine dokumenter.
+                    </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
