@@ -123,18 +123,18 @@ const List: React.FC<ImageProps> = ({ item, className, index, activeItem, ...pro
 const items = [
   {
     image: "/lingvist_chat_preview15.webp",
-    title: "AI-Powered Insights",
-    subtitle: "Unlock the potential of your documents",
+    title: "AI-dreven notatskrivning",
+    subtitle: "Få AI som hjælper dig med at skrive notater.",
   },
   {
     image: "/tematisk-filtrering_preview.png",
-    title: "Smart Filtering",
-    subtitle: "Organize your information effortlessly",
+    title: "Tematisk filtrering",
+    subtitle: "Filtrér dine søgninger efter emne, så du får de mest relevante svar.",
   },
   {
     image: "/citat_preview.png",
-    title: "Precise Citations",
-    subtitle: "Back your answers with reliable sources",
+    title: "Præcis citering",
+    subtitle: "Få citeringer i dine svar, så du kan få vist hvilken kilde, AI'en har fået svaret fra.",
   },
 ]
 
