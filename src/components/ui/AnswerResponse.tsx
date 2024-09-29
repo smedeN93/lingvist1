@@ -1,6 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useAnimation, useInView } from 'framer-motion';
 import { AnswerResponseSektion } from './compare';
+import { Info } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const AnswerResponse = () => {
   const controls = useAnimation();
@@ -48,6 +55,26 @@ const AnswerResponse = () => {
           className="lg:w-1/2 flex flex-col justify-start mb-6 sm:mb-8 lg:mb-0"
         >
           <div className="bg-[rgb(245,245,247)] rounded-3xl p-4 sm:p-6 lg:p-8">
+            <div className="mb-2 flex items-center">
+              <span className="inline-block bg-blue-100 text-blue-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded-full">
+                Dialogbaseret søgning
+              </span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button className="text-blue-600 hover:text-blue-800 transition-colors">
+                      <Info className="w-4 h-4" />
+                      <span className="sr-only">Information om hvor meget mere overblik man får ved brug af Lingvist.</span>
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                    <p className="text-sm text-wrap">
+                      Med Lingvist kan du hurtigt få overblik over dine dokumenter ved hjælp af kunstig intelligens. Det gør det nemt at finde relevante informationer og spare tid på manuel søgning.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
             <h2 className="text-4xl sm:text-5xl md:text-7xl font-bold dark:text-white mb-4">
               En app der bringer <span className="text-blue-600">kunstig intelligens</span> til dine dokumenter.
             </h2>
