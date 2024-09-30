@@ -2,6 +2,7 @@ import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { TRPCError } from "@trpc/server";
 import { UTApi } from "uploadthing/server";
 import * as z from "zod";
+import { getPineconeClient } from "@/lib/pinecone";
 
 import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 import { PLANS } from "@/config/stripe";
@@ -193,7 +194,21 @@ export const appRouter = router({
 
       if (!file) throw new TRPCError({ code: "NOT_FOUND" });
 
-      // delete file from db
+      // Delete associated notes
+      await db.note.deleteMany({
+        where: {
+          fileId: input.id,
+        },
+      });
+
+      // Delete associated messages
+      await db.message.deleteMany({
+        where: {
+          fileId: input.id,
+        },
+      });
+
+      // Delete file from db
       await db.file.delete({
         where: {
           id: input.id,
@@ -201,9 +216,15 @@ export const appRouter = router({
         },
       });
 
-      // delete file from uploadthing
+      // Delete file from uploadthing
       const utapi = new UTApi();
       await utapi.deleteFiles(file.key);
+
+      // Delete namespace from Pinecone
+      const pinecone = getPineconeClient();
+      const index = pinecone.Index("lingvist");
+      const namespace = index.namespace(file.id);
+      await namespace.deleteAll();
 
       return file;
     }),
