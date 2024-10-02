@@ -1,7 +1,7 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+import { streamText } from "ai";
 import { NextResponse, type NextRequest } from "next/server";
 import { CohereClient } from 'cohere-ai';
 
@@ -113,16 +113,15 @@ export async function POST(req: NextRequest) {
     content: msg.text,
   }));
 
-  // Generate OpenAI chat completion
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o",
+  // Generate OpenAI chat completion using streamText
+  const { textStream, fullStream } = await streamText({
+    model: openai('gpt-4o-mini'),
     temperature: 0,
-    stream: true,
     messages: [
       {
         role: "system",
         content:
-          `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Basér dit svar på den givne kontekst, som er relevante tekster fra dokumentet, som brugerens spørgsmål drejer sig. Den tidligere samtale er inkluderet for forståelse af samtale. Strukturér dit svar klart og logisk, og brug overskrifter hvor det er relevant.
+          `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Basér dit svar på den givne kontekst, som er relevante tekster fra dokumentet, som brugerens spørgsmål drejer sig om. Den tidligere samtale er inkluderet for forståelse af samtale. Strukturér dit svar klart og logisk, og brug overskrifter hvor det er relevant.
           ${kontraktvilkaar ? "Læg derudover særlig vægt på at analysere kontraktvilkår. Fremhæv vigtige klausuler, potentielle faldgruber og juridiske implikationer." : ""}
           ${okonomi ? "Læg derudover særlig vægt på at analysere de økonomiske aspekter nævnt i teksten. Inkluder finansielle prognoser, risici og potentielle muligheder hvor relevant." : ""}
           ${metode ? "Gennemgå derudover den metodologi, der er anvendt eller nævnt i teksten. Vurder dens styrker, svagheder og potentielle bias." : ""}
@@ -135,18 +134,11 @@ export async function POST(req: NextRequest) {
           ...
           ---END CITATIONS---`,
       },
+      ...formattedPrevMessages,
       {
         role: "user",
         content: `Besvar følgende spørgsmål baseret på den givne kontekst og tidligere samtale.
         
-  \n----------------\n
-  
-  TIDLIGERE BESKEDER:
-  ${formattedPrevMessages.map((message) => {
-    if (message.role === "user") return `User: ${message.content}\n`;
-    return `Assistant: ${message.content}\n`;
-  })}
-  
   \n----------------\n
   
   KONTEKST:
@@ -155,16 +147,12 @@ export async function POST(req: NextRequest) {
   BRUGERENS SPØRGSMÅL: ${message}`,
       },
     ],
-  });
-
-  // Stream the OpenAI response
-  const stream = OpenAIStream(response, {
-    async onCompletion(completion) {
+    onFinish: async (completion) => {
       console.log("OpenAI completion:", completion);
       // Store the AI response in the database
       await db.message.create({
         data: {
-          text: completion,
+          text: completion.text,
           isUserMessage: false,
           fileId,
           userId,
@@ -174,7 +162,7 @@ export async function POST(req: NextRequest) {
   });
 
   // Return the streaming response
-  return new StreamingTextResponse(stream);
+  return new Response(textStream);
 }
 
 // Define the structure for document type used in reranking

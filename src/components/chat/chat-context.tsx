@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { type PropsWithChildren, createContext, useState, useRef } from "react";
+import { type PropsWithChildren, createContext, useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
 
 import { trpc } from "@/app/_trpc/client";
@@ -66,6 +66,9 @@ export const ChatContextProvider = ({
     mutationFn: async ({ message }: { message: string }) => {
       const response = await fetch("/api/message", {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({
           fileId,
           message,
@@ -78,7 +81,10 @@ export const ChatContextProvider = ({
 
       if (!response.ok) throw new Error("Failed to send message.");
 
-      return response.body;
+      const data = response.body;
+      if (!data) throw new Error("No data returned from response.");
+
+      return data;
     },
     onMutate: async ({ message }) => {
       backupMessage.current = message;
@@ -147,20 +153,13 @@ export const ChatContextProvider = ({
       const reader = stream.getReader();
       const decoder = new TextDecoder();
       let done = false;
-
-      // accumulated response
       let accResponse = "";
 
       while (!done) {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
-
         const chunkValue = decoder.decode(value);
-
-        // Extract the string value from the chunk
-        const extractedValue = chunkValue.match(/"([^"]+)"/)?.[1] || "";
-
-        accResponse += extractedValue;
+        accResponse += chunkValue;
 
         // append chunk to the actual message
         utils.getFileMessages.setInfiniteData(
@@ -235,10 +234,10 @@ export const ChatContextProvider = ({
     setMessage(e.target.value);
   };
 
-  const addMessage = () => {
+  const addMessage = useCallback(() => {
     if (message.trim().length === 0) return;
-    sendMessage({ message }); // Send the message without modifying it
-  };
+    sendMessage({ message });
+  }, [message, sendMessage]);
 
   return (
     <ChatContext.Provider
