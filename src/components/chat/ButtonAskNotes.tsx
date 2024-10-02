@@ -30,10 +30,11 @@ export default function QuestionPopup({ onSubmit, noteId, updateNoteContent, set
       })
 
       if (!response.ok) {
-        throw new Error('Fejl ved opdatering af note')
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Fejl ved opdatering af note');
       }
 
-      return response.body
+      return response.body;
     },
     onMutate: () => {
       toast.loading('Opdaterer note...', {
@@ -47,20 +48,18 @@ export default function QuestionPopup({ onSubmit, noteId, updateNoteContent, set
       }
   
       const reader = stream.getReader()
-      let accResponse = '';
       const decoder = new TextDecoder();
+      let accResponse = '';
   
       try {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
   
-          const chunkValue = decoder.decode(value, { stream: true });
+          const chunkValue = decoder.decode(value);
           accResponse += chunkValue;
-          updateNoteContent(noteId, accResponse, accResponse); // Opdater både indhold og AI-svar
+          updateNoteContent(noteId, accResponse, accResponse);
         }
-      } catch (error) {
-        console.error('Fejl ved læsning af stream:', error);
       } finally {
         reader.releaseLock();
         setNoteUpdatingByAI(noteId, false);
@@ -74,9 +73,9 @@ export default function QuestionPopup({ onSubmit, noteId, updateNoteContent, set
         duration: 3000,
       })
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error('Fejl ved indsendelse af spørgsmål:', error)
-      toast.error('Fejl ved opdatering af note', {
+      toast.error(error.message || 'Fejl ved opdatering af note', {
         position: "bottom-right",
         duration: 3000,
       })
@@ -119,13 +118,13 @@ export default function QuestionPopup({ onSubmit, noteId, updateNoteContent, set
       </Button>
 
       {isOpen && (
-  <div 
-    ref={popupRef}
-    className="absolute bottom-full mb-2 right-[-2rem] w-80 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 ease-out z-50"
-    style={{
-      animation: 'fadeIn 0.3s ease-out',
-    }}
-  >
+        <div 
+          ref={popupRef}
+          className="absolute bottom-full mb-2 right-[-2rem] w-80 bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden transform transition-all duration-300 ease-out z-50"
+          style={{
+            animation: 'fadeIn 0.3s ease-out',
+          }}
+        >
           <div className="bg-gray-50 p-3 flex justify-between items-center border-b border-gray-200">
             <span className="font-semibold text-m text-gray-800">Stil et spørgsmål</span>
             <Button 

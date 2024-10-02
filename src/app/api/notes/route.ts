@@ -1,5 +1,5 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+import { streamText } from "ai";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { db } from "@/db";
@@ -32,11 +32,9 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Note not found", { status: 404 });
     }
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
+    const { textStream, fullStream } = await streamText({
+      model: openai('gpt-4o-mini'),
       temperature: 0,
-      stream: true,
-      max_tokens: 75,
       messages: [
         {
           role: "system",
@@ -48,22 +46,19 @@ export async function POST(req: NextRequest) {
           content: `Eksisterende noteindhold: ${note.content}\n\nBrugerspørgsmål: ${message}\n\nGiv et direkte og kortfattet svar, der kan tilføjes til den eksisterende note:`,
         },
       ],
-    });
-
-    const stream = OpenAIStream(response, {
-      async onCompletion(completion) {
+      onFinish: async (completion) => {
         try {
           await db.note.update({
             where: { id: note.id },
-            data: { aiResponse: completion },
+            data: { aiResponse: completion.text },
           });
         } catch (error) {
           console.error('Fejl ved opdatering af note i databasen:', error);
         }
       },
     });
-  
-    return new StreamingTextResponse(stream);
+
+    return new Response(textStream);
   } catch (error) {
     console.error('Error in notes route:', error);
     if (error instanceof Error) {
