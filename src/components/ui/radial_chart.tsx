@@ -8,7 +8,7 @@ import {
   RadialBarChart,
 } from "recharts"
 
-import { ChartContainer, type ChartConfig } from "./chart"
+import { ChartContainer, ChartConfig } from "./Chart"
 
 export const description = "Radial charts for documents and messages"
 
