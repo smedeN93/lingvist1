@@ -1,13 +1,18 @@
 "use client";
 
-import { useContext, useEffect, useRef } from "react";
-import { Loader2} from "lucide-react";
-
+import React, { useContext, useEffect, useRef, ReactNode } from "react";
+import { Loader2 } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 import { GlobalChatContext } from "./global-chat-context";
+
+interface Message {
+  id: string;
+  text: string;
+  isUserMessage: boolean;
+}
 
 export const GlobalMessages = () => {
   const { messages, isLoading } = useContext(GlobalChatContext);
-
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -18,6 +23,29 @@ export const GlobalMessages = () => {
       });
     }
   }, [messages]);
+
+  const customRenderers = {
+    p: ({ children }: { children: ReactNode }) => <p className="mb-2">{children}</p>,
+    h1: ({ children }: { children: ReactNode }) => <h1 className="text-2xl font-bold mt-4 mb-2">{children}</h1>,
+    h2: ({ children }: { children: ReactNode }) => <h2 className="text-xl font-bold mt-3 mb-2">{children}</h2>,
+    h3: ({ children }: { children: ReactNode }) => <h3 className="text-lg font-bold mt-2 mb-1">{children}</h3>,
+    ul: ({ children }: { children: ReactNode }) => <ul className="list-disc pl-6 mb-2">{children}</ul>,
+    ol: ({ children }: { children: ReactNode }) => <ol className="list-decimal pl-6 mb-2">{children}</ol>,
+    li: ({ children }: { children: ReactNode }) => <li className="mb-1">{children}</li>,
+    blockquote: ({ children }: { children: ReactNode }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2">{children}</blockquote>,
+  };
+
+  const renderMessage = (message: Message) => {
+    if (message.isUserMessage) {
+      return <div className="text-white">{message.text}</div>;
+    }
+
+    return (
+      <div className="text-gray-900">
+        <ReactMarkdown components={customRenderers}>{message.text}</ReactMarkdown>
+      </div>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-4 p-3 overflow-y-auto">
@@ -34,13 +62,13 @@ export const GlobalMessages = () => {
               }`}
             >
               <div
-                className={`rounded-lg px-3 py-2 max-w-sm ${
+                className={`rounded-lg px-3 py-2 max-w-[80%] ${
                   message.isUserMessage
                     ? "bg-[#519DE9] text-white"
                     : "bg-[rgb(250,250,252)] text-gray-900"
                 }`}
               >
-                {message.text}
+                {renderMessage(message)}
               </div>
             </div>
           );

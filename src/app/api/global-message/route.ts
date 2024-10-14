@@ -1,17 +1,23 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
-import { streamText } from "ai";
+import { streamText, generateObject } from "ai";
 import { NextResponse, type NextRequest } from "next/server";
 import { CohereClient } from 'cohere-ai';
+import { z } from 'zod';
 
 import { openai } from "@/lib/openai";
 import { getPineconeClient } from "@/lib/pinecone";
-import { db } from "@/db";  // Import the database client
+import { db } from "@/db";
 
 // Initialize Cohere client for reranking
 const cohere = new CohereClient({
   token: process.env.COHERE_API_KEY!,
+});
+
+// Define the schema for our structured data
+const resultSchema = z.object({
+  relevance: z.string().describe("En kort forklaring på, hvorfor dette resultat er relevant for forespørgslen")
 });
 
 export async function POST(req: NextRequest) {
@@ -23,31 +29,32 @@ export async function POST(req: NextRequest) {
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user?.id) return new NextResponse("Unauthorized.", { status: 401 });
+    if (!user?.id) return new NextResponse("Uautoriseret.", { status: 401 });
 
-    // Fetch all file IDs for the user from the database
+    // Fetch all file IDs and names for the user from the database
     const userFiles = await db.file.findMany({
       where: {
         userId: user.id,
       },
       select: {
         id: true,
+        name: true,
       },
     });
 
-    const fileIds = userFiles.map(file => file.id);
+    const fileMap = new Map(userFiles.map(file => [file.id, file.name]));
 
-    console.log("User file IDs:", fileIds);
+    console.log("Brugerens filer:", userFiles);
 
-    if (fileIds.length === 0) {
-      return new NextResponse("No documents found for the user.", { status: 404 });
+    if (userFiles.length === 0) {
+      return new NextResponse("Ingen dokumenter fundet for brugeren.", { status: 404 });
     }
 
     // Extract message data
     const { message } = body;
     
     if (!message) {
-      return new NextResponse("Message is required.", { status: 400 });
+      return new NextResponse("Besked er påkrævet.", { status: 400 });
     }
 
     // Initialize OpenAI embeddings
@@ -61,17 +68,20 @@ export async function POST(req: NextRequest) {
 
     // Perform similarity search across all user's files
     let allResults = [];
-    for (const fileId of fileIds) {
+    for (const file of userFiles) {
       const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
         pineconeIndex,
-        namespace: fileId,
+        namespace: file.id,
       });
 
       const results = await vectorStore.similaritySearch(message, 5);  // Adjust the number as needed
+      results.forEach(result => {
+        result.metadata.fileName = file.name;  // Add file name to metadata
+      });
       allResults.push(...results);
     }
 
-    console.log("Total similarity search results:", allResults.length);
+    console.log("Samlede resultater fra lighedssøgning:", allResults.length);
 
     // Take top 20 results without sorting
     const topResults = allResults.slice(0, 20);
@@ -79,13 +89,14 @@ export async function POST(req: NextRequest) {
     // Format initial results for reranking
     const initialResults = topResults.map(result => ({
       text: result.pageContent,
-      id: result.metadata.fileId?.toString() || 'N/A'
+      id: result.metadata.fileId?.toString() || 'N/A',
+      title: result.metadata.fileName || 'Ukendt titel'
     }));
 
-    console.log("Initial results for reranking:", initialResults.length);
+    console.log("Indledende resultater til omrangering:", initialResults.length);
 
     if (initialResults.length === 0) {
-      return new NextResponse("No relevant documents found.", { status: 404 });
+      return new NextResponse("Ingen relevante dokumenter fundet.", { status: 404 });
     }
 
     // Perform reranking using Cohere
@@ -97,13 +108,29 @@ export async function POST(req: NextRequest) {
       returnDocuments: true
     });
 
-    console.log("Reranked results:", rerankedResults.results.length);
+    console.log("Omrangerede resultater:", rerankedResults.results.length);
 
-    // Format reranked results with citations
-    const contextWithCitations = rerankedResults.results.map((result, index) => {
-      const document = (result.document as DocumentType) || { text: 'Ingen tekst tilgængelig', id: 'N/A' };
-      return `[${index + 1}] ${document.text}\n(Dokument ID: ${document.id})`;
-    }).join("\n\n");
+    // Generate structured data for each reranked result
+    const structuredResults = await Promise.all(rerankedResults.results.map(async (result, index) => {
+      const document = (result.document as DocumentType) || { text: 'Ingen tekst tilgængelig', id: 'N/A', title: 'Ukendt titel' };
+      
+      const { object } = await generateObject({
+        model: openai('gpt-4o-mini'),
+        schema: resultSchema,
+        prompt: `Generer et struktureret resultat for følgende indhold, under hensyntagen til dets relevans for forespørgslen: "${message}"\n\nIndhold: ${document.text}`,
+      });
+
+      return {
+        ...object,
+        documentId: document.id,
+        title: document.title
+      };
+    }));
+
+    // Format structured results
+    const formattedResults = structuredResults.map((result, index) => {
+      return `Resultat ${index + 1}:\n- Titel: ${result.title}\n- Relevans: ${result.relevance}\n`;
+    }).join("\n");
 
     // Generate OpenAI chat completion using streamText
     const { textStream, fullStream } = await streamText({
@@ -113,25 +140,15 @@ export async function POST(req: NextRequest) {
         {
           role: "system",
           content:
-            `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Basér dit svar på den givne kontekst, som er relevante tekster fra brugerens dokumenter. Strukturér dit svar klart og logisk, og brug overskrifter hvor det er relevant.
-            Du skal inkludere in-text citationer for hver specifik reference i dit svar ved at bruge tal i firkantede parenteser, f.eks. [1], [2], osv. Dette hjælper brugeren med at finde informationen i originaldokumentet.
-            Efter dit svar skal du inkludere en sektion med citationsdetaljer i følgende format:
-            ---CITATIONS---
-            [1]: (Dokument ID: {id}) {first 100 characters of the citation...}
-            [2]: (Dokument ID: {id}) {first 100 characters of the citation...}
-            ...
-            ---END CITATIONS---`,
+            `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Din opgave er at præsentere de givne strukturerede resultater i det nøjagtige format, der er angivet, uden yderligere kommentarer eller ændringer. Brug asterisker for formatering: *kursiv* for kursiv tekst og **fed** for fed tekst.`,
         },
         {
           role: "user",
-          content: `Besvar følgende spørgsmål baseret på den givne kontekst.
-        
-  \n----------------\n
-  
-  KONTEKST:
-  ${contextWithCitations}
-  
-  BRUGERENS SPØRGSMÅL: ${message}`,
+          content: `Præsenter følgende strukturerede resultater med passende formatering (kursiv for titler, fed for vigtige punkter):
+
+${formattedResults}
+
+Brug derefter disse resultater til at give et kort, velformuleret svar på brugerens forespørgsel: "${message}"`,
         },
       ],
     });
@@ -139,8 +156,8 @@ export async function POST(req: NextRequest) {
     // Return the streaming response
     return new Response(textStream);
   } catch (error) {
-    console.error("Error in global message route:", error);
-    return new NextResponse("An error occurred while processing your request.", { status: 500 });
+    console.error("Fejl i global message route:", error);
+    return new NextResponse("Der opstod en fejl under behandlingen af din anmodning.", { status: 500 });
   }
 }
 
@@ -148,4 +165,5 @@ export async function POST(req: NextRequest) {
 type DocumentType = {
   text: string;
   id: string;
+  title: string;
 };
