@@ -1,7 +1,7 @@
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 
-import { Dashboard } from "@/components/dashboard";
+import  Dashboard  from "@/components/dashboard";
 import { db } from "@/db";
 import { getUserSubscriptionPlan } from "@/lib/stripe";
 

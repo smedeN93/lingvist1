@@ -33,7 +33,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
   onToggle,
   fileId
 }) => {
-  console.log('fileId in NotesPanel:', fileId);
+  //console.log('fileId in NotesPanel:', fileId);
   const [notes, setNotes] = React.useState<Note[]>([]);
   const [currentNote, setCurrentNote] = React.useState('');
   const textareaRefs = useRef<{ [key: string]: HTMLTextAreaElement | null }>({});

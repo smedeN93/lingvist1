@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { TypewriterEffectSmooth } from './TypewriterEffectSmooth';
 import { FileUp, MessageSquare, Bot, ChevronRight, ChevronLeft, ArrowRight, BarChart, ArrowUpRight} from 'lucide-react';
 import ShimmerButton from "@/components/ui/shimmer-button";
-import { ChartForSmallCard, RAGImprovementChart } from './Chart';
+import { ChartForSmallCard, RAGImprovementChart } from './Chart_cards';
 import PDFChatFlow from './PdfChatFlow';
 import ComprehensiveRAGVisualization from './RAGProcess';
 import {

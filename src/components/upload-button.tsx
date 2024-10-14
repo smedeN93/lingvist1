@@ -1,8 +1,8 @@
 "use client";
 
-import { Cloud, FileIcon, Loader2, Upload } from "lucide-react";
+import { Cloud, FileIcon, Loader2, Upload, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { type Dispatch, type SetStateAction, useState } from "react";
+import { type Dispatch, type SetStateAction, useState, useCallback } from "react";
 import Dropzone from "react-dropzone";
 import { toast } from "sonner";
 
@@ -15,30 +15,42 @@ type UploadDropzoneProps = {
   isSubscribed: boolean;
   isUploading: boolean;
   setIsUploading: Dispatch<SetStateAction<boolean>>;
+  uploadProgress: number;
+  setUploadProgress: Dispatch<SetStateAction<number>>;
 };
 
 const UploadDropzone = ({
   isSubscribed,
   isUploading,
   setIsUploading,
+  uploadProgress,
+  setUploadProgress,
 }: UploadDropzoneProps) => {
   const router = useRouter();
 
   const [error, setError] = useState("");
-  const [uploadProgress, setUploadProgress] = useState(0);
 
   const { startUpload } = useUploadThing(
     isSubscribed ? "proPlanUploader" : "freePlanUploader",
     {
       onUploadError: (err) => {
         setIsUploading(false);
-        if (err.code === "BAD_REQUEST") setError("Kun PDF-filer er tilladt.");
-
-        if (err.code === "INTERNAL_SERVER_ERROR" || err.code === "TOO_LARGE")
-          setError("Filen er for stor.");
-
-        if (err.code === "FILE_LIMIT_EXCEEDED" || err.code === "TOO_MANY_FILES")
-          setError("Der er for mange filer.");
+        switch (err.code) {
+          case "BAD_REQUEST":
+            setError("Kun PDF-filer er tilladt.");
+            break;
+          case "TOO_LARGE":
+            setError("Filen er for stor.");
+            break;
+          case "TOO_MANY_FILES":
+            setError("Der er for mange filer.");
+            break;
+          case "FILE_LIMIT_EXCEEDED":
+            setError("Filgrænsen er overskredet.");
+            break;
+          default:
+            setError("Der opstod en fejl under upload.");
+        }
       },
     },
   );
@@ -80,6 +92,8 @@ const UploadDropzone = ({
         const res = await startUpload(acceptedFile);
 
         if (!res) {
+          clearInterval(progressInterval);
+          setIsUploading(false);
           return toast.error("Noget gik galt!", {
             description: "Prøv igen senere.",
           });
@@ -90,6 +104,8 @@ const UploadDropzone = ({
         const key = fileResponse?.key;
 
         if (!key) {
+          clearInterval(progressInterval);
+          setIsUploading(false);
           return toast.error("Noget gik galt!", {
             description: "Prøv igen senere.",
           });
@@ -164,37 +180,144 @@ const UploadDropzone = ({
 };
 
 export const UploadButton = ({ isSubscribed }: { isSubscribed: boolean }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false)
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState(0)
+  const router = useRouter()
+
+  const { startUpload } = useUploadThing(
+    isSubscribed ? "proPlanUploader" : "freePlanUploader"
+  )
+
+  const { mutate: startPolling } = trpc.getFile.useMutation({
+    onSuccess: (file) => {
+      router.push(`/dashboard/${file.id}`)
+    },
+    retry: true,
+    retryDelay: 500,
+  })
+
+  const startSimulatedProgress = () => {
+    setUploadProgress(0)
+
+    const interval = setInterval(() => {
+      setUploadProgress((prevProgress) => {
+        if (prevProgress >= 95) {
+          clearInterval(interval)
+          return prevProgress
+        }
+        return prevProgress + 5
+      })
+    }, 500)
+
+    return interval
+  }
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      setIsUploading(true)
+      const progressInterval = startSimulatedProgress()
+
+      const res = await startUpload(acceptedFiles)
+
+      if (!res) {
+        setIsUploading(false)
+        clearInterval(progressInterval)
+        return toast.error("Noget gik galt!", {
+          description: "Prøv igen senere.",
+        })
+      }
+
+      const [fileResponse] = res
+      const key = fileResponse?.key
+
+      if (!key) {
+        setIsUploading(false)
+        clearInterval(progressInterval)
+        return toast.error("Noget gik galt!", {
+          description: "Prøv igen senere.",
+        })
+      }
+
+      clearInterval(progressInterval)
+      setUploadProgress(100)
+
+      startPolling({ key })
+    },
+    [startUpload, startPolling]
+  )
 
   return (
-    <Dialog
-      open={isOpen || isUploading}
-      onOpenChange={(v) => {
-        if (!v) setIsOpen(v);
-      }}
+    <Dropzone
+      multiple={false}
+      onDrop={onDrop}
+      onDropRejected={() => toast.error("Filen blev afvist.", { description: "Kun PDF-filer op til en vis størrelse er tilladt." })}
     >
-      <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <button
-          className="group relative overflow-hidden rounded-full bg-gradient-to-b from-gray-100 to-gray-200 px-6 py-2 shadow-md transition-all duration-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 active:from-gray-200 active:to-gray-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          disabled={isOpen || isUploading}
-          aria-disabled={isOpen || isUploading}
-        >
-          <div className="relative z-10 flex items-center justify-center space-x-2">
-            <Upload className="h-5 w-5 text-gray-700" />
-            <span className="text-sm font-medium text-gray-700">Upload</span>
-          </div>
-          <div className="absolute inset-0 z-0 bg-gradient-to-b from-white to-gray-100 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
-        </button>
-      </DialogTrigger>
+      {({ getRootProps, getInputProps, isDragActive }) => (
+        <div {...getRootProps()} className="relative w-full h-full">
+          <input {...getInputProps()} />
+          <Dialog
+            open={isOpen}
+            onOpenChange={(v) => {
+              if (!v) setIsOpen(v)
+            }}
+          >
+            <DialogTrigger onClick={() => setIsOpen(true)} asChild>
+              <button
+                className={`w-full h-full flex flex-col items-center justify-center space-y-2 bg-slate-950 rounded-3xl transition-all duration-300 hover:bg-slate-800 focus:outline-none focus:ring-inset disabled:opacity-50 disabled:cursor-not-allowed ${
+                  isDragActive ? "bg-[#519DE9] scale-105" : ""
+                }`}
+                disabled={isUploading}
+                aria-disabled={isUploading}
+              >
+                <div className={`bg-white rounded-full p-2 transition-transform duration-300 ${isDragActive ? 'scale-110' : ''}`}>
+                  <Plus className="h-6 w-6 text-slate-950" />
+                </div>
+                <span className={`text-xl font-extrabold text-white transition-all duration-300 ${isDragActive ? 'scale-110' : ''}`}>
+                  {isDragActive ? "Slip filen" : "Upload her"}
+                </span>
+                <p className="text-sm text-gray-300">
+                  {isDragActive
+                    ? "Slip for at uploade"
+                    : "Klik eller træk og slip"}
+                </p>
+              </button>
+            </DialogTrigger>
 
-      <DialogContent>
-        <UploadDropzone
-          isSubscribed={isSubscribed}
-          isUploading={isUploading}
-          setIsUploading={setIsUploading}
-        />
-      </DialogContent>
-    </Dialog>
-  );
-};
+            <DialogContent>
+              <UploadDropzone
+                isSubscribed={isSubscribed}
+                isUploading={isUploading}
+                setIsUploading={setIsUploading}
+                uploadProgress={uploadProgress}
+                setUploadProgress={setUploadProgress}
+              />
+            </DialogContent>
+          </Dialog>
+          {isUploading && (
+            <div className="absolute inset-0 bg-slate-950 bg-opacity-80 flex flex-col items-center justify-center rounded-3xl">
+              <Progress
+                value={uploadProgress}
+                className="w-1/2 h-2 bg-slate-700"
+                indicatorColor={uploadProgress === 100 ? "bg-green-500" : "bg-[#519DE9]"}
+              />
+              <p className="mt-2 text-sm text-gray-300">
+                {uploadProgress === 100 ? "Behandler fil..." : "Uploader..."}
+              </p>
+            </div>
+          )}
+          {isDragActive && !isUploading && (
+            <div className="absolute inset-0 bg-[#519DE9] rounded-3xl flex items-center justify-center">
+              <div className="border-4 border-white border-dashed p-8 rounded-lg">
+                <Cloud className="h-12 w-12 text-white mx-auto mb-4 animate-bounce" />
+                <p className="text-lg font-extrabold text-white">
+                  Slip filen for at uploade
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </Dropzone>
+  )
+}

@@ -15,7 +15,7 @@ type MessageProps = {
 export const Message = forwardRef<HTMLDivElement, MessageProps>(
   ({ message, isNextMessageSamePerson }, ref) => {
     const renderMessageContent = () => {
-      console.log("Rå message.text:", message.text);
+      //console.log("Rå message.text:", message.text);
       
       if (typeof message.text !== "string") return message.text;
 
@@ -24,13 +24,11 @@ export const Message = forwardRef<HTMLDivElement, MessageProps>(
         ? citationsRaw.split('\n').filter(line => line.trim() !== '' && !line.includes('---END CITATIONS---'))
         : [];
 
-      console.log("Indhold:", content);
-      console.log("Citationer:", citations);
+      //console.log("Indhold:", content);
+      //console.log("Citationer:", citations);
 
       const customRenderers: Components = {
-        p: (
-          { children }
-        ) => {
+        p: ({ children }) => {
           const processedChildren = React.Children.map(children, child => {
             if (typeof child === 'string') {
               return child.split(/(\[[0-9]+\])/g).map((part, index) => {
@@ -39,12 +37,12 @@ export const Message = forwardRef<HTMLDivElement, MessageProps>(
                   let citation = (citations[citationIndex] || '').trim();
                   let sidetal = '';
                   
-                  console.log("Rå citation:", citation); // Ny debug-linje
+                  //console.log("Rå citation:", citation); 
 
                   // Ændret regex til at være mere fleksibel
                   const sideMatch = citation.match(/\(Side:\s*(\d+)\)/);
                   
-                  console.log("Side match:", sideMatch); // Ny debug-linje
+                  //console.log("Side match:", sideMatch); 
 
                   if (sideMatch) {
                     sidetal = sideMatch[1];
@@ -52,19 +50,19 @@ export const Message = forwardRef<HTMLDivElement, MessageProps>(
                     citation = citation.replace(/\(Side:\s*\d+\)\s*/, '').trim();
                   }
 
-                  console.log("Sidetal:", sidetal); // Ny debug-linje
-                  console.log("Behandlet citation:", citation); // Ny debug-linje
+                  //console.log("Sidetal:", sidetal); // Ny debug-linje
+                  //console.log("Behandlet citation:", citation); // Ny debug-linje
 
                   // Fjern citationsindekset fra begyndelsen af citationen
                   citation = citation.replace(/^\[\d+\]:\s*/, '');
 
                   return (
                     <span key={index} className="relative group inline-flex items-center justify-center">
+                      <span className="absolute top-full right-0 mt-1 bg-white text-gray-800 text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 w-64 text-left pointer-events-none shadow-lg border border-gray-200 whitespace-normal z-50">
+                        {sidetal ? <strong>Side {sidetal}:</strong> : ''} {citation}
+                      </span>
                       <span className="flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-600 rounded-full cursor-pointer transition-all duration-200 ease-in-out group-hover:bg-blue-700">
                         {citationIndex + 1}
-                      </span>
-                      <span className="absolute top-0 left-full ml-2 bg-white text-gray-800 text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 transition-all duration-200 w-64 text-left pointer-events-none shadow-lg border border-gray-200 whitespace-normal">
-                        {sidetal ? <strong>Side {sidetal}:</strong> : ''} {citation}
                       </span>
                     </span>
                   );

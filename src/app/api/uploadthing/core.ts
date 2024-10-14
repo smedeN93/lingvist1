@@ -11,10 +11,8 @@ import { File } from "@prisma/client";
 import { getUserSubscriptionPlan } from "@/lib/stripe";
 import { PLANS } from "@/config/stripe";
 
-// Create an instance of the uploadthing library
 const f = createUploadthing();
 
-// Middleware to authenticate user and get subscription plan
 const middleware = async () => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
@@ -26,7 +24,6 @@ const middleware = async () => {
   return { subscriptionPlan, userId: user.id };
 };
 
-// Function to handle the upload completion
 const onUploadComplete = async ({
   metadata,
   file,
@@ -40,7 +37,6 @@ const onUploadComplete = async ({
 }) => {
   let createdFile: File | null;
 
-  // Check if the file already exists in the database
   createdFile = await db.file.findUnique({
     where: {
       key: file.key,
@@ -48,7 +44,6 @@ const onUploadComplete = async ({
     },
   });
 
-  // If the file doesn't exist, create a new entry in the database
   if (!createdFile) {
     createdFile = await db.file.create({
       data: {
@@ -62,28 +57,22 @@ const onUploadComplete = async ({
   }
 
   try {
-    // Fetch the PDF file
     const response = await fetch(createdFile.url);
     const blob = await response.blob();
 
-    // Load PDF into memory
     const loader = new PDFLoader(blob);
 
-    // Extract PDF page level text
     const pageLevelDocs = await loader.load();
 
-    // Get the number of pages in the PDF
     const pageAmt = pageLevelDocs.length;
     const { subscriptionPlan, userId } = metadata;
     const { isSubscribed } = subscriptionPlan;
 
-    // Check if the number of pages exceeds the plan limits
     const isProExceeded =
       pageAmt > PLANS.find((plan) => plan.name === "Pro")!.pagesPerPdf;
     const isFreeExceeded =
       pageAmt > PLANS.find((plan) => plan.name === "Free")!.pagesPerPdf;
 
-    // If the page limit is exceeded, mark the upload as failed
     if ((isSubscribed && isProExceeded) || (!isSubscribed && isFreeExceeded)) {
       await db.file.update({
         data: {
@@ -97,16 +86,13 @@ const onUploadComplete = async ({
       return;
     }
 
-    // Initialize Pinecone client and index
     const pinecone = getPineconeClient();
     const pineconeIndex = pinecone.Index("lingvist");
 
-    // Create OpenAI embeddings
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY!,
     });
 
-    // Add page numbers to metadata for each document
     const docsWithPageNumbers = pageLevelDocs.map((doc, i) => ({
       ...doc,
       metadata: {
@@ -115,13 +101,11 @@ const onUploadComplete = async ({
       },
     }));
 
-    // Store documents in Pinecone with embeddings
     await PineconeStore.fromDocuments(docsWithPageNumbers, embeddings, {
       pineconeIndex,
       namespace: createdFile.id,
     });
 
-    // Update the file status to SUCCESS in the database
     await db.file.update({
       data: {
         uploadStatus: "SUCCESS",
@@ -133,7 +117,6 @@ const onUploadComplete = async ({
     });
   } catch (error) {
     console.error("File processing failed:", error);
-    // If an error occurs, update the file status to FAILED
     await db.file.update({
       data: {
         uploadStatus: "FAILED",
@@ -146,7 +129,6 @@ const onUploadComplete = async ({
   }
 };
 
-// Define the file router with different upload configurations for free and pro plans
 export const ourFileRouter = {
   freePlanUploader: f({ pdf: { maxFileSize: "4MB" } })
     .middleware(middleware)

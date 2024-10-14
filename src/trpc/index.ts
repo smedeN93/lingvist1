@@ -52,6 +52,7 @@ export const appRouter = router({
         _count: {
           select: {
             messages: true,
+            notes: true,
           },
         },
       },
