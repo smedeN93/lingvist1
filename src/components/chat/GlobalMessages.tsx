@@ -4,6 +4,7 @@ import React, { useContext, useEffect, useRef, ReactNode } from "react";
 import { Loader2 } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 import { GlobalChatContext } from "./global-chat-context";
+import { Components } from 'react-markdown';
 
 interface Message {
   id: string;
@@ -24,15 +25,15 @@ export const GlobalMessages = () => {
     }
   }, [messages]);
 
-  const customRenderers = {
-    p: ({ children }: { children: ReactNode }) => <p className="mb-2">{children}</p>,
-    h1: ({ children }: { children: ReactNode }) => <h1 className="text-2xl font-bold mt-4 mb-2">{children}</h1>,
-    h2: ({ children }: { children: ReactNode }) => <h2 className="text-xl font-bold mt-3 mb-2">{children}</h2>,
-    h3: ({ children }: { children: ReactNode }) => <h3 className="text-lg font-bold mt-2 mb-1">{children}</h3>,
-    ul: ({ children }: { children: ReactNode }) => <ul className="list-disc pl-6 mb-2">{children}</ul>,
-    ol: ({ children }: { children: ReactNode }) => <ol className="list-decimal pl-6 mb-2">{children}</ol>,
-    li: ({ children }: { children: ReactNode }) => <li className="mb-1">{children}</li>,
-    blockquote: ({ children }: { children: ReactNode }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2">{children}</blockquote>,
+  const customRenderers: Components = {
+    p: ({ children }) => <p className="mb-2">{children}</p>,
+    h1: ({ children }) => <h1 className="text-2xl font-bold mt-4 mb-2">{children}</h1>,
+    h2: ({ children }) => <h2 className="text-xl font-bold mt-3 mb-2">{children}</h2>,
+    h3: ({ children }) => <h3 className="text-lg font-bold mt-2 mb-1">{children}</h3>,
+    ul: ({ children }) => <ul className="list-disc pl-6 mb-2">{children}</ul>,
+    ol: ({ children }) => <ol className="list-decimal pl-6 mb-2">{children}</ol>,
+    li: ({ children }) => <li className="mb-1">{children}</li>,
+    blockquote: ({ children }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2">{children}</blockquote>,
   };
 
   const renderMessage = (message: Message) => {
