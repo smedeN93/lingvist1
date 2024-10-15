@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Uautoriseret.", { status: 401 });
     }
 
+    console.log(`[${Date.now()}] User authenticated: ${user.id}`);
+
     const userFiles = await db.file.findMany({
       where: { userId: user.id },
       select: { id: true, name: true },
@@ -51,6 +53,8 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Besked er påkrævet.", { status: 400 });
     }
 
+    console.log(`[${Date.now()}] Processing message: ${message}`);
+
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY!,
     });
@@ -60,6 +64,7 @@ export async function POST(req: NextRequest) {
 
     let allResults = [];
     for (const file of userFiles) {
+      console.log(`[${Date.now()}] Processing file: ${file.name}`);
       const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
         pineconeIndex,
         namespace: file.id,
@@ -85,6 +90,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Ingen relevante dokumenter fundet.", { status: 404 });
     }
 
+    console.log(`[${Date.now()}] Starting reranking`);
     const rerankedResults = await cohere.rerank({
       documents: initialResults,
       query: message,
@@ -98,6 +104,7 @@ export async function POST(req: NextRequest) {
     const structuredResults = await Promise.all(rerankedResults.results.map(async (result, index) => {
       const document = (result.document as DocumentType) || { text: 'Ingen tekst tilgængelig', id: 'N/A', title: 'Ukendt titel' };
       
+      console.log(`[${Date.now()}] Generating structured result for document: ${document.title}`);
       const { object } = await generateObject({
         model: openai('gpt-4o-mini'),
         schema: resultSchema,
@@ -115,6 +122,7 @@ export async function POST(req: NextRequest) {
       return `Resultat ${index + 1}:\n- Titel: ${result.title}\n- Relevans: ${result.relevance}\n`;
     }).join("\n");
 
+    console.log(`[${Date.now()}] Starting stream generation`);
     const { textStream, fullStream } = await streamText({
       model: openai('gpt-4o-mini'),
       temperature: 0,
@@ -146,9 +154,12 @@ Brug derefter disse resultater til at give et kort, velformuleret svar på bruge
         try {
           for await (const chunk of textStream) {
             controller.enqueue(encoder.encode(chunk));
+            console.log(`[${Date.now()}] Chunk sent: ${chunk.length} characters`);
           }
           controller.close();
+          console.log(`[${Date.now()}] Stream closed successfully`);
         } catch (error) {
+          console.error(`[${Date.now()}] Error in stream:`, error);
           controller.error(error);
         } finally {
           clearTimeout(timeout);
