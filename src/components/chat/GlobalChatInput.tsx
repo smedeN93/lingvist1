@@ -3,8 +3,8 @@
 import { useContext, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import { Textarea } from "../ui/textarea";
+import { cn } from "../../lib/utils";
 
 import { GlobalChatContext } from "./global-chat-context";
 
@@ -15,27 +15,30 @@ interface GlobalChatInputProps {
 export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const {
-    setMessages,
     isLoading,
     setIsLoading,
-    messages, // Include messages from context if needed
+    addMessage,
+    updateMessageById,
   } = useContext(GlobalChatContext);
 
   const [message, setMessage] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
+    setError(null); // Clear any previous errors when the user starts typing
   };
 
-  const addMessage = async () => {
+  const sendMessage = async (retryCount = 0) => {
     if (message.trim().length === 0 || isLoading) return;
 
     setIsLoading(true);
+    setError(null);
     const userMessageId = Date.now().toString();
-    setMessages((prevMessages) => [
-      ...prevMessages,
-      { id: userMessageId, text: message, isUserMessage: true },
-    ]);
+    addMessage({ id: userMessageId, text: message, isUserMessage: true });
+
+    const aiMessageId = (Date.now() + 1).toString();
+    addMessage({ id: aiMessageId, text: "", isUserMessage: false, isLoading: true });
 
     try {
       const response = await fetch("/api/global-message", {
@@ -49,19 +52,12 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to send message");
+        throw new Error(`Failed to send message: ${response.statusText}`);
       }
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let aiResponse = "";
-      const aiMessageId = (Date.now() + 1).toString(); // Ensure unique ID
-
-      // Optimistically add the AI message
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { id: aiMessageId, text: "", isUserMessage: false },
-      ]);
 
       while (true) {
         const { done, value } = await reader!.read();
@@ -69,24 +65,19 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
         const chunk = decoder.decode(value, { stream: true });
         aiResponse += chunk;
 
-        // Update the last message (AI's message) incrementally
-        setMessages((prevMessages) => {
-          const updatedMessages = [...prevMessages];
-          const aiMessageIndex = updatedMessages.findIndex(
-            (msg) => msg.id === aiMessageId
-          );
-          if (aiMessageIndex !== -1) {
-            updatedMessages[aiMessageIndex] = {
-              ...updatedMessages[aiMessageIndex],
-              text: aiResponse,
-            };
-          }
-          return updatedMessages;
-        });
+        updateMessageById(aiMessageId, { text: aiResponse, isLoading: false });
       }
     } catch (error) {
       console.error("Error sending message:", error);
-      // Optionally handle the error here
+      setError("Failed to send message. Please try again.");
+      updateMessageById(aiMessageId, { isLoading: false, error: "Failed to load message" });
+      
+      // Implement retry mechanism
+      if (retryCount < 3) {
+        setTimeout(() => sendMessage(retryCount + 1), 1000 * (retryCount + 1));
+      } else {
+        setError("Failed to send message after multiple attempts. Please try again later.");
+      }
     } finally {
       setIsLoading(false);
       setMessage("");
@@ -94,18 +85,21 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
   };
 
   return (
-    <div className="p-2 mt-4"> {/* Added mt-4 for top margin */}
+    <div className="p-2 mt-4">
       <form
         onSubmit={(e) => e.preventDefault()}
         autoCapitalize="off"
         autoComplete="off"
-        className="mx-2 flex flex-row items-center gap-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl"
+        className="mx-2 flex flex-col items-center gap-3 md:mx-4 md:last:mb-6 lg:mx-auto lg:max-w-2xl xl:max-w-3xl"
       >
-        <div className="relative flex flex-1 items-center">
+        {error && (
+          <div className="text-red-500 text-sm mb-2 w-full text-center">
+            {error}
+          </div>
+        )}
+        <div className="relative flex flex-1 items-center w-full">
           <div className="relative w-full">
-            {/* Background overlay with frosted effect */}
             <div className="absolute inset-0 bg-[rgb(250,250,252)] backdrop-blur-md rounded-full z-0" />
-            {/* Input field and send button */}
             <div className="relative flex items-center">
               <Textarea
                 ref={textareaRef}
@@ -120,7 +114,7 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
-                    addMessage();
+                    sendMessage();
                     textareaRef.current?.focus();
                   }
                 }}
@@ -133,7 +127,7 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
                   aria-disabled={isLoading || isDisabled || !message.trim()}
                   type="submit"
                   onClick={() => {
-                    addMessage();
+                    sendMessage();
                     textareaRef.current?.focus();
                   }}
                   className={cn(

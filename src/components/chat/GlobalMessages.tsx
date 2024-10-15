@@ -1,30 +1,23 @@
 "use client";
 
-import React, { useContext, useEffect, useRef, ReactNode } from "react";
+import React, { useContext, useEffect, useRef, useCallback, useState } from "react";
 import { Loader2 } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 import { GlobalChatContext } from "./global-chat-context";
 import { Components } from 'react-markdown';
 
-interface Message {
-  id: string;
-  text: string;
-  isUserMessage: boolean;
+interface MessageProps {
+  message: {
+    id: string;
+    text: string;
+    isUserMessage: boolean;
+    isLoading?: boolean;
+    error?: string;
+  };
+  onRetry: (id: string) => void;
 }
 
-export const GlobalMessages = () => {
-  const { messages, isLoading } = useContext(GlobalChatContext);
-  const lastMessageRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (lastMessageRef.current) {
-      lastMessageRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-    }
-  }, [messages]);
-
+const Message: React.FC<MessageProps> = React.memo(({ message, onRetry }) => {
   const customRenderers: Components = {
     p: ({ children }) => <p className="mb-2">{children}</p>,
     h1: ({ children }) => <h1 className="text-2xl font-bold mt-4 mb-2">{children}</h1>,
@@ -36,50 +29,97 @@ export const GlobalMessages = () => {
     blockquote: ({ children }) => <blockquote className="border-l-4 border-gray-300 pl-4 italic my-2">{children}</blockquote>,
   };
 
-  const renderMessage = (message: Message) => {
-    if (message.isUserMessage) {
-      return <div className="text-white">{message.text}</div>;
-    }
+  if (message.isUserMessage) {
+    return <div className="text-white">{message.text}</div>;
+  }
 
+  if (message.isLoading) {
     return (
-      <div className="text-gray-900">
-        <ReactMarkdown components={customRenderers}>{message.text}</ReactMarkdown>
+      <div className="flex items-center">
+        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+        <span>AI is thinking...</span>
       </div>
     );
-  };
+  }
+
+  if (message.error) {
+    return (
+      <div className="text-red-500">
+        Error: {message.error}
+        <button
+          className="ml-2 text-blue-500 underline"
+          onClick={() => onRetry(message.id)}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="text-gray-900">
+      <ReactMarkdown components={customRenderers}>{message.text}</ReactMarkdown>
+    </div>
+  );
+});
+
+Message.displayName = 'Message';
+
+export const GlobalMessages = () => {
+  const { messages, isLoading, updateMessageById } = useContext(GlobalChatContext);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [prevMessageCount, setPrevMessageCount] = useState(0);
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    if (messages.length > prevMessageCount) {
+      scrollToBottom();
+    }
+    setPrevMessageCount(messages.length);
+  }, [messages, scrollToBottom, prevMessageCount]);
+
+  const handleRetry = useCallback((id: string) => {
+    // Implement retry logic here
+    console.log("Retrying message:", id);
+    updateMessageById(id, { isLoading: true, error: undefined });
+    // You would typically re-fetch the message content here
+    // For now, we'll just simulate a successful retry after a delay
+    setTimeout(() => {
+      updateMessageById(id, { isLoading: false, text: "Retried message content" });
+    }, 2000);
+  }, [updateMessageById]);
 
   return (
     <div className="flex flex-col gap-4 p-3 overflow-y-auto">
       {messages && messages.length > 0 ? (
-        messages.map((message, i) => {
-          const isLastMessage = i === messages.length - 1;
-
-          return (
+        messages.map((message) => (
+          <div
+            key={message.id}
+            className={`flex ${
+              message.isUserMessage ? "justify-end" : "justify-start"
+            }`}
+          >
             <div
-              key={message.id}
-              ref={isLastMessage ? lastMessageRef : null}
-              className={`flex ${
-                message.isUserMessage ? "justify-end" : "justify-start"
+              className={`rounded-lg px-3 py-2 max-w-[80%] ${
+                message.isUserMessage
+                  ? "bg-[#519DE9] text-white"
+                  : "bg-[rgb(250,250,252)] text-gray-900"
               }`}
             >
-              <div
-                className={`rounded-lg px-3 py-2 max-w-[80%] ${
-                  message.isUserMessage
-                    ? "bg-[#519DE9] text-white"
-                    : "bg-[rgb(250,250,252)] text-gray-900"
-                }`}
-              >
-                {renderMessage(message)}
-              </div>
+              <Message message={message} onRetry={handleRetry} />
             </div>
-          );
-        })
+          </div>
+        ))
       ) : isLoading ? (
         <div className="w-full flex flex-col items-center justify-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin" />
           <p>Loading messages...</p>
         </div>
       ) : null}
+      <div ref={messagesEndRef} />
     </div>
   );
 };

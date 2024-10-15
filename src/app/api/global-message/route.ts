@@ -21,52 +21,43 @@ const resultSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  try {
-    // Handle POST request for processing user messages
-    const body = await req.json();
+  const startTime = Date.now();
+  console.log(`[${startTime}] Starting global message processing`);
 
-    // Authenticate user
+  try {
+    const body = await req.json();
     const { getUser } = getKindeServerSession();
     const user = await getUser();
 
-    if (!user?.id) return new NextResponse("Uautoriseret.", { status: 401 });
+    if (!user?.id) {
+      console.log(`[${Date.now()}] Unauthorized access attempt`);
+      return new NextResponse("Uautoriseret.", { status: 401 });
+    }
 
-    // Fetch all file IDs and names for the user from the database
     const userFiles = await db.file.findMany({
-      where: {
-        userId: user.id,
-      },
-      select: {
-        id: true,
-        name: true,
-      },
+      where: { userId: user.id },
+      select: { id: true, name: true },
     });
 
-    const fileMap = new Map(userFiles.map(file => [file.id, file.name]));
-
-    console.log("Brugerens filer:", userFiles);
+    console.log(`[${Date.now()}] User files retrieved: ${userFiles.length}`);
 
     if (userFiles.length === 0) {
       return new NextResponse("Ingen dokumenter fundet for brugeren.", { status: 404 });
     }
 
-    // Extract message data
     const { message } = body;
     
     if (!message) {
       return new NextResponse("Besked er påkrævet.", { status: 400 });
     }
 
-    // Initialize OpenAI embeddings
     const embeddings = new OpenAIEmbeddings({
       openAIApiKey: process.env.OPENAI_API_KEY!,
     });
 
-    // Set up Pinecone vector store
     const pinecone = getPineconeClient();
     const pineconeIndex = pinecone.Index("lingvist");
 
-    // Perform similarity search across all user's files
     let allResults = [];
     for (const file of userFiles) {
       const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
@@ -74,32 +65,26 @@ export async function POST(req: NextRequest) {
         namespace: file.id,
       });
 
-      const results = await vectorStore.similaritySearch(message, 5);  // Adjust the number as needed
+      const results = await vectorStore.similaritySearch(message, 5);
       results.forEach(result => {
-        result.metadata.fileName = file.name;  // Add file name to metadata
+        result.metadata.fileName = file.name;
       });
       allResults.push(...results);
     }
 
-    console.log("Samlede resultater fra lighedssøgning:", allResults.length);
+    console.log(`[${Date.now()}] Similarity search completed. Results: ${allResults.length}`);
 
-    // Take top 20 results without sorting
     const topResults = allResults.slice(0, 20);
-
-    // Format initial results for reranking
     const initialResults = topResults.map(result => ({
       text: result.pageContent,
       id: result.metadata.fileId?.toString() || 'N/A',
       title: result.metadata.fileName || 'Ukendt titel'
     }));
 
-    console.log("Indledende resultater til omrangering:", initialResults.length);
-
     if (initialResults.length === 0) {
       return new NextResponse("Ingen relevante dokumenter fundet.", { status: 404 });
     }
 
-    // Perform reranking using Cohere
     const rerankedResults = await cohere.rerank({
       documents: initialResults,
       query: message,
@@ -108,9 +93,8 @@ export async function POST(req: NextRequest) {
       returnDocuments: true
     });
 
-    console.log("Omrangerede resultater:", rerankedResults.results.length);
+    console.log(`[${Date.now()}] Reranking completed. Results: ${rerankedResults.results.length}`);
 
-    // Generate structured data for each reranked result
     const structuredResults = await Promise.all(rerankedResults.results.map(async (result, index) => {
       const document = (result.document as DocumentType) || { text: 'Ingen tekst tilgængelig', id: 'N/A', title: 'Ukendt titel' };
       
@@ -127,20 +111,17 @@ export async function POST(req: NextRequest) {
       };
     }));
 
-    // Format structured results
     const formattedResults = structuredResults.map((result, index) => {
       return `Resultat ${index + 1}:\n- Titel: ${result.title}\n- Relevans: ${result.relevance}\n`;
     }).join("\n");
 
-    // Generate OpenAI chat completion using streamText
     const { textStream, fullStream } = await streamText({
       model: openai('gpt-4o-mini'),
       temperature: 0,
       messages: [
         {
           role: "system",
-          content:
-            `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Din opgave er at præsentere de givne strukturerede resultater i det nøjagtige format, der er angivet, uden yderligere kommentarer eller ændringer. Brug asterisker for formatering: *kursiv* for kursiv tekst og **fed** for fed tekst.`,
+          content: `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Din opgave er at præsentere de givne strukturerede resultater i det nøjagtige format, der er angivet, uden yderligere kommentarer eller ændringer. Brug asterisker for formatering: *kursiv* for kursiv tekst og **fed** for fed tekst.`,
         },
         {
           role: "user",
@@ -153,11 +134,34 @@ Brug derefter disse resultater til at give et kort, velformuleret svar på bruge
       ],
     });
 
-    // Return the streaming response
-    return new Response(textStream);
+    console.log(`[${Date.now()}] Stream generation completed. Sending response.`);
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        const encoder = new TextEncoder();
+        const timeout = setTimeout(() => {
+          controller.error(new Error("Stream timed out"));
+        }, 60000); // 60 second timeout
+
+        try {
+          for await (const chunk of textStream) {
+            controller.enqueue(encoder.encode(chunk));
+          }
+          controller.close();
+        } catch (error) {
+          controller.error(error);
+        } finally {
+          clearTimeout(timeout);
+        }
+      },
+    });
+
+    return new Response(stream);
   } catch (error) {
-    console.error("Fejl i global message route:", error);
+    console.error(`[${Date.now()}] Error in global message route:`, error);
     return new NextResponse("Der opstod en fejl under behandlingen af din anmodning.", { status: 500 });
+  } finally {
+    console.log(`[${Date.now()}] Global message processing completed. Total time: ${Date.now() - startTime}ms`);
   }
 }
 
