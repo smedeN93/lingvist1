@@ -125,7 +125,7 @@ const SignInButtons = () => {
     <div className="flex flex-row space-x-2 sm:space-x-3 md:space-x-6 items-stretch justify-center">
       <div className="w-36 sm:w-44">
         <ShimmerButtonDemo 
-          text="Prøv det gratis" 
+          text="Prøv gratis" 
           href="/dashboard" 
           className="w-full h-full"
         />

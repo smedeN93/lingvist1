@@ -15,6 +15,8 @@ export type GlobalChatContextType = {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   updateMessageById: (id: string, updates: Partial<Message>) => void;
   addMessage: (message: Message) => void;
+  loadingStatus: string | null;
+  setLoadingStatus: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 export const GlobalChatContext = createContext<GlobalChatContextType>({
@@ -24,11 +26,14 @@ export const GlobalChatContext = createContext<GlobalChatContextType>({
   setIsLoading: () => {},
   updateMessageById: () => {},
   addMessage: () => {},
+  loadingStatus: null,
+  setLoadingStatus: () => {},
 });
 
 export const GlobalChatContextProvider = ({ children }: PropsWithChildren) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState<string | null>(null);
 
   const updateMessageById = useCallback((id: string, updates: Partial<Message>) => {
     setMessages((prevMessages) =>
@@ -51,6 +56,8 @@ export const GlobalChatContextProvider = ({ children }: PropsWithChildren) => {
         setIsLoading,
         updateMessageById,
         addMessage,
+        loadingStatus,
+        setLoadingStatus,
       }}
     >
       {children}

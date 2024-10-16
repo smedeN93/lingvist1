@@ -19,6 +19,7 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
     setIsLoading,
     addMessage,
     updateMessageById,
+    setLoadingStatus,
   } = useContext(GlobalChatContext);
 
   const [message, setMessage] = useState("");
@@ -34,6 +35,8 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
 
     setIsLoading(true);
     setError(null);
+    setLoadingStatus('Starting...');
+
     const userMessageId = Date.now().toString();
     addMessage({ id: userMessageId, text: message, isUserMessage: true });
 
@@ -58,15 +61,59 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let aiResponse = "";
+      let done = false;
+      let buffer = "";
 
-      while (true) {
-        const { done, value } = await reader!.read();
-        if (done) break;
-        const chunk = decoder.decode(value, { stream: true });
-        aiResponse += chunk;
+      while (!done) {
+        const { value, done: doneReading } = await reader!.read();
+        done = doneReading;
+        const chunkValue = decoder.decode(value || new Uint8Array(), { stream: !done });
+        buffer += chunkValue;
 
-        updateMessageById(aiMessageId, { text: aiResponse, isLoading: false });
+        let processedIndex = 0;
+
+        // Process any status messages in the buffer
+        while (true) {
+          let statusStart = buffer.indexOf('status:', processedIndex);
+          if (statusStart === -1) {
+            break;
+          }
+
+          // Append any text before the status message to aiResponse
+          if (statusStart > processedIndex) {
+            const textPart = buffer.substring(processedIndex, statusStart);
+            aiResponse += textPart;
+            updateMessageById(aiMessageId, { text: aiResponse, isLoading: false });
+          }
+
+          // Find the end of the status line
+          let statusEnd = buffer.indexOf('\n', statusStart);
+          if (statusEnd === -1) {
+            // Status line not complete yet, wait for more data
+            break;
+          }
+
+          // Extract the status message
+          const statusMessage = buffer.substring(statusStart + 7, statusEnd).trim();
+          setLoadingStatus(statusMessage);
+
+          // Move processedIndex past the status line
+          processedIndex = statusEnd + 1;
+        }
+
+        // Append any remaining text to aiResponse
+        if (processedIndex < buffer.length) {
+          const textPart = buffer.substring(processedIndex);
+          aiResponse += textPart;
+          updateMessageById(aiMessageId, { text: aiResponse, isLoading: false });
+        }
+
+        // Reset buffer
+        buffer = "";
       }
+
+      // Clear loading status after processing
+      setLoadingStatus(null);
     } catch (error) {
       console.error("Error sending message:", error);
       setError("Failed to send message. Please try again.");
@@ -77,6 +124,7 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
         setTimeout(() => sendMessage(retryCount + 1), 1000 * (retryCount + 1));
       } else {
         setError("Failed to send message after multiple attempts. Please try again later.");
+        setLoadingStatus(null);
       }
     } finally {
       setIsLoading(false);

@@ -10,16 +10,16 @@ import { openai } from "@/lib/openai";
 import { getPineconeClient } from "@/lib/pinecone";
 import { db } from "@/db";
 
-// Initialize Cohere client for reranking
 const cohere = new CohereClient({
   token: process.env.COHERE_API_KEY!,
 });
 
 // Define the schema for our structured data
 const resultSchema = z.object({
-  relevance: z.string().describe("En kort forklaring på, hvorfor dette resultat er relevant for forespørgslen")
+  relevance: z.string().describe("En kort forklaring på, hvorfor dette resultat er relevant for forespørgslen"),
 });
 
+// Modify the POST method to stream status updates
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
   console.log(`[${startTime}] Starting global message processing`);
@@ -34,140 +34,167 @@ export async function POST(req: NextRequest) {
       return new NextResponse("Uautoriseret.", { status: 401 });
     }
 
-    console.log(`[${Date.now()}] User authenticated: ${user.id}`);
+    const encoder = new TextEncoder();
 
-    const userFiles = await db.file.findMany({
-      where: { userId: user.id },
-      select: { id: true, name: true },
-    });
+    // Create a ReadableStream to stream status updates and the assistant's response
+    const stream = new ReadableStream({
+      async start(controller) {
+        const enqueueStatus = (message: string) => {
+          controller.enqueue(encoder.encode(`status: ${message}\n`));
+        };
+        const enqueueText = (text: string) => {
+          controller.enqueue(encoder.encode(text));
+        };
 
-    console.log(`[${Date.now()}] User files retrieved: ${userFiles.length}`);
+        enqueueStatus('Starting processing');
 
-    if (userFiles.length === 0) {
-      return new NextResponse("Ingen dokumenter fundet for brugeren.", { status: 404 });
-    }
+        console.log(`[${Date.now()}] User authenticated: ${user.id}`);
 
-    const { message } = body;
-    
-    if (!message) {
-      return new NextResponse("Besked er påkrævet.", { status: 400 });
-    }
+        const userFiles = await db.file.findMany({
+          where: { userId: user.id },
+          select: { id: true, name: true },
+        });
 
-    console.log(`[${Date.now()}] Processing message: ${message}`);
+        console.log(`[${Date.now()}] User files retrieved: ${userFiles.length}`);
+        enqueueStatus('Retrieved user files');
 
-    const embeddings = new OpenAIEmbeddings({
-      openAIApiKey: process.env.OPENAI_API_KEY!,
-    });
+        if (userFiles.length === 0) {
+          controller.enqueue(encoder.encode("Ingen dokumenter fundet for brugeren."));
+          controller.close();
+          return;
+        }
 
-    const pinecone = getPineconeClient();
-    const pineconeIndex = pinecone.Index("lingvist");
+        const { message } = body;
 
-    let allResults = [];
-    for (const file of userFiles) {
-      console.log(`[${Date.now()}] Processing file: ${file.name}`);
-      const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
-        pineconeIndex,
-        namespace: file.id,
-      });
+        if (!message) {
+          controller.enqueue(encoder.encode("Besked er påkrævet."));
+          controller.close();
+          return;
+        }
 
-      const results = await vectorStore.similaritySearch(message, 5);
-      results.forEach(result => {
-        result.metadata.fileName = file.name;
-      });
-      allResults.push(...results);
-    }
+        console.log(`[${Date.now()}] Processing message: ${message}`);
+        enqueueStatus('Processing message');
 
-    console.log(`[${Date.now()}] Similarity search completed. Results: ${allResults.length}`);
+        const embeddings = new OpenAIEmbeddings({
+          openAIApiKey: process.env.OPENAI_API_KEY!,
+        });
 
-    const topResults = allResults.slice(0, 20);
-    const initialResults = topResults.map(result => ({
-      text: result.pageContent,
-      id: result.metadata.fileId?.toString() || 'N/A',
-      title: result.metadata.fileName || 'Ukendt titel'
-    }));
+        const pinecone = getPineconeClient();
+        const pineconeIndex = pinecone.Index("lingvist");
 
-    if (initialResults.length === 0) {
-      return new NextResponse("Ingen relevante dokumenter fundet.", { status: 404 });
-    }
+        let allResults = [];
+        for (const file of userFiles) {
+          console.log(`[${Date.now()}] Processing file: ${file.name}`);
+          enqueueStatus(`Processing file: ${file.name}`);
 
-    console.log(`[${Date.now()}] Starting reranking`);
-    const rerankedResults = await cohere.rerank({
-      documents: initialResults,
-      query: message,
-      topN: Math.min(4, initialResults.length),
-      model: 'rerank-multilingual-v3.0',
-      returnDocuments: true
-    });
+          const vectorStore = await PineconeStore.fromExistingIndex(embeddings, {
+            pineconeIndex,
+            namespace: file.id,
+          });
 
-    console.log(`[${Date.now()}] Reranking completed. Results: ${rerankedResults.results.length}`);
+          const results = await vectorStore.similaritySearch(message, 5);
+          results.forEach(result => {
+            result.metadata.fileName = file.name;
+          });
+          allResults.push(...results);
+        }
 
-    const structuredResults = await Promise.all(rerankedResults.results.map(async (result, index) => {
-      const document = (result.document as DocumentType) || { text: 'Ingen tekst tilgængelig', id: 'N/A', title: 'Ukendt titel' };
-      
-      console.log(`[${Date.now()}] Generating structured result for document: ${document.title}`);
-      const { object } = await generateObject({
-        model: openai('gpt-4o-mini'),
-        schema: resultSchema,
-        prompt: `Generer et struktureret resultat for følgende indhold, under hensyntagen til dets relevans for forespørgslen: "${message}"\n\nIndhold: ${document.text}`,
-      });
+        console.log(`[${Date.now()}] Similarity search completed. Results: ${allResults.length}`);
+        enqueueStatus('Similarity search completed');
 
-      return {
-        ...object,
-        documentId: document.id,
-        title: document.title
-      };
-    }));
+        const topResults = allResults.slice(0, 20);
+        const initialResults = topResults.map(result => ({
+          text: result.pageContent,
+          id: result.metadata.fileId?.toString() || 'N/A',
+          title: result.metadata.fileName || 'Ukendt titel',
+        }));
 
-    const formattedResults = structuredResults.map((result, index) => {
-      return `Resultat ${index + 1}:\n- Titel: ${result.title}\n- Relevans: ${result.relevance}\n`;
-    }).join("\n");
+        if (initialResults.length === 0) {
+          controller.enqueue(encoder.encode("Ingen relevante dokumenter fundet."));
+          controller.close();
+          return;
+        }
 
-    console.log(`[${Date.now()}] Starting stream generation`);
-    const { textStream, fullStream } = await streamText({
-      model: openai('gpt-4o-mini'),
-      temperature: 0,
-      messages: [
-        {
-          role: "system",
-          content: `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Din opgave er at præsentere de givne strukturerede resultater i det nøjagtige format, der er angivet, uden yderligere kommentarer eller ændringer. Brug asterisker for formatering: *kursiv* for kursiv tekst og **fed** for fed tekst.`,
-        },
-        {
-          role: "user",
-          content: `Præsenter følgende strukturerede resultater med passende formatering (kursiv for titler, fed for vigtige punkter):
+        console.log(`[${Date.now()}] Starting reranking`);
+        enqueueStatus('Starting reranking');
+
+        const rerankedResults = await cohere.rerank({
+          documents: initialResults,
+          query: message,
+          topN: Math.min(4, initialResults.length),
+          model: 'rerank-multilingual-v3.0',
+          returnDocuments: true,
+        });
+
+        console.log(`[${Date.now()}] Reranking completed. Results: ${rerankedResults.results.length}`);
+        enqueueStatus('Reranking completed');
+
+        const structuredResults = await Promise.all(
+          rerankedResults.results.map(async (result) => {
+            const document = (result.document as DocumentType) || {
+              text: 'Ingen tekst tilgængelig',
+              id: 'N/A',
+              title: 'Ukendt titel',
+            };
+
+            console.log(`[${Date.now()}] Generating structured result for document: ${document.title}`);
+            enqueueStatus(`Generating structured result for document: ${document.title}`);
+
+            const { object } = await generateObject({
+              model: openai('gpt-4o-mini'),
+              schema: resultSchema,
+              prompt: `Generer et struktureret resultat for følgende indhold, under hensyntagen til dets relevans for forespørgslen: "${message}"\n\nIndhold: ${document.text}`,
+            });
+
+            return {
+              ...object,
+              documentId: document.id,
+              title: document.title,
+            };
+          })
+        );
+
+        const formattedResults = structuredResults
+          .map((result, index) => {
+            return `Resultat ${index + 1}:\n- Titel: ${result.title}\n- Relevans: ${result.relevance}\n`;
+          })
+          .join("\n");
+
+        console.log(`[${Date.now()}] Starting stream generation`);
+        enqueueStatus('Generating assistant reply');
+
+        const { textStream, fullStream } = await streamText({
+          model: openai('gpt-4o-mini'),
+          temperature: 0,
+          messages: [
+            {
+              role: "system",
+              content: `Du er en hjælpsom assistent specialiseret i at analysere og besvare spørgsmål om dokumenter. Din opgave er at præsentere de givne strukturerede resultater i det nøjagtige format, der er angivet, uden yderligere kommentarer eller ændringer. Brug asterisker for formatering: *kursiv* for kursiv tekst og **fed** for fed tekst.`,
+            },
+            {
+              role: "user",
+              content: `Præsenter følgende strukturerede resultater med passende formatering (kursiv for titler, fed for vigtige punkter):
 
 ${formattedResults}
 
 Brug derefter disse resultater til at give et kort, velformuleret svar på brugerens forespørgsel: "${message}"`,
-        },
-      ],
-    });
+            },
+          ],
+        });
 
-    console.log(`[${Date.now()}] Stream generation completed. Sending response.`);
-
-    const stream = new ReadableStream({
-      async start(controller) {
-        const encoder = new TextEncoder();
-        const timeout = setTimeout(() => {
-          controller.error(new Error("Stream timed out"));
-        }, 60000); // 60 second timeout
-
-        try {
-          for await (const chunk of textStream) {
-            controller.enqueue(encoder.encode(chunk));
-            console.log(`[${Date.now()}] Chunk sent: ${chunk.length} characters`);
-          }
-          controller.close();
-          console.log(`[${Date.now()}] Stream closed successfully`);
-        } catch (error) {
-          console.error(`[${Date.now()}] Error in stream:`, error);
-          controller.error(error);
-        } finally {
-          clearTimeout(timeout);
+        // Stream the assistant's response
+        for await (const chunk of textStream) {
+          enqueueText(chunk);
         }
+
+        controller.close();
+        console.log(`[${Date.now()}] Stream closed successfully`);
       },
     });
 
-    return new Response(stream);
+    return new Response(stream, {
+      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
+    });
   } catch (error) {
     console.error(`[${Date.now()}] Error in global message route:`, error);
     return new NextResponse("Der opstod en fejl under behandlingen af din anmodning.", { status: 500 });

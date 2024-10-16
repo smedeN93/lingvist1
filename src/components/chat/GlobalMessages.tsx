@@ -66,7 +66,7 @@ const Message: React.FC<MessageProps> = React.memo(({ message, onRetry }) => {
 Message.displayName = 'Message';
 
 export const GlobalMessages = () => {
-  const { messages, isLoading, updateMessageById } = useContext(GlobalChatContext);
+  const { messages, isLoading, loadingStatus, updateMessageById } = useContext(GlobalChatContext);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [prevMessageCount, setPrevMessageCount] = useState(0);
 
@@ -120,6 +120,11 @@ export const GlobalMessages = () => {
         </div>
       ) : null}
       <div ref={messagesEndRef} />
+      {loadingStatus && (
+        <div className="text-gray-500 text-center mt-2">
+          {loadingStatus}
+        </div>
+      )}
     </div>
   );
 };
