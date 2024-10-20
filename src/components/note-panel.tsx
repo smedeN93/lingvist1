@@ -236,7 +236,7 @@ const NotesPanel: React.FC<NotesPanelProps> = ({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: '100%' }}
           transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-          className="fixed top-20 right-4 bottom-5 w-full sm:w-[24rem] max-w-full bg-[#fafafa] rounded-xl shadow-lg overflow-hidden flex flex-col z-50 sm:max-w-sm md:max-w-md lg:max-w-lg"
+          className="fixed top-[72px] right-6 bottom-8 w-full sm:w-[24rem] max-w-full bg-[#fafafa] rounded-xl shadow-lg overflow-hidden flex flex-col z-50 sm:max-w-sm md:max-w-md lg:max-w-lg"
         >
           <div className="bg-[#fafafa] p-4 sm:p-6 border-b border-zinc-950/10 flex justify-between items-center rounded-t-2xl">
             <h2 className="text-xl sm:text-2xl font-bold text-zinc-800">Noter</h2>

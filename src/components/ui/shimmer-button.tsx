@@ -97,10 +97,16 @@ ShimmerButton.displayName = "ShimmerButton";
 
 export default ShimmerButton;
 
-export function ShimmerButtonDemo({ text = "Kom i gang", className = "", href = "/" }) {
+export function ShimmerButtonDemo({ 
+  text = "Kom i gang", 
+  className = "", 
+  href = "/",
+  width = "w-full",
+  padding = "px-3 sm:px-5 lg:px-7 py-1.5 sm:py-2.5 lg:py-3.5"
+}) {
   return (
-    <Link href={href} className={`z-10 inline-block ${className}`}>
-      <ShimmerButton className="shadow-2xl">
+    <Link href={href} className={`z-10 inline-block ${width} ${className}`}>
+      <ShimmerButton className={`shadow-2xl ${width} ${padding}`}>
         <span className="flex items-center justify-center whitespace-nowrap text-xs sm:text-sm lg:text-base font-medium leading-none tracking-tight text-white dark:from-white dark:to-slate-900/10">
           {text}
           <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
@@ -109,4 +115,3 @@ export function ShimmerButtonDemo({ text = "Kom i gang", className = "", href = 
     </Link>
   );
 }
-

@@ -26,7 +26,7 @@ const FileIdPage = async ({ params }: { params: { fileId: string } }) => {
   if (!file) notFound();
 
   return (
-    <div className="flex-1 bg-[rgb(245,245,247)] justify-between flex flex-col h-[calc(100vh-3.5rem)]">
+    <div className="flex-1 bg-white justify-between flex flex-col h-[calc(100vh-3.5rem)] mt-12">
       <div className="mx-auto w-full grow lg:flex">
         {/* left side */}
         <div className="lg:flex-1 lg:w-1/2 xl:w-[55%] px-4 py-6 lg:px-8">

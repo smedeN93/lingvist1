@@ -1,53 +1,15 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from 'next/image';
-import { SparklesCore } from "./sparkles";
 import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { IconDotsVertical } from "@tabler/icons-react";
 
-
-
-export function AnswerResponseSektion() {
-  return (
-    <div className="w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px] flex items-center justify-center [perspective:1000px] sm:[perspective:1200px] [transform-style:preserve-3d] pt-4 sm:pt-6 md:pt-8">
-      <div
-        style={{
-          transform: "rotateX(15deg) translateZ(30px)",
-        }}
-        className="
-          p-0.5 sm:p-1 md:p-2 lg:p-4 
-          rounded-3xl 
-          dark:bg-neutral-900/60 bg-neutral-100/60 
-          w-full h-full 
-          backdrop-blur-sm
-          shadow-[0_10px_30px_rgba(0,0,0,0.1),_0_1px_2px_rgba(0,0,0,0.08)]
-          dark:shadow-[0_10px_30px_rgba(0,0,0,0.2),_0_1px_2px_rgba(255,255,255,0.05)]
-          transition-all duration-300 ease-out
-          hover:shadow-[0_15px_40px_rgba(0,0,0,0.12),_0_1px_3px_rgba(0,0,0,0.1)]
-          dark:hover:shadow-[0_15px_40px_rgba(0,0,0,0.25),_0_1px_3px_rgba(255,255,255,0.06)]
-        "
-      >
-        <Compare
-          firstImage="/lingvist_chat_interface2.svg"
-          secondImage="/lingvist_chat_interface1.svg"
-          firstImageClassName="object-cover object-left-top w-full h-full"
-          secondImageClassname="object-cover object-left-top w-full h-full"
-          className="w-full h-full rounded-[22px] md:rounded-lg"
-          slideMode="hover"
-          autoplay={true}
-        />
-      </div>
-    </div>
-  );
-}
-
 interface CompareProps {
-  firstImage?: string;
-  secondImage?: string;
+  firstImage: string;
+  secondImage: string;
   className?: string;
   firstImageClassName?: string;
   secondImageClassname?: string;
-  initialSliderPercentage?: number;
   slideMode?: "hover" | "drag";
   showHandlebar?: boolean;
   autoplay?: boolean;
@@ -58,12 +20,11 @@ interface CompareProps {
 }
 
 export const Compare = ({
-  firstImage = "",
-  secondImage = "",
+  firstImage,
+  secondImage,
   className,
   firstImageClassName,
   secondImageClassname,
-  initialSliderPercentage = 50,
   slideMode = "hover",
   showHandlebar = true,
   autoplay = false,
@@ -72,13 +33,9 @@ export const Compare = ({
   height = 400,
   quality = 100,
 }: CompareProps) => {
-  const [sliderXPercent, setSliderXPercent] = useState(initialSliderPercentage);
+  const [sliderXPercent, setSliderXPercent] = useState(50);
   const [isDragging, setIsDragging] = useState(false);
-
   const sliderRef = useRef<HTMLDivElement>(null);
-
-  const [isMouseOver, setIsMouseOver] = useState(false);
-
   const autoplayRef = useRef<NodeJS.Timeout | null>(null);
 
   const startAutoplay = useCallback(() => {
@@ -111,14 +68,12 @@ export const Compare = ({
   }, [startAutoplay, stopAutoplay]);
 
   function mouseEnterHandler() {
-    setIsMouseOver(true);
     stopAutoplay();
   }
 
   function mouseLeaveHandler() {
-    setIsMouseOver(false);
     if (slideMode === "hover") {
-      setSliderXPercent(initialSliderPercentage);
+      setSliderXPercent(50);
     }
     if (slideMode === "drag") {
       setIsDragging(false);
@@ -217,20 +172,8 @@ export const Compare = ({
           }}
           transition={{ duration: 0 }}
         >
-          <div className="w-36 h-full [mask-image:radial-gradient(100px_at_left,white,transparent)] absolute top-1/2 -translate-y-1/2 left-0 bg-gradient-to-r from-indigo-400 via-transparent to-transparent z-20 opacity-50" />
-          <div className="w-10 h-1/2 [mask-image:radial-gradient(50px_at_left,white,transparent)] absolute top-1/2 -translate-y-1/2 left-0 bg-gradient-to-r from-cyan-400 via-transparent to-transparent z-10 opacity-100" />
-          <div className="w-10 h-3/4 top-1/2 -translate-y-1/2 absolute -right-10 [mask-image:radial-gradient(100px_at_left,white,transparent)]">
-            <MemoizedSparklesCore
-              background="transparent"
-              minSize={0.4}
-              maxSize={1}
-              particleDensity={1200}
-              className="w-full h-full"
-              particleColor="#FFFFFF"
-            />
-          </div>
           {showHandlebar && (
-            <div className="h-5 w-5 rounded-md top-1/2 -translate-y-1/2 bg-white z-30 -right-2.5 absolute   flex items-center justify-center shadow-[0px_-1px_0px_0px_#FFFFFF40]">
+            <div className="h-5 w-5 rounded-md top-1/2 -translate-y-1/2 bg-white z-30 -right-2.5 absolute flex items-center justify-center shadow-[0px_-1px_0px_0px_#FFFFFF40]">
               <IconDotsVertical className="h-4 w-4 text-black" />
             </div>
           )}
@@ -238,54 +181,48 @@ export const Compare = ({
       </AnimatePresence>
       <div className="overflow-hidden w-full h-full relative z-20 pointer-events-none">
         <AnimatePresence initial={false}>
-          {firstImage ? (
-            <motion.div
-              className={cn(
-                "absolute inset-0 z-20 rounded-2xl flex-shrink-0 w-full h-full select-none overflow-hidden",
-                firstImageClassName
-              )}
-              style={{
-                clipPath: `inset(0 ${100 - sliderXPercent}% 0 0)`,
-              }}
-              transition={{ duration: 0 }}
-            >
-              <Image
-                alt="Billede af en AI chat app brugerflade"
-                src={firstImage}
-                fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 80vw"
-                className={cn(
-                  "object-cover object-left-top",
-                  firstImageClassName
-                )}
-                draggable={false}
-                quality={quality}
-              />
-            </motion.div>
-          ) : null}
-        </AnimatePresence>
-      </div>
-
-      <AnimatePresence initial={false}>
-        {secondImage ? (
-          <motion.div className="absolute inset-0 z-[19]">
+          <motion.div
+            className={cn(
+              "absolute inset-0 z-20 flex-shrink-0 w-full h-full select-none overflow-hidden",
+              firstImageClassName
+            )}
+            style={{
+              clipPath: `inset(0 ${100 - sliderXPercent}% 0 0)`,
+            }}
+            transition={{ duration: 0 }}
+          >
             <Image
-              alt="Billede af en AI chat app brugerflade"
-              src={secondImage}
+              alt="First image"
+              src={firstImage}
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 80vw"
               className={cn(
-                "object-cover object-left-top rounded-2xl",
-                secondImageClassname
+                "object-cover object-left-top",
+                firstImageClassName
               )}
               draggable={false}
               quality={quality}
             />
           </motion.div>
-        ) : null}
+        </AnimatePresence>
+      </div>
+
+      <AnimatePresence initial={false}>
+        <motion.div className="absolute inset-0 z-[19]">
+          <Image
+            alt="Second image"
+            src={secondImage}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 80vw"
+            className={cn(
+              "object-cover object-left-top rounded-2xl",
+              secondImageClassname
+            )}
+            draggable={false}
+            quality={quality}
+          />
+        </motion.div>
       </AnimatePresence>
     </div>
   );
 };
-
-const MemoizedSparklesCore = React.memo(SparklesCore);

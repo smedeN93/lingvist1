@@ -5,11 +5,9 @@ import {
 import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
-
 import { MaxWidthWrapper } from "./max-width-wrapper";
 import { MobileNav } from "./mobile-nav";
 import { UserAccountNav } from "./user-account-nav";
-import { NavbarWrapper } from "./navbarwrapper";
 import { ShimmerRegisterLink } from "./ui/ShimmerRegisterLink";
 import { cn } from "@/lib/utils";
 
@@ -19,67 +17,78 @@ export const Navbar = async () => {
 
   return (
     <>
-      <NavbarWrapper>
+      <div className="fixed top-4 left-0 right-0 z-50">
         <MaxWidthWrapper>
-          <div className="flex h-14 items-center justify-between">
-            <Link href="/" className="flex z-40 font-bold items-center">
-              <span>lingvist</span>
-              <span className="text-blue-600 text-2xl font-extrabold leading-none relative bottom-0.5">.</span>
-            </Link>
+          <nav className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg px-4 py-2">
+            <div className="flex items-center justify-between">
+              <Link href="/" className="flex font-bold items-center">
+                <span className="text-slate-800 text-shadow-sm">lingvist</span>
+                <span className="text-blue-600 text-2xl font-extrabold leading-none relative bottom-0.5 text-shadow-sm">.</span>
+              </Link>
 
-            <div className="flex items-center justify-center space-x-4">
-              {!user ? (
-                <>
-                  <Link
-                    href="/pricing"
-                    className={buttonVariants({
-                      variant: "ghost",
-                      size: "sm",
-                    })}
-                  >
-                    Priser
-                  </Link>
+              <div className="flex items-center space-x-2">
+                {!user ? (
+                  <>
+                    <Link
+                      href="/pricing"
+                      className={cn(
+                        buttonVariants({
+                          variant: "ghost",
+                          size: "sm",
+                        }),
+                        "bg-slate-200/50 text-slate-700 hover:bg-slate-200/70 hover:text-slate-900 transition-colors text-shadow-sm"
+                      )}
+                    >
+                      Priser
+                    </Link>
 
-                  <LoginLink
-                    className={cn(
-                      buttonVariants({
-                        variant: "secondary",
-                        size: "sm",
-                      }),
-                      "bg-white text-slate-800 border border-slate-200 hover:bg-slate-50"
-                    )}
-                  >
-                    Log ind
-                  </LoginLink>
-                  <ShimmerRegisterLink size="default" className="shadow-md" />
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className={buttonVariants({
-                      variant: "ghost",
-                      size: "sm",
-                    })}
-                  >
-                    Kontrolpanel
-                  </Link>
+                    <LoginLink
+                      className={cn(
+                        buttonVariants({
+                          variant: "ghost",
+                          size: "sm",
+                        }),
+                        "bg-slate-200/50 text-slate-700 hover:bg-slate-200/70 hover:text-slate-900 transition-colors text-shadow-sm"
+                      )}
+                    >
+                      Log ind
+                    </LoginLink>
+                    <ShimmerRegisterLink 
+                      size="sm" 
+                      className="bg-white/40 text-slate-800 hover:bg-white/50 hover:text-slate-900 transition-colors text-shadow-sm" 
+                    />
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      className={cn(
+                        buttonVariants({
+                          variant: "ghost",
+                          size: "sm",
+                        }),
+                        "bg-slate-200/50 text-slate-700 hover:bg-slate-200/70 hover:text-slate-900 transition-colors text-shadow-sm"
+                      )}
+                    >
+                      Kontrolpanel
+                    </Link>
 
-                  <UserAccountNav
-                    name={
-                      !user.given_name || !user.family_name
-                        ? "Your Account"
-                        : `${user.given_name} ${user.family_name}`
-                    }
-                    email={user.email ?? ""}
-                    imageUrl={user.picture ?? ""}
-                  />
-                </>
-              )}
+                    <UserAccountNav
+                      name={
+                        !user.given_name || !user.family_name
+                          ? "Your Account"
+                          : `${user.given_name} ${user.family_name}`
+                      }
+                      email={user.email ?? ""}
+                      imageUrl={user.picture ?? ""}
+                    />
+                  </>
+                )}
+              </div>
             </div>
-          </div>
+          </nav>
         </MaxWidthWrapper>
-      </NavbarWrapper>
+      </div>
       
       <MobileNav isAuth={!!user} />
     </>

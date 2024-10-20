@@ -318,10 +318,10 @@ const PricingComponent: React.FC = () => {
         transition={{ duration: 0.5, delay: 0.4 }}
       >
         <div className="mb-4 xl:mb-6">
-          <h2 className="text-2xl sm:text-3xl xl:text-5xl font-bold text-slate-950">
+          <h2 className="text-2xl sm:text-3xl xl:text-5xl font-bold text-slate-950 tracking-[-0.04em]">
             Få mere ud af dine dokumenter.
           </h2>
-          <p className="text-blue-600 text-2xl sm:text-3xl xl:text-5xl font-bold inline-block">
+          <p className="text-blue-600 text-2xl sm:text-3xl xl:text-5xl font-bold inline-block tracking-[-0.04em]">
             Simpel prissætning.
           </p>
         </div>

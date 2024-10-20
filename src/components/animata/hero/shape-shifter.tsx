@@ -1,6 +1,7 @@
 import Marquee from "@/components/animata/container/marquee";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import { FaPause } from 'react-icons/fa';
 
 const images: { src: string; alt: string; width: number; height: number; className?: string }[] = [
   {
@@ -10,27 +11,21 @@ const images: { src: string; alt: string; width: number; height: number; classNa
     height: 1907,
   },
   {
-    src: "https://images.unsplash.com/photo-1495985812444-236d6a87bdd9?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3",
+    src: "/lingvist-fullscreen-preview.webp",
     alt: "Image 3",
-    width: 600,
-    height: 400,
-  },
-  {
-    src: "https://images.unsplash.com/photo-1451976426598-a7593bd6d0b2?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3",
-    alt: "Image 2",
     width: 800,
     height: 400,
   },
   {
-    src: "https://images.unsplash.com/photo-1479839672679-a46483c0e7c8?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3",
-    alt: "Image 4",
-    width: 400,
-    height: 400,
+    src: "/lingvist-dashboard-preview.webp",
+    alt: "Image 2",
+    width: 1860,
+    height: 1287,
   },
   {
-    src: "https://images.unsplash.com/photo-1611816055460-618287c870bd?q=80&w=600&auto=format&fit=crop&ixlib=rb-4.0.3",
-    alt: "Image 5",
-    width: 600,
+    src: "/lingvist-subscription-preview.webp",
+    alt: "Image 4",
+    width: 400,
     height: 400,
   },
 ];
@@ -44,7 +39,7 @@ const RollingImages = () => (
           alt={image.alt}
           width={image.width}
           height={image.height}
-          className={cn("object-contain max-h-full w-auto", image.className)}
+          className={cn("object-contain max-h-full w-auto rounded-lg", image.className)}
         />
       </div>
     ))}
@@ -63,7 +58,7 @@ export default function ShapeShifter({
   return (
     <div
       className={cn(
-        "flex min-h-96 w-full min-w-fit items-center justify-center",
+        "flex min-h-96 w-full min-w-fit items-center justify-center relative",
         containerClassName
       )}
     >
@@ -74,6 +69,9 @@ export default function ShapeShifter({
         )}
       >
         {children ?? <RollingImages />}
+      </div>
+      <div className="absolute bottom-2 right-2 bg-white bg-opacity-10 backdrop-blur-md rounded-full p-2.5 text-white text-opacity-80 border border-white border-opacity-20 shadow-lg">
+        <FaPause size={14} />
       </div>
     </div>
   );

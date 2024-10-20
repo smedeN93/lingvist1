@@ -6,12 +6,12 @@ import {
   TargetAndTransition,
   Variants,
 } from 'framer-motion';
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 type PresetType = 'blur' | 'shake' | 'scale' | 'fade' | 'slide';
 
 type TextEffectProps = {
-  children: string;
+  children: ReactNode;
   per?: 'word' | 'char' | 'line';
   as?: keyof React.JSX.IntrinsicElements;
   variants?: {
@@ -99,49 +99,69 @@ const presetVariants: Record<
   },
 };
 
+const processChildren = (children: ReactNode, per: 'word' | 'char' | 'line'): ReactNode[] => {
+  return React.Children.toArray(children).flatMap((child) => {
+    if (typeof child === 'string') {
+      if (per === 'word') {
+        return child.split(/(\s+)/).map((word) => word);
+      } else if (per === 'char') {
+        return child.split('');
+      }
+      return [child];
+    } else if (React.isValidElement(child)) {
+      const processedChildren = processChildren(child.props.children, per);
+      return [React.cloneElement(child, {}, ...processedChildren)];
+    }
+    return [child];
+  });
+};
+
 const AnimationComponent: React.FC<{
-  segment: string;
+  segment: ReactNode;
   variants: Variants;
   per: 'line' | 'word' | 'char';
   segmentWrapperClassName?: string;
 }> = React.memo(({ segment, variants, per, segmentWrapperClassName }) => {
-  const content =
-    per === 'line' ? (
-      <motion.span variants={variants} className='block'>
-        {segment}
-      </motion.span>
-    ) : per === 'word' ? (
-      <motion.span
-        aria-hidden='true'
-        variants={variants}
-        className='inline-block whitespace-pre'
-      >
-        {segment}
-      </motion.span>
-    ) : (
-      <motion.span className='inline-block whitespace-pre'>
-        {segment.split('').map((char, charIndex) => (
-          <motion.span
-            key={`char-${charIndex}`}
-            aria-hidden='true'
-            variants={variants}
-            className='inline-block whitespace-pre'
-          >
-            {char}
-          </motion.span>
-        ))}
-      </motion.span>
-    );
+  const renderContent = () => {
+    if (typeof segment === 'string') {
+      return (
+        <motion.span
+          variants={variants}
+          className={cn(
+            per === 'line' ? 'block' : 'inline-block',
+            per === 'char' ? 'whitespace-pre' : ''
+          )}
+        >
+          {segment}
+        </motion.span>
+      );
+    } else if (React.isValidElement(segment)) {
+      return React.cloneElement(
+        segment,
+        {},
+        <motion.span
+          variants={variants}
+          className={cn(
+            per === 'line' ? 'block' : 'inline-block',
+            per === 'char' ? 'whitespace-pre' : ''
+          )}
+        >
+          {segment.props.children}
+        </motion.span>
+      );
+    }
+    return segment;
+  };
 
   if (!segmentWrapperClassName) {
-    return content;
+    return renderContent();
   }
 
   const defaultWrapperClassName = per === 'line' ? 'block' : 'inline-block';
 
   return (
     <span className={cn(defaultWrapperClassName, segmentWrapperClassName)}>
-      {content}
+      {renderContent()}
     </span>
   );
 });
@@ -160,15 +180,7 @@ export function TextEffect({
   onAnimationComplete,
   segmentWrapperClassName,
 }: TextEffectProps) {
-  let segments: string[];
-
-  if (per === 'line') {
-    segments = children.split('\n');
-  } else if (per === 'word') {
-    segments = children.split(/(\s+)/);
-  } else {
-    segments = children.split('');
-  }
+  const segments = processChildren(children, per);
 
   const MotionTag = motion[as as keyof typeof motion] as typeof motion.div;
   const selectedVariants = preset
@@ -176,8 +188,7 @@ export function TextEffect({
     : { container: defaultContainerVariants, item: defaultItemVariants };
   const containerVariants = variants?.container || selectedVariants.container;
   const itemVariants = variants?.item || selectedVariants.item;
-  const ariaLabel = per === 'line' ? undefined : children;
-
+  
   const stagger = defaultStaggerTimes[per];
 
   const delayedContainerVariants: Variants = {
@@ -202,14 +213,13 @@ export function TextEffect({
           initial='hidden'
           animate='visible'
           exit='exit'
-          aria-label={ariaLabel}
           variants={delayedContainerVariants}
           className={cn('whitespace-pre-wrap', className)}
           onAnimationComplete={onAnimationComplete}
         >
           {segments.map((segment, index) => (
             <AnimationComponent
-              key={`${per}-${index}-${segment}`}
+              key={`${per}-${index}`}
               segment={segment}
               variants={itemVariants}
               per={per}

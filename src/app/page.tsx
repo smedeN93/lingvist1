@@ -1,7 +1,7 @@
 "use client"
 
 import React, { Suspense } from "react";
-import LandingPage from "@/components/ui/landing-page-aurora";
+import LandingPage from "@/components/ui/landing-page";
 import ShuffleSection from "@/components/ui/ShuffleSection";
 import Expandable from "@/components/ui/FeatureSection";
 import { AppleCardsCarousel } from "@/components/ui/apple-cards-carousel";
@@ -11,7 +11,6 @@ const IntermediateCard = React.lazy(() => import("@/components/ui/IntermediateCa
 const SecurityInfoCard = React.lazy(() => import("@/components/ui/SecurityInfoCard"));
 const PricingComponent = React.lazy(() => import("@/components/ui/PricingComponent"));
 const PreFooter = React.lazy(() => import("@/components/ui/PreFooter"));
-
 
 const LoadingFallback = () => <div className="w-full h-20 flex items-center justify-center">Loading...</div>;
 
@@ -65,7 +64,7 @@ const HomePage = () => {
         </Suspense>
       </div>
 
-      <div className="mt-24 md:mt-32 mb-24 md:mb-32 px-4 sm:px-6 lg:px-8">
+      <div className="mt-24 md:mt-32 mb-24 md:mb-32 px-4 sm:px-6 lg:px-8 tracking-[-0.04em]">
         <Suspense fallback={<LoadingFallback />}>
           <SecurityInfoCard />
         </Suspense>

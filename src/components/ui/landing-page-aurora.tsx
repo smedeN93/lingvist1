@@ -16,17 +16,18 @@ const StructuredGridBackground = () => {
       
       <div className="absolute inset-0 flex items-center justify-center">
         <div 
-          className="w-full max-w-[1663px] h-[calc(100%-200px)] relative border border-[rgba(220,220,225,0.8)] rounded-3xl sm:rounded-[60px] md:rounded-[80px] lg:rounded-[100px] overflow-hidden"
+          className="w-full max-w-[1663px] h-[calc(100%-200px)] relative border border-[rgba(220,220,225,0.4)] rounded-3xl sm:rounded-[60px] md:rounded-[80px] lg:rounded-[100px] overflow-hidden"
           style={{
             backgroundImage: `
-              linear-gradient(to right, rgba(220,220,225,0.8) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(220,220,225,0.8) 1px, transparent 1px)
+              linear-gradient(to right, rgba(220,220,225,0.2) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(220,220,225,0.2) 1px, transparent 1px)
             `,
-            backgroundSize: '120px 120px',
-            backgroundPosition: '-1px -1px',
+            backgroundSize: '40px 40px',
+            backgroundPosition: 'center center',
           }}
         >
-          {/* Remove corner decorations as they might not fit with the rounded corners */}
+          {/* Add a subtle inner shadow */}
+          <div className="absolute inset-0 shadow-inner rounded-3xl sm:rounded-[60px] md:rounded-[80px] lg:rounded-[100px]" />
         </div>
       </div>
 
@@ -48,15 +49,15 @@ export default function LandingPage() {
               per="char"
               preset="fade"
               delay={0.5}
-              className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-semibold text-slate-950 mx-auto tracking-[-0.03em]"
+              className="text-2xl xs:text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-semibold text-slate-950 mx-auto tracking-[-0.05em]"
             >
-              AI der citerer dine dokumenter.
+              AI der citerer <span className="text-blue-600 font-bold">dine</span> dokumenter.
             </TextEffect>
             <TextEffect
               per="char"
               preset="fade"
               delay={2}
-              className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-medium text-slate-950 tracking-[-0.04em]"
+              className="text-lg sm:text-xl lg:text-2xl xl:text-3xl font-medium text-slate-700 tracking-[-0.04em] max-w-[20ch] sm:max-w-[24ch] lg:max-w-[100ch] mx-auto text-center"
             >
               Samtaler med citerede svar, så du er sikker på fakta.
             </TextEffect>
@@ -91,7 +92,7 @@ export default function LandingPage() {
           >
             <ShapeShifter
               containerClassName="w-full h-full"
-              className="w-full h-full rounded-lg shadow-lg"
+              className="w-full h-full rounded-3xl shadow-lg"
             />
           </motion.div>
         </div>

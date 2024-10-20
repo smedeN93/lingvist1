@@ -239,16 +239,16 @@ const IntermediateCard: React.FC<IntermediateCardProps> = ({
         <div className="xl:w-1/3 flex flex-col justify-between xl:justify-start h-full">
           <div>
             <motion.h2 
-              className="text-2xl sm:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-slate-950"
+              className="text-2xl sm:text-3xl xl:text-4xl 2xl:text-5xl font-bold text-slate-950 tracking-[-0.04em]"
               variants={itemVariants}
             >
               {title}
             </motion.h2>
-            <motion.div className="mb-2" variants={itemVariants}>
+            <motion.div className="mb-2 tracking-[-0.04em]" variants={itemVariants}>
               <TypewriterEffectSmooth words={animatedTexts} className="text-blue-600" infinite={false}/>
             </motion.div>
             <motion.p 
-              className="text-sm sm:text-base xl:text-lg text-slate-950 mb-2"
+              className="text-sm sm:text-base xl:text-lg text-slate-950 mb-2 tracking-[-0.04em]"
               variants={itemVariants}
             >
               {descriptionText}

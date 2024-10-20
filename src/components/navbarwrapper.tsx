@@ -26,10 +26,13 @@ export const NavbarWrapper: React.FC<NavbarWrapperProps> = ({ children }) => {
   }, []);
 
   return (
-    <nav className={`sticky h-14 inset-x-0 top-0 z-30 w-full transition-all hidden sm:block
-                     bg-[rgb(245,245,247)]
-                     ${isScrolled ? 'backdrop-blur-lg border-b border-gray-200' : ''}`}>
-      {children}
+    <nav className={`sticky h-14 inset-x-0 top-0 z-30 w-full transition-all duration-300 ease-in-out hidden sm:block
+                     ${isScrolled 
+                       ? 'bg-white/70 backdrop-blur-lg border-b border-gray-200' 
+                       : 'bg-transparent'}`}>
+      <div className={`h-full ${isScrolled ? '' : 'bg-transparent'}`}>
+        {children}
+      </div>
     </nav>
   );
 };

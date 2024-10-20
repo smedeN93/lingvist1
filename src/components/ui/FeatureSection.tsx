@@ -120,7 +120,7 @@ const generateSquares = () => {
           className={`object-cover ${cornerClasses}`}
           priority={index === 0} // Load the first image with priority
         />
-        <div className="absolute inset-0 bg-black/10" /> {/* Slight dark overlay */}
+        <div className="absolute inset-0 bg-black/30" /> {/* Slight dark overlay */}
         {sq.title && sq.icon && (
           <div className="absolute bottom-4 left-4 max-w-[80%]">
             <div className="bg-white/50 backdrop-blur-lg rounded-lg p-2 sm:p-3 inline-block">
@@ -191,21 +191,21 @@ export default function ImageShuffleCard() {
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
                     <p className="text-sm text-wrap">
-                      N��r du uploader dine dokumenter til Lingvist, gør du dem til den primære informationskilde for AI. Det gør ganske enkelt, at du slipper for at bekymre dig om sandhedsgraden af de svar du får. De er nemlig baseret på dine dokumenter.
+                      Når du uploader dine dokumenter til Lingvist, gør du dem til den primære informationskilde for AI. Det gør ganske enkelt, at du slipper for at bekymre dig om sandhedsgraden af de svar du får. De er nemlig baseret på dine dokumenter.
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
             <div className="mb-4 lg:mb-6">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-slate-950">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-slate-950 tracking-[-0.04em]">
                 AI til søgning med citeringer og notatskrivning.
               </h2>
-              <p className="text-blue-600 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold inline-block">
+              <p className="text-blue-600 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold inline-block tracking-[-0.04em]">
                 Alt samlet i ét.
               </p>
             </div>
-            <p className="text-sm sm:text-base xl:text-lg text-slate-950 dark:text-slate-300 mb-4">
+            <p className="text-sm sm:text-base xl:text-lg text-slate-950 dark:text-slate-300 mb-4 tracking-[-0.04em]">
               Lav en pålidelig AI-assistent baseret på dine dokumenter, som citerer kilderne i sine svar.
             </p>
             <div className="space-y-2 mb-4">

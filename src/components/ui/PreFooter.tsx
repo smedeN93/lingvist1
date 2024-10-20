@@ -4,7 +4,6 @@ import { motion, useInView } from 'framer-motion';
 
 // Lazy load components
 const LingvistUsers = lazy(() => import('./animated-tooltip').then(module => ({ default: module.LingvistUsers })));
-const TypewriterEffectSmooth = lazy(() => import('./TypewriterEffectSmooth').then(module => ({ default: module.TypewriterEffectSmooth })));
 
 const PreFooter: React.FC = () => {
   const userTypes = [
@@ -55,16 +54,9 @@ const PreFooter: React.FC = () => {
     >
       <div className="flex flex-col lg:flex-row items-start gap-8">
         <motion.div className="lg:w-2/3" variants={childVariants}>
-          <motion.h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4" variants={childVariants}>
+          <motion.h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 tracking-[-0.04em]" variants={childVariants}>
             Klar til at prøve Lingvist? <br/> Flere er i gang.
           </motion.h2>
-          <Suspense fallback={<div className="text-[#e0e0e2] text-lg sm:text-xl mb-2">Loading...</div>}>
-            <TypewriterEffectSmooth
-              words={userTypes}
-              className="text-[#e0e0e2] text-lg sm:text-xl mb-2"
-              infinite={true}
-            />
-          </Suspense>
           <Suspense fallback={<div className="h-20 bg-gray-700 rounded animate-pulse"></div>}>
             <LingvistUsers />
           </Suspense>

@@ -49,18 +49,18 @@ const AnswerResponse = () => {
               </Tooltip>
             </TooltipProvider>
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold dark:text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold dark:text-white mb-4 tracking-[-0.04em]">
             En app der bringer <span className="text-blue-600">kunstig intelligens</span> til dine dokumenter.
           </h2>
-          <p className="text-sm sm:text-base text-slate-950 dark:text-slate-300">
+          <p className="text-sm sm:text-base text-slate-950 dark:text-slate-300 tracking-[-0.04em]">
             Lingvist gør din søgen til en samtale, så du kan finde svar på en brøkdel af tiden du plejer.
           </p>
         </div>
       </div>
       <div className="w-full">
         <CompareImage
-          firstImage="/lingvist_chat_preview15.webp"
-          secondImage="/lingvist_chat_preview15.webp"
+          firstImage="/lingvist-chat-preview.webp"
+          secondImage="/lingvist-dashboard-preview.webp"
           alt="Screenshot of application"
           width={3840}
           height={1907}

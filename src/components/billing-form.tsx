@@ -68,7 +68,7 @@ export const BillingForm = ({ subscriptionPlan }: BillingFormProps) => {
                 </div>
                 <div className="flex items-center">
                   <CheckCircle2 className="text-blue-500 mr-3 h-5 w-5" />
-                  <span className="text-sm text-gray-600">Prioritetet kundesupport</span>
+                  <span className="text-sm text-gray-600">Udvidet dokumentgrænse</span>
                 </div>
               </div>
             </CardContent>

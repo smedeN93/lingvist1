@@ -81,14 +81,14 @@ export function ShuffleHeroSection() {
               </TooltipProvider>
             </div>
             <div className="mb-4 lg:mb-6">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-slate-950">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-slate-950 tracking-[-0.04em]">
                 Få AI til at finde det du søger i dine dokumenter.
               </h2>
-              <p className="text-blue-600 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold inline-block">
+              <p className="text-blue-600 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold inline-block tracking-[-0.04em]">
                 Udnyt op til 500 sider samtidigt.
               </p>
             </div>
-            <p className="text-sm sm:text-base xl:text-lg text-slate-950 dark:text-slate-300 mb-4">
+            <p className="text-sm sm:text-base xl:text-lg text-slate-950 dark:text-slate-300 mb-4 tracking-[-0.04em]">
               Lav en pålidelig AI-assistent baseret på dine dokumenter, som citerer kilderne i sine svar.
             </p>
             <div className="space-y-2 mb-4">
@@ -219,7 +219,7 @@ const generateSquares = () => {
         key={sq.id}
         layout
         transition={{ duration: 1.5, type: "spring" }}
-        className={`w-full h-full relative ${cornerClasses}`}
+        className={`w-full h-full relative ${cornerClasses} overflow-hidden`}
       >
         <Image
           src={sq.src}
@@ -228,6 +228,7 @@ const generateSquares = () => {
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className={`object-cover ${cornerClasses}`}
         />
+        <div className="absolute inset-0 bg-black opacity-30"></div>
       </motion.div>
     );
   });

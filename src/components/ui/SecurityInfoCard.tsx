@@ -95,10 +95,10 @@ const SecurityInfoCard: React.FC = () => {
     >
       <motion.div className="flex flex-col mb-6 lg:mb-8" variants={itemVariants}>
         <div className="mb-4 lg:mb-6">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-slate-950">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-slate-950 tracking-[-0.04em]">
             Sikkerhed. Selvfølgelig.
           </h2>
-          <p className="text-blue-600 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold inline-block">
+          <p className="text-blue-600 text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold inline-block tracking-[-0.04em]">
             Se hvordan.
           </p>
         </div>

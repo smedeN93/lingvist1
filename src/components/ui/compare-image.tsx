@@ -20,7 +20,7 @@ export const CompareImage: React.FC<CompareImageProps> = ({
 }) => {
   return (
     <div className="relative w-full h-full flex items-center">
-      <div className="relative rounded-3xl overflow-hidden shadow-sm w-full">
+      <div className="relative rounded sm:rounded-md md:rounded-lg lg:rounded-xl xl:rounded-2xl overflow-hidden shadow-sm w-full">
         <Compare
           firstImage={firstImage}
           secondImage={secondImage}
@@ -31,10 +31,9 @@ export const CompareImage: React.FC<CompareImageProps> = ({
           height={height}
           slideMode="hover"
           autoplay={true}
-          autoplayDuration={5000}
+          autoplayDuration={7000}
           quality={quality}
         />
-        <div className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(220,220,225,0.8)] rounded-3xl"></div>
       </div>
     </div>
   );

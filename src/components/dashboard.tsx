@@ -41,7 +41,7 @@ export default function Component({ subscriptionPlan }: DashboardProps) {
         transition={{ duration: 0.5 }}
         className="min-h-screen bg-white p-4 pb-24"
       >
-        <main className="mx-auto max-w-7xl md:p-10 pb-32">
+        <main className="mx-auto max-w-7xl md:p-10 pb-32 mt-6">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
