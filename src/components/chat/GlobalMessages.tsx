@@ -5,6 +5,7 @@ import { Loader2 } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 import { GlobalChatContext } from "./global-chat-context";
 import { Components } from 'react-markdown';
+import  LoadingIndicator  from "./LoadingIndicator";
 
 interface MessageProps {
   message: {
@@ -33,15 +34,6 @@ const Message: React.FC<MessageProps> = React.memo(({ message, onRetry }) => {
     return <div className="text-white">{message.text}</div>;
   }
 
-  if (message.isLoading) {
-    return (
-      <div className="flex items-center">
-        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-        <span>AI is thinking...</span>
-      </div>
-    );
-  }
-
   if (message.error) {
     return (
       <div className="text-red-500">
@@ -66,7 +58,7 @@ const Message: React.FC<MessageProps> = React.memo(({ message, onRetry }) => {
 Message.displayName = 'Message';
 
 export const GlobalMessages = () => {
-  const { messages, isLoading, loadingStatus, updateMessageById } = useContext(GlobalChatContext);
+  const { messages, isLoading, loadingSteps, updateMessageById } = useContext(GlobalChatContext);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [prevMessageCount, setPrevMessageCount] = useState(0);
 
@@ -103,7 +95,7 @@ export const GlobalMessages = () => {
             }`}
           >
             <div
-              className={`rounded-lg px-3 py-2 max-w-[80%] ${
+              className={`rounded-3xl px-3 py-2 max-w-[80%] ${
                 message.isUserMessage
                   ? "bg-[#519DE9] text-white"
                   : "bg-[rgb(250,250,252)] text-gray-900"
@@ -114,17 +106,17 @@ export const GlobalMessages = () => {
           </div>
         ))
       ) : isLoading ? (
-        <div className="w-full flex flex-col items-center justify-center gap-2">
+        <div className="w-full h-full flex flex-col items-center justify-center gap-2">
           <Loader2 className="h-8 w-8 animate-spin" />
           <p>Loading messages...</p>
         </div>
       ) : null}
-      <div ref={messagesEndRef} />
-      {loadingStatus && (
-        <div className="text-gray-500 text-center mt-2">
-          {loadingStatus}
+      {loadingSteps.length > 0 && isLoading && (
+        <div className="w-full flex justify-center">
+          <LoadingIndicator steps={loadingSteps} />
         </div>
       )}
+      <div ref={messagesEndRef} />
     </div>
   );
 };

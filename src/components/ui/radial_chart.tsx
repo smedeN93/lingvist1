@@ -90,7 +90,7 @@ function RadialChartComponent({ data, config, label }: { data: any[], config: Ch
         />
         <RadialBar 
           dataKey="value" 
-          background 
+          background={{ fill: "rgb(250,250,252)" }}
           cornerRadius={10} 
           className={isZero ? "opacity-30" : ""}
         />

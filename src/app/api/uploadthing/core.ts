@@ -35,12 +35,13 @@ const onUploadComplete = async ({
     url: string;
   };
 }) => {
-  let createdFile: File | null;
+  const { subscriptionPlan, userId } = metadata;
+  const { isSubscribed } = subscriptionPlan;
 
-  createdFile = await db.file.findUnique({
+  let createdFile = await db.file.findUnique({
     where: {
       key: file.key,
-      userId: metadata.userId,
+      userId: userId,
     },
   });
 
@@ -49,7 +50,7 @@ const onUploadComplete = async ({
       data: {
         key: file.key,
         name: file.name,
-        userId: metadata.userId,
+        userId: userId,
         url: `https://utfs.io/f/${file.key}`,
         uploadStatus: "PROCESSING",
       },
@@ -65,8 +66,6 @@ const onUploadComplete = async ({
     const pageLevelDocs = await loader.load();
 
     const pageAmt = pageLevelDocs.length;
-    const { subscriptionPlan, userId } = metadata;
-    const { isSubscribed } = subscriptionPlan;
 
     const isProExceeded =
       pageAmt > PLANS.find((plan) => plan.name === "Pro")!.pagesPerPdf;
@@ -112,7 +111,7 @@ const onUploadComplete = async ({
       },
       where: {
         id: createdFile.id,
-        userId: metadata.userId,
+        userId: userId,
       },
     });
   } catch (error) {
@@ -123,17 +122,17 @@ const onUploadComplete = async ({
       },
       where: {
         id: createdFile.id,
-        userId: metadata.userId,
+        userId: userId,
       },
     });
   }
 };
 
 export const ourFileRouter = {
-  freePlanUploader: f({ pdf: { maxFileSize: "4MB" } })
+  freePlanUploader: f({ pdf: { maxFileSize: "4MB", maxFileCount: 10 } })
     .middleware(middleware)
     .onUploadComplete(onUploadComplete),
-  proPlanUploader: f({ pdf: { maxFileSize: "16MB" } })
+  proPlanUploader: f({ pdf: { maxFileSize: "16MB", maxFileCount: 20 } })
     .middleware(middleware)
     .onUploadComplete(onUploadComplete),
 } satisfies FileRouter;

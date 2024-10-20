@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, Info, CheckCircle2 } from 'lucide-react'
+import { ArrowRight, Info, CheckCircle2, Zap, Filter, Quote } from 'lucide-react'
 import ShimmerButton from "@/components/ui/shimmer-button"
 import {
   Tooltip,
@@ -53,21 +53,25 @@ const squareData = [
     id: 1,
     src: "/asdf (10).png",
     title: "AI-dreven notatskrivning",
+    icon: Zap,
   },
   {
     id: 2,
     src: "/33333.png",
     title: "Tematisk filtrering",
+    icon: Filter,
   },
   {
     id: 3,
     src: "/fdsa.png",
     title: "Præcis citering",
+    icon: Quote,
   },
   {
     id: 4,
     src: "https://images.unsplash.com/photo-1688025950970-2ffb840b8f64?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
     title: "",
+    icon: null,
   },
 ]
 
@@ -106,7 +110,7 @@ const generateSquares = () => {
         key={sq.id}
         layout
         transition={{ duration: 1.5, type: "spring" }}
-        className={`w-full h-full relative ${cornerClasses}`}
+        className={`w-full h-full relative ${cornerClasses} overflow-hidden`}
       >
         <Image
           src={sq.src}
@@ -116,9 +120,19 @@ const generateSquares = () => {
           className={`object-cover ${cornerClasses}`}
           priority={index === 0} // Load the first image with priority
         />
-        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-end p-4">
-          <h3 className="text-white text-lg font-semibold">{sq.title}</h3>
-        </div>
+        <div className="absolute inset-0 bg-black/10" /> {/* Slight dark overlay */}
+        {sq.title && sq.icon && (
+          <div className="absolute bottom-4 left-4 max-w-[80%]">
+            <div className="bg-white/50 backdrop-blur-lg rounded-lg p-2 sm:p-3 inline-block">
+              <div className="flex items-center">
+                <div className="bg-slate-800 rounded-full p-1 sm:p-1.5 mr-2 sm:mr-3">
+                  <sq.icon className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
+                </div>
+                <h3 className="text-slate-900 text-xs sm:text-sm font-semibold">{sq.title}</h3>
+              </div>
+            </div>
+          </div>
+        )}
       </motion.div>
     )
   })
@@ -177,7 +191,7 @@ export default function ImageShuffleCard() {
                   </TooltipTrigger>
                   <TooltipContent className="max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
                     <p className="text-sm text-wrap">
-                      Når du uploader dine dokumenter til Lingvist, gør du dem til den primære informationskilde for AI. Det gør ganske enkelt, at du slipper for at bekymre dig om sandhedsgraden af de svar du får. De er nemlig baseret på dine dokumenter.
+                      N��r du uploader dine dokumenter til Lingvist, gør du dem til den primære informationskilde for AI. Det gør ganske enkelt, at du slipper for at bekymre dig om sandhedsgraden af de svar du får. De er nemlig baseret på dine dokumenter.
                     </p>
                   </TooltipContent>
                 </Tooltip>

@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { openai } from "@/lib/openai";
 import { getPineconeClient } from "@/lib/pinecone";
 import { db } from "@/db";
+import { sendMessageValidator } from "@/lib/validators/send-message-validator";
 
 const cohere = new CohereClient({
   token: process.env.COHERE_API_KEY!,
@@ -31,8 +32,18 @@ export async function POST(req: NextRequest) {
 
     if (!user?.id) {
       console.log(`[${Date.now()}] Unauthorized access attempt`);
-      return new NextResponse("Uautoriseret.", { status: 401 });
+      return new NextResponse("Du skal være logget ind for at sende en besked.", { status: 401 });
     }
+
+    // Validate the message using the sendMessageValidator
+    const validationResult = sendMessageValidator.safeParse(body);
+    if (!validationResult.success) {
+      console.log(`[${Date.now()}] Invalid message format`);
+      const errorMessage = validationResult.error.issues.map(issue => issue.message).join(', ');
+      return new NextResponse(`Der opstod en fejl med din besked: ${errorMessage}`, { status: 400 });
+    }
+
+    const { message } = validationResult.data;
 
     const encoder = new TextEncoder();
 
@@ -46,7 +57,7 @@ export async function POST(req: NextRequest) {
           controller.enqueue(encoder.encode(text));
         };
 
-        enqueueStatus('Starting processing');
+        enqueueStatus('Gennemgår alle dine filer...');
 
         console.log(`[${Date.now()}] User authenticated: ${user.id}`);
 
@@ -56,7 +67,6 @@ export async function POST(req: NextRequest) {
         });
 
         console.log(`[${Date.now()}] User files retrieved: ${userFiles.length}`);
-        enqueueStatus('Retrieved user files');
 
         if (userFiles.length === 0) {
           controller.enqueue(encoder.encode("Ingen dokumenter fundet for brugeren."));
@@ -64,16 +74,8 @@ export async function POST(req: NextRequest) {
           return;
         }
 
-        const { message } = body;
-
-        if (!message) {
-          controller.enqueue(encoder.encode("Besked er påkrævet."));
-          controller.close();
-          return;
-        }
-
         console.log(`[${Date.now()}] Processing message: ${message}`);
-        enqueueStatus('Processing message');
+        enqueueStatus('Finder relevante afsnit...');
 
         const embeddings = new OpenAIEmbeddings({
           openAIApiKey: process.env.OPENAI_API_KEY!,
@@ -100,7 +102,6 @@ export async function POST(req: NextRequest) {
         }
 
         console.log(`[${Date.now()}] Similarity search completed. Results: ${allResults.length}`);
-        enqueueStatus('Similarity search completed');
 
         const topResults = allResults.slice(0, 20);
         const initialResults = topResults.map(result => ({
@@ -116,7 +117,7 @@ export async function POST(req: NextRequest) {
         }
 
         console.log(`[${Date.now()}] Starting reranking`);
-        enqueueStatus('Starting reranking');
+        enqueueStatus('Sammensætter svar...');
 
         const rerankedResults = await cohere.rerank({
           documents: initialResults,
@@ -127,7 +128,6 @@ export async function POST(req: NextRequest) {
         });
 
         console.log(`[${Date.now()}] Reranking completed. Results: ${rerankedResults.results.length}`);
-        enqueueStatus('Reranking completed');
 
         const structuredResults = await Promise.all(
           rerankedResults.results.map(async (result) => {
@@ -161,7 +161,6 @@ export async function POST(req: NextRequest) {
           .join("\n");
 
         console.log(`[${Date.now()}] Starting stream generation`);
-        enqueueStatus('Generating assistant reply');
 
         const { textStream, fullStream } = await streamText({
           model: openai('gpt-4o-mini'),
@@ -196,8 +195,8 @@ Brug derefter disse resultater til at give et kort, velformuleret svar på bruge
       headers: { 'Content-Type': 'text/plain; charset=utf-8' },
     });
   } catch (error) {
-    console.error(`[${Date.now()}] Error in global message route:`, error);
-    return new NextResponse("Der opstod en fejl under behandlingen af din anmodning.", { status: 500 });
+    console.error(`[${Date.now()}] Error processing message:`, error);
+    return new NextResponse("Der opstod en fejl under behandlingen af din besked. Prøv venligst igen senere.", { status: 500 });
   } finally {
     console.log(`[${Date.now()}] Global message processing completed. Total time: ${Date.now() - startTime}ms`);
   }

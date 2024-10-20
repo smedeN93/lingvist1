@@ -1,12 +1,13 @@
 "use client";
 
-import { useContext, useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 import { Textarea } from "../ui/textarea";
 import { cn } from "../../lib/utils";
 
-import { GlobalChatContext } from "./global-chat-context";
+import { GlobalChatContext, LoadingStep } from "./global-chat-context";
+import { SuggestionCards } from "./SuggestionCards";
 
 interface GlobalChatInputProps {
   isDisabled?: boolean;
@@ -19,7 +20,8 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
     setIsLoading,
     addMessage,
     updateMessageById,
-    setLoadingStatus,
+    setLoadingSteps,
+    fileCount,
   } = useContext(GlobalChatContext);
 
   const [message, setMessage] = useState("");
@@ -27,15 +29,19 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
-    setError(null); // Clear any previous errors when the user starts typing
+    setError(null);
   };
 
-  const sendMessage = async (retryCount = 0) => {
+  const handleSuggestionClick = (suggestion: string) => {
+    setMessage(suggestion);
+    textareaRef.current?.focus();
+  };
+
+  const sendMessage = async () => {
     if (message.trim().length === 0 || isLoading) return;
 
     setIsLoading(true);
     setError(null);
-    setLoadingStatus('Starting...');
 
     const userMessageId = Date.now().toString();
     addMessage({ id: userMessageId, text: message, isUserMessage: true });
@@ -64,6 +70,14 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
       let done = false;
       let buffer = "";
 
+      // Initialize loading steps
+      const initialSteps: LoadingStep[] = [
+        { label: 'Gennemgår alle dine filer...', status: 'active' },
+        { label: 'Finder relevante afsnit...', status: 'pending' },
+        { label: 'Sammensætter svar...', status: 'pending' },
+      ];
+      setLoadingSteps(initialSteps);
+
       while (!done) {
         const { value, done: doneReading } = await reader!.read();
         done = doneReading;
@@ -79,13 +93,6 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
             break;
           }
 
-          // Append any text before the status message to aiResponse
-          if (statusStart > processedIndex) {
-            const textPart = buffer.substring(processedIndex, statusStart);
-            aiResponse += textPart;
-            updateMessageById(aiMessageId, { text: aiResponse, isLoading: false });
-          }
-
           // Find the end of the status line
           let statusEnd = buffer.indexOf('\n', statusStart);
           if (statusEnd === -1) {
@@ -95,7 +102,20 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
 
           // Extract the status message
           const statusMessage = buffer.substring(statusStart + 7, statusEnd).trim();
-          setLoadingStatus(statusMessage);
+
+          // Update loading steps based on the received status
+          setLoadingSteps((prevSteps) => {
+            return prevSteps.map((step, index) => {
+              if (step.label === statusMessage) {
+                // Mark the previous step as completed
+                if (index > 0) {
+                  prevSteps[index - 1].status = 'completed';
+                }
+                return { ...step, status: 'active' };
+              }
+              return step;
+            });
+          });
 
           // Move processedIndex past the status line
           processedIndex = statusEnd + 1;
@@ -112,20 +132,14 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
         buffer = "";
       }
 
-      // Clear loading status after processing
-      setLoadingStatus(null);
+      // Mark all steps as completed after processing
+      setLoadingSteps((prevSteps) =>
+        prevSteps.map((step) => ({ ...step, status: 'completed' }))
+      );
     } catch (error) {
       console.error("Error sending message:", error);
-      setError("Failed to send message. Please try again.");
-      updateMessageById(aiMessageId, { isLoading: false, error: "Failed to load message" });
-      
-      // Implement retry mechanism
-      if (retryCount < 3) {
-        setTimeout(() => sendMessage(retryCount + 1), 1000 * (retryCount + 1));
-      } else {
-        setError("Failed to send message after multiple attempts. Please try again later.");
-        setLoadingStatus(null);
-      }
+      setError("Din besked er for lang. Den må maksimalt være 300 tegn.");
+      updateMessageById(aiMessageId, { isLoading: false, error: "Kunne ikke indlæse beskeden" });
     } finally {
       setIsLoading(false);
       setMessage("");
@@ -145,22 +159,22 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
             {error}
           </div>
         )}
-        <div className="relative flex flex-1 items-center w-full">
+        <div className="relative flex flex-1 items-center w-full -mt-4">
           <div className="relative w-full">
-            <div className="absolute inset-0 bg-[rgb(250,250,252)] backdrop-blur-md rounded-full z-0" />
-            <div className="relative flex items-center">
+            <div className="absolute inset-0 bg-white backdrop-blur-md rounded-full z-0" />
+            <div className="relative flex items-center font-light">
               <Textarea
                 ref={textareaRef}
-                placeholder="Ask AI a question or make a request..."
+                placeholder={fileCount === 0 ? "Upload et par dokumenter og stil et spørgsmål" : "Stil et spørgsmål på tværs af alle dine dokumenter"}
                 rows={1}
                 maxRows={4}
                 autoFocus
-                disabled={isLoading || isDisabled}
-                aria-disabled={isLoading || isDisabled}
+                disabled={isLoading || isDisabled || fileCount === 0}
+                aria-disabled={isLoading || isDisabled || fileCount === 0}
                 onChange={handleInputChange}
                 value={message}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
+                  if (e.key === "Enter" && !e.shiftKey && fileCount > 0) {
                     e.preventDefault();
                     sendMessage();
                     textareaRef.current?.focus();
@@ -171,18 +185,20 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
 
               <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center space-x-2 z-20">
                 <button
-                  disabled={isLoading || isDisabled || !message.trim()}
-                  aria-disabled={isLoading || isDisabled || !message.trim()}
+                  disabled={isLoading || isDisabled || !message.trim() || fileCount === 0}
+                  aria-disabled={isLoading || isDisabled || !message.trim() || fileCount === 0}
                   type="submit"
                   onClick={() => {
-                    sendMessage();
-                    textareaRef.current?.focus();
+                    if (fileCount > 0) {
+                      sendMessage();
+                      textareaRef.current?.focus();
+                    }
                   }}
                   className={cn(
                     "h-8 w-8 rounded-full",
                     "bg-black dark:bg-zinc-900 dark:disabled:bg-zinc-800 transition duration-200",
                     "flex items-center justify-center",
-                    "disabled:bg-white disabled:cursor-not-allowed"
+                    "disabled:bg-[rgb(245,245,247)] disabled:cursor-not-allowed"
                   )}
                   aria-label="Send Message..."
                   title="Send Message..."
@@ -223,6 +239,7 @@ export const GlobalChatInput = ({ isDisabled }: GlobalChatInputProps) => {
           </div>
         </div>
       </form>
+      <SuggestionCards onSuggestionClick={handleSuggestionClick} />
     </div>
   );
 };

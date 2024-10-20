@@ -96,23 +96,46 @@ export default function ToolbarExpandable() {
         },
       });
     };
-  
+
+    // Deactivate all filters first
+    setKontraktvilkaar(false);
+    setOkonomi(false);
+    setMetode(false);
+    setRisici(false);
+
+    // Activate the selected filter if it wasn't already active
     switch (key) {
       case 'kontraktvilkaar':
-        setKontraktvilkaar(!kontraktvilkaar);
-        showToast(kontraktvilkaar ? "Kontraktvilkår filtrering deaktiveret" : "Kontraktvilkår filtrering aktiveret");
+        if (!kontraktvilkaar) {
+          setKontraktvilkaar(true);
+          showToast("Kontraktvilkår filtrering aktiveret");
+        } else {
+          showToast("Kontraktvilkår filtrering deaktiveret");
+        }
         break;
       case 'okonomi':
-        setOkonomi(!okonomi);
-        showToast(okonomi ? "Økonomi filtrering deaktiveret" : "Økonomi filtrering aktiveret");
+        if (!okonomi) {
+          setOkonomi(true);
+          showToast("Økonomi filtrering aktiveret");
+        } else {
+          showToast("Økonomi filtrering deaktiveret");
+        }
         break;
       case 'metode':
-        setMetode(!metode);
-        showToast(metode ? "Metode filtrering deaktiveret" : "Metode filtrering aktiveret");
+        if (!metode) {
+          setMetode(true);
+          showToast("Metode filtrering aktiveret");
+        } else {
+          showToast("Metode filtrering deaktiveret");
+        }
         break;
       case 'risici':
-        setRisici(!risici);
-        showToast(risici ? "Risici filtrering deaktiveret" : "Risici filtrering aktiveret");
+        if (!risici) {
+          setRisici(true);
+          showToast("Risici filtrering aktiveret");
+        } else {
+          showToast("Risici filtrering deaktiveret");
+        }
         break;
     }
   };
@@ -120,12 +143,18 @@ export default function ToolbarExpandable() {
   const renderContent = (item: Item) => {
     return (
       <div className='space-y-2'>
-        <div>
-          <span className='text-sm font-medium text-zinc-800 mb-2 block'>{item.content.label}</span>
-          {item.content.description && (
-            <p className='text-xs text-zinc-500 mt-1 mb-3'>{item.content.description}</p>
-          )}
+        <div className="flex justify-between items-center mb-2">
+          <span className='text-sm font-medium text-zinc-800'>{item.content.label}</span>
+          <span 
+            className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full cursor-help"
+            title="Ved aktivering af filtret kan der forekomme afvigelser i beskeden på nuværende tidspunkt"
+          >
+            Eksperimentel
+          </span>
         </div>
+        {item.content.description && (
+          <p className='text-xs text-zinc-500 mt-1 mb-3'>{item.content.description}</p>
+        )}
         {item.content.subItems && (
           <div className='space-y-3 ml-2 mt-2'>
             {item.content.subItems.map((subItem) => (

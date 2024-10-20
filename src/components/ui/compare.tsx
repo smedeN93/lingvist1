@@ -54,6 +54,7 @@ interface CompareProps {
   autoplayDuration?: number;
   width?: number;
   height?: number;
+  quality?: number;
 }
 
 export const Compare = ({
@@ -69,6 +70,7 @@ export const Compare = ({
   autoplayDuration = 5000,
   width = 400,
   height = 400,
+  quality = 100,
 }: CompareProps) => {
   const [sliderXPercent, setSliderXPercent] = useState(initialSliderPercentage);
   const [isDragging, setIsDragging] = useState(false);
@@ -251,12 +253,13 @@ export const Compare = ({
                 alt="Billede af en AI chat app brugerflade"
                 src={firstImage}
                 fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 80vw"
                 className={cn(
                   "object-cover object-left-top",
                   firstImageClassName
                 )}
                 draggable={false}
+                quality={quality}
               />
             </motion.div>
           ) : null}
@@ -270,12 +273,13 @@ export const Compare = ({
               alt="Billede af en AI chat app brugerflade"
               src={secondImage}
               fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 80vw"
               className={cn(
                 "object-cover object-left-top rounded-2xl",
                 secondImageClassname
               )}
               draggable={false}
+              quality={quality}
             />
           </motion.div>
         ) : null}

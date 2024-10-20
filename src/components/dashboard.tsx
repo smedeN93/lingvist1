@@ -181,21 +181,23 @@ export default function Component({ subscriptionPlan }: DashboardProps) {
                   <Skeleton height={100} className="w-full max-w-md" />
                 </div>
               ) : (
-               <motion.div
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="flex flex-col items-center justify-center gap-2 text-center"
+                  className="flex justify-center"
                 >
-                  <Ghost className="h-8 w-8 text-slate-800" />
-                  <h3 className="font-semibold text-xl text-slate-900">Der er tomt herinde.</h3>
-                  <p className="text-slate-600 mb-4">Lad os uploade din første PDF!</p>
+                  <div className="max-w-sm p-5 bg-[rgb(248,248,250)] rounded-2xl border border-slate-100 shadow-md">
+                    <div className="flex flex-col items-center justify-center gap-2 text-center">
+                      <Ghost className="h-8 w-8 text-slate-400" />
+                      <h3 className="font-semibold text-lg text-slate-700">Der er tomt herinde.</h3>
+                      <p className="text-slate-500 text-sm">Lad os uploade din første PDF!</p>
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </CardContent>
           </Card>
-
-          {/* Now place the GlobalChatWrapper here */}
           <GlobalChatWrapper />
         </main>
 

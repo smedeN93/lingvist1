@@ -14,7 +14,8 @@ export interface TextareaProps
         <TextareaAutosize
           className={cn(
             "flex w-full rounded-full border border-zinc-950/10 bg-white dark:bg-zinc-800 px-3 py-2 text-sm ring-offset-background",
-            "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            "placeholder:text-muted-foreground focus-visible:outline-none",
+            "focus-visible:ring-1 focus-visible:ring-[rgb(225,225,227)]",
             "disabled:cursor-not-allowed disabled:opacity-50",
             "transition duration-200",
             "h-7 sm:h-9 lg:h-9", // Justeret højde til at matche toolbar

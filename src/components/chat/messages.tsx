@@ -10,6 +10,7 @@ import { INFINITE_QUERY_LIMIT } from "@/config/infinite-query";
 
 import { ChatContext } from "./chat-context";
 import { Message } from "./message";
+import { WelcomeMessage } from './welcome-message';
 
 import "simplebar-react/dist/simplebar.min.css";
 
@@ -88,7 +89,7 @@ export const Messages = ({ fileId }: { fileId: string }) => {
 
   return (
     <SimpleBar autoHide={false} className="max-h-[calc(100vh-3.5rem-7rem)]" scrollableNodeProps={{ ref: containerRef }}>
-      <div className="flex flex-1 flex-col-reverse gap-4 pb-24 pl-4 pr-4">
+      <div className="flex flex-1 flex-col-reverse gap-4 pb-24 pl-4 pr-4 min-h-full">
         {combinedMessages && combinedMessages.length > 0 ? (
           combinedMessages.map((message, i) => {
             const isNextMessageSamePerson =
@@ -122,15 +123,7 @@ export const Messages = ({ fileId }: { fileId: string }) => {
             <Skeleton className="h-16" />
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center gap-4 py-8">
-                <div className="bg-blue-100 rounded-full p-3">
-                  <MessageSquare className="h-6 w-6 text-blue-500" />
-                </div>
-                <h3 className="font-semibold text-2xl text-gray-800">Så er du klar!</h3>
-                <p className="text-gray-500 text-center max-w-sm">
-                  Stil dit første spørgsmål for at komme i gang.
-                </p>
-              </div>
+          <WelcomeMessage />
         )}
       </div>
     </SimpleBar>
