@@ -39,7 +39,7 @@ const RollingImages = () => (
           alt={image.alt}
           width={image.width}
           height={image.height}
-          className={cn("object-contain max-h-full w-auto rounded-lg", image.className)}
+          className={cn("object-contain max-h-full w-auto rounded-3xl", image.className)}
         />
       </div>
     ))}

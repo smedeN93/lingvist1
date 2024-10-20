@@ -42,7 +42,7 @@ export default function HeroHome() {
                 data-aos="zoom-y-out"
                 data-aos-delay={300}
               >
-                Hurtigt find den viden du har brug, og få citerede svar, så du er sikker på fakta.
+                Hurtigt find den viden du har brug for, og få citerede svar, så du er sikker på fakta.
               </p>
               <motion.div
                 initial={{ opacity: 0, y: 40 }}

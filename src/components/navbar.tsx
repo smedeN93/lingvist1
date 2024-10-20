@@ -17,7 +17,7 @@ export const Navbar = async () => {
 
   return (
     <>
-      <div className="fixed top-4 left-0 right-0 z-50">
+      <div className="hidden sm:block fixed top-4 left-0 right-0 z-50">
         <MaxWidthWrapper>
           <nav className="bg-white/10 backdrop-blur-md border border-white/20 rounded-full shadow-lg px-4 py-2">
             <div className="flex items-center justify-between">
